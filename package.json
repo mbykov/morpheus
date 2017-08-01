@@ -1,6 +1,6 @@
 {
   "name": "laoshi",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Morpheus for Chinese",
   "main": "main.js",
   "scripts": {
@@ -60,7 +60,9 @@
       ]
     },
       "linux": {
-          "icon": "assets/icons"
+          "icon": "assets/icons",
+          "AppImage",
+          "deb"
       },
       "win": {
           "publisherName": "Michael Bykov",
