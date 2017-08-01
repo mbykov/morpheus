@@ -1,17 +1,29 @@
 os:
   - linux
-
 language: node_js
-
 node_js:
-  - "7"
+  - "8"
+dist: trusty
+sudo: false
+
+env:
+  global:
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
 install:
   - npm install
 
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm release; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm release -- --mac --win; fi
+
 cache:
   directories:
     - node_modules
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+    - $HOME/.npm/_prebuilds
 
 notifications:
   email:
