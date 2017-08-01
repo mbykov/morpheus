@@ -1,12 +1,12 @@
 {
   "name": "laoshi",
-  "version": "0.2.14",
+  "version": "0.2.16",
   "description": "Morpheus for Chinese",
   "main": "main.js",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "build": "webpack",
-    "start": "webpack && electron .",
+    "start": "electron .",
     "test": "echo \"Error: no test specified\"",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
@@ -29,7 +29,7 @@
     "electron-builder": "^19.18.1",
     "electron-rebuild": "^1.6.0",
     "file-loader": "^0.11.2",
-    "html-webpack-plugin": "^2.29.0",
+    "html-webpack-plugin": "^2.30.1.0",
     "imports-loader": "^0.7.1",
     "style-loader": "^0.18.2",
     "webpack": "^3.4.1"
