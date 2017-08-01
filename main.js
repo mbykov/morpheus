@@ -11,7 +11,7 @@ PouchDB.plugin(require('pouchdb-adapter-node-websql'))
 // const app = electron.app
 // Module to create native browser window.
 
-let dpath = path.join(__dirname, 'pouchdb.db/chinese')
+let dpath = path.join(__dirname, 'pouchdb/chinese')
 
 let remote = new PouchDB('http:\/\/localhost:5984/chinese')
 let db = PouchDB(dpath, {adapter: 'websql'})
