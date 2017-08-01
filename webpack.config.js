@@ -6,8 +6,7 @@ module.exports = {
     devtool: "inline-source-map",
     "target": "electron-renderer",
     entry: {
-        app: './src/index.js',
-        print: './src/print.js'
+        app: './src/index.js'
     },
     plugins: [
         new CleanWebpackPlugin(['dist']),
