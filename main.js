@@ -23,7 +23,8 @@ let timerId = null
 let tray = null
 
 app.on('ready', () => {
-    tray = new Tray('./assets/icons/32x32.png')
+    let traypath = path.join(__dirname, 'assets/icons/32x32.png')
+    tray = new Tray(traypath)
     const contextMenu = Menu.buildFromTemplate([
         // {label: 'Item1', type: 'radio'},
         // {label: 'Item2', type: 'radio'},
@@ -50,7 +51,7 @@ function createWindow () {
     mainWindow.loadURL(`file://${__dirname}/dist/index.html`)
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
     mainWindow.focus()
 
