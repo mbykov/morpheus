@@ -15,7 +15,7 @@ let dpath = path.join(__dirname, 'pouchdb-websql/chinese')
 
 let remote = new PouchDB('http:\/\/localhost:5984/chinese')
 // let db = PouchDB(dpath, {adapter: 'websql'})
-let db = new PouchDB('pouchdb/chinese')
+let db = new PouchDB(dpath)
 
 db.sync(remote)
 
