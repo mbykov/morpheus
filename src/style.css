@@ -1,0 +1,218 @@
+/* @font-face { */
+/*     font-family: 'DejaVu Sans'; */
+/*     src:  url('lib/DejaVuSans.ttf') format('truetype'); */
+/*     font-weight: normal; */
+/*     font-style: normal; */
+/*     color: black; */
+/* } */
+
+
+body {
+    font-family: 'DejaVu Sans';
+    box-shadow: inset 0 2px 0px #dcffa6, 0 2px 5px #000;
+    margin: 2px;
+    margin-bottom: 5px;
+    margin-top: 0;
+    height: 100%;
+}
+
+html {
+    margin: 0;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+b {
+    color: maroon;
+}
+
+p {
+    margins: 0;
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 3px;
+}
+
+#header {
+    font-family: 'DejaVu Sans';
+    color: #fff;
+    background-color: #8aba87;
+    text-align: center;
+    font-size: 26px;
+    padding: 5px;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    padding-top: 15px;
+    padding-bottom: 25px;
+    -webkit-app-region: drag;
+    /* margin-right: 15px; */
+}
+
+#laoshi-header:focus{
+    outline: none;
+}
+
+#container {
+}
+
+.laoshi-close {
+    float: right;
+    cursor: pointer;
+    margin-top: -3px;
+    margin-right: 3px;
+    font-size: 20px;
+    -webkit-app-region: no-drag;
+}
+
+
+.laoshi-form {
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+}
+
+.laoshi-current {
+    background-color: grey;
+}
+
+#laoshi-results {
+    font-family: 'DejaVu Sans';
+    font-size: 16px;
+    margin-left: 25px;
+    margin-top: 25px;
+    /* line-height: 16px; */
+}
+
+#laoshi-morphs {
+    font-family: 'DejaVu Sans';
+    font-size: 18px;
+    margin-left: 25px;
+    margin-top: 10px;
+    color: maroon;
+}
+
+.underlined {
+    border-bottom: 2px solid white;
+    /* border-bottom-color: green; */
+}
+
+.tree-leaf {
+    text-indent: 2em;
+    padding-top: 3px;
+    font-size: 16px;
+}
+
+
+.dict-pos {
+    font-size: 16px;
+    color: maroon;
+    padding-left: 20px;
+    cursor: pointer;
+}
+
+.black {
+    color: black;
+}
+
+.tree {
+    margin-top: 1em;
+}
+
+.link {
+    color: maroon;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+.help-menu {
+    float: right;
+    width: 200px;
+    margin-left: 25px;
+    padding: 5px;
+    background-color: #e6ffff;
+}
+
+.help-row {
+    margin: 0;
+}
+
+.help-row:hover {
+    background-color: #8aba87;
+}
+
+#book {
+    margin-left: 50px;
+}
+
+.seg {
+    cursor: pointer;
+}
+
+.seg:hover {
+    /* background-color: #8aba87; */
+    background-color: grey;
+}
+
+.ambi {
+    cursor: pointer;
+}
+
+.ambi:hover {
+    background-color: grey;
+}
+
+.clause {
+    position: relative;
+}
+
+/* .clause > * { */
+/*     position: absolute; */
+/* } */
+
+#ambis {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    color: white;
+    /* line-height: 24px; */
+    display: 'block';
+    padding: 3px;
+    position: absolute;
+    z-index: 1000;
+    box-shadow: 0 0 10px 1px rgba(0,0,0,.3);
+    height: auto;
+    top: 250px;
+    left: 300px;
+    background-color: #8aba87;
+    font-family: 'DejaVu Sans';
+    font-size: 26px;
+}
+
+.dict {
+    font-size: 26px;
+    padding: 10px;
+}
+
+.trns {
+    line-height: 16px;
+    padding: 10px;
+    padding-left: 25px;
+}
+
+#singles {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    /* color: white; */
+    color: black;
+    /* line-height: 24px; */
+    display: 'block';
+    padding: 3px;
+    position: absolute;
+    z-index: 1000;
+    box-shadow: 0 0 10px 1px rgba(0,0,0,.3);
+    height: auto;
+    top: 250px;
+    left: 300px;
+    /* background-color: #8aba87; */
+    background-color: white;
+    font-family: 'DejaVu Sans';
+    font-size: 26px;
+}
