@@ -2,8 +2,8 @@ const path = require('path')
 const electron = require('electron')
 const {app, Menu, Tray} = require('electron')
 const clipboard = electron.clipboard
-// const seg = require('hieroglyphic');
-const seg = require('../segmenter');
+const seg = require('hieroglyphic');
+// const seg = require('../segmenter');
 const PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
 
