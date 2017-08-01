@@ -1,6 +1,6 @@
 {
   "name": "laoshi",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Morpheus for Chinese",
   "main": "main.js",
   "scripts": {
@@ -63,7 +63,6 @@
           "icon": "assets/icons",
           "target": [
               "AppImage",
-              "rpm",
               "deb"
           ]
       },
