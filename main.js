@@ -2,20 +2,20 @@ const path = require('path')
 const electron = require('electron')
 const {app, Menu, Tray} = require('electron')
 const clipboard = electron.clipboard
-const seg = require('hieroglyphic');
-// const seg = require('../segmenter');
+// const seg = require('hieroglyphic');
+const seg = require('../segmenter');
 const PouchDB = require('pouchdb')
-PouchDB.plugin(require('pouchdb-adapter-node-websql'))
+// PouchDB.plugin(require('pouchdb-adapter-node-websql'))
 
 // Module to control application life.
 // const app = electron.app
 // Module to create native browser window.
 
-let dpath = path.join(__dirname, 'pouchdb/chinese')
+let dpath = path.join(__dirname, 'pouchdb-websql/chinese')
 
 let remote = new PouchDB('http:\/\/localhost:5984/chinese')
-let db = PouchDB(dpath, {adapter: 'websql'})
-// let db = new PouchDB('chinese')
+// let db = PouchDB(dpath, {adapter: 'websql'})
+let db = new PouchDB('pouchdb/chinese')
 
 db.sync(remote)
 

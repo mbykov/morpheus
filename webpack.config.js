@@ -21,9 +21,6 @@ module.exports = {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'dist')
     },
-    externals: {
-        'sqlite3':'commonjs sqlite3'
-    },
     module: {
         rules: [
             {

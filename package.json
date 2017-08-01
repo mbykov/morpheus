@@ -1,6 +1,6 @@
 {
   "name": "laoshi",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "description": "Morpheus for Chinese",
   "main": "main.js",
   "scripts": {
@@ -24,7 +24,6 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.16",
-    "component-webpack-plugin": "^0.2.1",
     "css-loader": "^0.28.4",
     "electron": "^1.6.11",
     "electron-builder": "^19.18.1",
@@ -37,10 +36,8 @@
   },
   "dependencies": {
     "delegate": "^3.1.3",
-    "hieroglyphic": "^0.2.1",
-    "lodash": "^4.17.4",
-    "pouchdb-adapter-node-websql": "^6.3.4",
-    "sqlite3": "^3.1.8"
+    "hieroglyphic": "^0.2.2",
+    "lodash": "^4.17.4"
   },
   "build": {
     "appId": "com.github.mbykov.laoshi",
