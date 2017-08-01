@@ -15,8 +15,7 @@ install:
   - npm install
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm release; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm release -- --mac --win; fi
+  - npm run release
 
 cache:
   directories:
