@@ -13,11 +13,9 @@ const PouchDB = require('pouchdb')
 
 let dpath = path.join(__dirname, 'pouchdb/chinese')
 
-let remote = new PouchDB('http:\/\/localhost:5984/chinese')
+let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
 // let db = PouchDB(dpath, {adapter: 'websql'})
 let db = new PouchDB(dpath)
-//
-
 db.sync(remote)
 
 let timerId = null
@@ -37,22 +35,16 @@ app.on('ready', () => {
     tray.setContextMenu(contextMenu)
 })
 
-
 const BrowserWindow = electron.BrowserWindow
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function createWindow () {
-    // Create the browser window.
     mainWindow = new BrowserWindow({width: 800, height: 600})
 
-    // and load the index.html of the app.
     mainWindow.loadURL(`file://${__dirname}/dist/index.html`)
 
     // mainWindow.webContents.openDevTools()
-
     mainWindow.focus()
 
     // Emitted when the window is closed.
