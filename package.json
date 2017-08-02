@@ -4,7 +4,8 @@
   "description": "Morpheus for Chinese",
   "main": "main.js",
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall_": "electron-builder install-app-deps",
+    "postinstall": "electron-rebuild",
     "build": "webpack",
     "start": "electron .",
     "test": "echo \"Error: no test specified\"",
@@ -42,7 +43,7 @@
   "build": {
     "appId": "com.github.mbykov.laoshi",
       "files": [
-          "dist/",
+          "build/",
           "assets/",
           "pouchdb/",
           "main.js",
@@ -65,6 +66,7 @@
     "linux": {
       "icon": "assets/icons",
       "target": [
+        "AppImage",
         "deb"
       ]
     },

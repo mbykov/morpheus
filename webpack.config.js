@@ -9,7 +9,7 @@ module.exports = {
         app: './src/index.js'
     },
     plugins: [
-        new CleanWebpackPlugin(['dist']),
+        new CleanWebpackPlugin(['build']),
         new HtmlWebpackPlugin({
             title: 'Output Management',
             filename: 'index.html',
@@ -18,7 +18,7 @@ module.exports = {
     ],
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'build')
     },
     module: {
         rules: [

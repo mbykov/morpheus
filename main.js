@@ -11,7 +11,7 @@ const PouchDB = require('pouchdb')
 // const app = electron.app
 // Module to create native browser window.
 
-let dpath = path.join(__dirname, 'pouchdb/chinese')
+let dpath = path.resolve(__dirname, 'pouchdb/chinese')
 
 let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
 // let db = PouchDB(dpath, {adapter: 'websql'})
@@ -26,8 +26,6 @@ app.on('ready', () => {
     let traypath = path.join(__dirname, 'assets/icons/32x32.png')
     tray = new Tray(traypath)
     const contextMenu = Menu.buildFromTemplate([
-        // {label: 'Item1', type: 'radio'},
-        // {label: 'Item2', type: 'radio'},
         {label: 'help', role: 'help'},
         {label: 'learn more', click () { electron.shell.openExternal('http:\/\/diglossa.org') }},
         {label: 'quit', role: 'quit'}
@@ -41,9 +39,9 @@ const BrowserWindow = electron.BrowserWindow
 let mainWindow
 
 function createWindow () {
-    mainWindow = new BrowserWindow({width: 800, height: 600})
+    mainWindow = new BrowserWindow({width: 800, height: 600, webPreferences: { webSecurity: false }})
 
-    mainWindow.loadURL(`file://${__dirname}/dist/index.html`)
+    mainWindow.loadURL(`file://${__dirname}/build/index.html`)
 
     // mainWindow.webContents.openDevTools()
     mainWindow.focus()
@@ -61,6 +59,7 @@ function createWindow () {
     tray.on('click', () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     })
+
 
     // mainWindow.webContents.on('did-finish-load', function() {
         // mainWindow.webContents.send('parsed', 'kuku')
