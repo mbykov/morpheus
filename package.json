@@ -1,6 +1,6 @@
 {
   "name": "laoshi",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "description": "Morpheus for Chinese",
   "main": "main.js",
   "scripts": {
@@ -43,12 +43,20 @@
   "build": {
     "appId": "com.github.mbykov.laoshi",
     "asarUnpack": "pouchdb",
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "mbykov",
-        "repo": "laoshi"
-      }
+      "files": [
+          "dist/",
+          "assets/",
+          "pouchdb/",
+          "node_modules/",
+          "main.js",
+          "package.json"
+      ],
+      "publish": [
+          {
+              "provider": "github",
+              "owner": "mbykov",
+              "repo": "laoshi"
+          }
     ],
     "mac": {
       "category": "Educational software",
