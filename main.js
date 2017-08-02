@@ -11,7 +11,11 @@ const PouchDB = require('pouchdb')
 // const app = electron.app
 // Module to create native browser window.
 
-let dpath = path.resolve(__dirname, 'pouchdb/chinese')
+const upath = app.getPath('userData')
+console.log('U', upath)
+
+let dpath = path.resolve(__dirname, '../asar.unpacked/pouchdb/chinese')
+// const dbPath = path.resolve(app.getPath('userData'), 'data.db');
 
 let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
 // let db = PouchDB(dpath, {adapter: 'websql'})

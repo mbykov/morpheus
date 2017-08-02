@@ -1,11 +1,11 @@
 {
   "name": "laoshi",
-  "version": "0.2.30",
+  "version": "0.2.31",
   "description": "Morpheus for Chinese",
   "main": "main.js",
   "scripts": {
     "postinstall_": "electron-builder install-app-deps",
-    "postinstall": "electron-rebuild",
+    "postinstall_": "electron-rebuild",
     "build": "webpack",
     "start": "electron .",
     "test": "echo \"Error: no test specified\"",
@@ -49,6 +49,7 @@
           "main.js",
           "package.json"
       ],
+      "asarUnpack": "pouchdb",
       "publish": [
           {
               "provider": "github",
