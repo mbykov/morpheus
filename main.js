@@ -51,7 +51,7 @@ function createWindow () {
     mainWindow.loadURL(`file://${__dirname}/dist/index.html`)
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 
     mainWindow.focus()
 
