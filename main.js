@@ -11,16 +11,18 @@ const PouchDB = require('pouchdb')
 // const app = electron.app
 // Module to create native browser window.
 
-const upath = app.getPath('userData')
-console.log('U', upath)
+// const upath = app.getPath('userData')
+// console.log('U', upath)
 
-let dpath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb/chinese')
-// const dbPath = path.resolve(app.getPath('userData'), 'data.db');
+const dpath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb/chinese')
+const dbPath = path.resolve(app.getPath('userData'), 'pouchdb/chinese');
 
 let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
 // let db = PouchDB(dpath, {adapter: 'websql'})
 //
+let deaddb = new PouchDB(dpath)
 let db = new PouchDB(dpath)
+db.replicate.from(deaddb)
 db.sync(remote)
 
 let timerId = null
