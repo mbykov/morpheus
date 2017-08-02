@@ -1,6 +1,6 @@
 {
   "name": "laoshi",
-  "version": "0.2.28",
+  "version": "0.2.29",
   "description": "Morpheus for Chinese",
   "main": "main.js",
   "scripts": {
@@ -45,7 +45,6 @@
           "dist/",
           "assets/",
           "pouchdb/",
-          "node_modules/",
           "main.js",
           "package.json"
       ],
