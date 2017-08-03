@@ -20,12 +20,19 @@ const dbPath = path.resolve(upath, 'pouchdb/chinese')
 let dbState = jetpack.exists(dbPath)
 
 if (!dbState) {
+    // fs.chmodSync('test', 0755)
     const toPath = path.resolve(upath, 'pouchdb')
     const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
     // const fromPath = path.resolve(__dirname, 'pouchdb')
+    jetpack.dir(toPath, { empty: true, mode: '700' })
     jetpack.copy(fromPath, toPath, { matching: '**/*' })
-    dbState = jetpack.exists(dbPath)
+   dbState = jetpack.exists(dbPath)
 }
+
+process.on('unhandledRejection', (reason, p) => {
+  // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+});
+
 
 // 新华社北京
 // 第三十七次会议 并发表重要讲话
