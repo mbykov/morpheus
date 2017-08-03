@@ -24,7 +24,6 @@ if (!dbState) {
     const toPath = path.resolve(upath, 'pouchdb')
     const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
     // const fromPath = path.resolve(__dirname, 'pouchdb')
-    jetpack.dir(toPath, { empty: true, mode: '700' })
     jetpack.copy(fromPath, toPath, { matching: '**/*' })
    dbState = jetpack.exists(dbPath)
 }
