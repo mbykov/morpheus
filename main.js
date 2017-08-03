@@ -21,13 +21,14 @@ let dbState = jetpack.exists(dbPath)
 
 if (!dbState) {
     const toPath = path.resolve(upath, 'pouchdb')
-    // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
-    const fromPath = path.resolve(__dirname, 'pouchdb')
+    const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
+    // const fromPath = path.resolve(__dirname, 'pouchdb')
     jetpack.copy(fromPath, toPath, { matching: '**/*' })
     dbState = jetpack.exists(dbPath)
 }
 
 // 新华社北京
+// 第三十七次会议 并发表重要讲话
 let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
 let db = new PouchDB(dbPath)
 // let db = PouchDB(dpath, {adapter: 'websql'})
