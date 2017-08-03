@@ -2,6 +2,7 @@ const path = require('path')
 const electron = require('electron')
 const {app, Menu, Tray} = require('electron')
 const clipboard = electron.clipboard
+const jetpack = require("fs-jetpack")
 const seg = require('hieroglyphic');
 // const seg = require('../segmenter');
 const PouchDB = require('pouchdb')
@@ -11,19 +12,36 @@ const PouchDB = require('pouchdb')
 // const app = electron.app
 // Module to create native browser window.
 
-// const upath = app.getPath('userData')
-// console.log('U', upath)
+const upath = app.getPath('userData')
+let dbPath = path.resolve(upath, 'pouchdb')
+let dbState = jetpack.exists(dbPath)
+console.log('DB STATE', dbState)
 
-const dpath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb/chinese')
-const dbPath = path.resolve(app.getPath('userData'), 'pouchdb/chinese');
+if (!dbState) {
+    jetpack.copy('pouchdb', dbPath, { matching: '**/*' });
+    console.log('DB COPIED')
+}
+
+let chPath = path.resolve(upath, 'pouchdb/chinese')
+
+// const dpath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb/chinese')
+// const dbPath = path.resolve(app.getPath('userData'), 'pouchdb/chinese');
 
 let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
+let db = new PouchDB(chPath)
 // let db = PouchDB(dpath, {adapter: 'websql'})
-//
-let deaddb = new PouchDB(dpath)
-let db = new PouchDB(dpath)
-db.replicate.from(deaddb)
 db.sync(remote)
+
+// function dbState(state) {
+//     try {
+//         mkdirp.sync(path.dirname(fullStoreFileName));
+//         jsonfile.writeFileSync(fullStoreFileName, state);
+//     } catch (err) {
+//         // Don't care
+//     }
+// }
+
+
 
 let timerId = null
 let tray = null
