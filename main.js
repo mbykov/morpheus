@@ -20,9 +20,10 @@ const dbPath = path.resolve(upath, 'pouchdb/chinese')
 let dbState = jetpack.exists(dbPath)
 
 if (!dbState) {
-    // const dumpPath = path.resolve(upath, 'pouchdb')
-    const dumpPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
-    jetpack.copy('pouchdb', dumpPath, { matching: '**/*' })
+    const toPath = path.resolve(upath, 'pouchdb')
+    // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
+    const fromPath = path.resolve(__dirname, 'pouchdb')
+    jetpack.copy(fromPath, toPath, { matching: '**/*' })
     dbState = jetpack.exists(dbPath)
 }
 

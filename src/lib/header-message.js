@@ -33,38 +33,15 @@ function parseClause(cl) {
             oSeg.singles.push(symseg)
         })
     })
-    bindMessageEvents(oClause, cl)
+    bindMouseEvents(oClause, cl)
     return oClause
 }
 
 // document.addEventListener("keydown", keyDown, false)
 
-// function keyDown(e) {
-//     let keyCode = e.keyCode;
-//     if (e.keyCode != 17) return
-//     let cur = q('.current')
-//     if (!cur || cur.textContent.length < 2) return
-//     if (cur.classList.contains('ambis')) return
-//     let oResults = q('#laoshi-results')
-//     let oSingles = recreateDiv('singles')
-//     cur.textContent.split('').forEach(sym => {
-//         let symseg = _.find(cur.singles, single => single.dict == sym)
-//         let oSym = span(symseg.dict)
-//         oSym.classList.add('seg')
-//         oSingles.appendChild(oSym)
-//     })
-//     oResults.appendChild(oSingles)
-//     var coords = getCoords(cur);
-//     placePopup(coords, oSingles);
-//     delegate(oSingles, '.seg', 'mouseover', function(e) {
-//         let single = _.find(cur.singles, single => single.dict == e.target.textContent)
-//         createDict(single)
-//     }, false);
-// }
-
 // 第三十各地区要切 en arche en ho logos
 // 爾時世尊重說偈言
-function bindMessageEvents(el, cl) {
+function bindMouseEvents(el, cl) {
     delegate(el, '.seg', 'mouseover', function(e) {
         setCurrent(e)
         let oAmbis = q('.ambis')
