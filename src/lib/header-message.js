@@ -37,50 +37,71 @@ function parseClause(cl) {
     return oClause
 }
 
-document.addEventListener("keydown", keyDown, false)
+// document.addEventListener("keydown", keyDown, false)
 
-function keyDown(e) {
-    let keyCode = e.keyCode;
-    if (e.keyCode != 17) return
-    let cur = q('.current')
-    if (!cur || cur.textContent.length < 2) return
-    if (cur.classList.contains('ambis')) return
-    let oResults = q('#laoshi-results')
-    let oSingles = recreateDiv('singles')
-    cur.textContent.split('').forEach(sym => {
-        let symseg = _.find(cur.singles, single => single.dict == sym)
-        let oSym = span(symseg.dict)
-        oSym.classList.add('seg')
-        oSingles.appendChild(oSym)
-    })
-    oResults.appendChild(oSingles)
-    var coords = getCoords(cur);
-    placePopup(coords, oSingles);
-    delegate(oSingles, '.seg', 'mouseover', function(e) {
-        let single = _.find(cur.singles, single => single.dict == e.target.textContent)
-        createDict(single)
-    }, false);
-}
+// function keyDown(e) {
+//     let keyCode = e.keyCode;
+//     if (e.keyCode != 17) return
+//     let cur = q('.current')
+//     if (!cur || cur.textContent.length < 2) return
+//     if (cur.classList.contains('ambis')) return
+//     let oResults = q('#laoshi-results')
+//     let oSingles = recreateDiv('singles')
+//     cur.textContent.split('').forEach(sym => {
+//         let symseg = _.find(cur.singles, single => single.dict == sym)
+//         let oSym = span(symseg.dict)
+//         oSym.classList.add('seg')
+//         oSingles.appendChild(oSym)
+//     })
+//     oResults.appendChild(oSingles)
+//     var coords = getCoords(cur);
+//     placePopup(coords, oSingles);
+//     delegate(oSingles, '.seg', 'mouseover', function(e) {
+//         let single = _.find(cur.singles, single => single.dict == e.target.textContent)
+//         createDict(single)
+//     }, false);
+// }
 
 // 第三十各地区要切 en arche en ho logos
 // 爾時世尊重說偈言
 function bindMessageEvents(el, cl) {
     delegate(el, '.seg', 'mouseover', function(e) {
+        setCurrent(e)
         let oAmbis = q('.ambis')
         if (oAmbis) remove(oAmbis)
         let oSingles = q('.singles')
         if (oSingles) remove(oSingles)
         if (e.ctrlKey) return
         let idx = e.target.getAttribute('idx')
-        let curs = qs('.current')
-        curs.forEach(cur => {cur.classList.remove('current')})
-        e.target.classList.add('current')
         let seg = cl.segs[idx]
         createDict(seg)
     }, false);
 
+    delegate(el, '.seg', 'click', function(e) {
+        setCurrent(e)
+        let cur = e.target
+        if (!cur || cur.textContent.length < 2) return
+        if (cur.classList.contains('ambis')) return
+        let oResults = q('#laoshi-results')
+        let oSingles = recreateDiv('singles')
+        cur.textContent.split('').forEach(sym => {
+            let symseg = _.find(cur.singles, single => single.dict == sym)
+            let oSym = span(symseg.dict)
+            oSym.classList.add('seg')
+            oSingles.appendChild(oSym)
+        })
+        oResults.appendChild(oSingles)
+        var coords = getCoords(cur);
+        placePopup(coords, oSingles);
+        delegate(oSingles, '.seg', 'mouseover', function(e) {
+            let single = _.find(cur.singles, single => single.dict == e.target.textContent)
+            createDict(single)
+        }, false);
+    }, false)
+
     // AMBIES
     delegate(el, '.ambi', 'mouseover', function(e) {
+        setCurrent(e)
         let oSingles = q('.singles')
         if (oSingles) remove(oSingles)
         let oResults = q('#laoshi-results')
@@ -88,9 +109,6 @@ function bindMessageEvents(el, cl) {
         empty(oDicts)
         let test = q('.ambis')
         if (test) return
-        let curs = qs('.current')
-        curs.forEach(cur => {cur.classList.remove('current')})
-        e.target.classList.add('current')
 
         let idx = e.target.getAttribute('idx')
         let seg = cl.segs[idx]
@@ -107,6 +125,12 @@ function bindMessageEvents(el, cl) {
             createDict(cur)
         }, false);
     }, false);
+}
+
+function setCurrent(e) {
+    let curs = qs('.current')
+    curs.forEach(cur => {cur.classList.remove('current')})
+    e.target.classList.add('current')
 }
 
 // 第三十各地区要切 实把

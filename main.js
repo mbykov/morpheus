@@ -3,39 +3,39 @@ const electron = require('electron')
 const {app, Menu, Tray} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
-const seg = require('hieroglyphic');
-// const seg = require('../segmenter');
+const seg = require('hieroglyphic')
+// const seg = require('../segmenter')
 const PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
+const isDev = require('electron-is-dev')
 
 // Module to control application life.
 // const app = electron.app
 // Module to create native browser window.
 
+// console.log('ISDEV', isDev)
+
 const upath = app.getPath('userData')
-let dbPath = path.resolve(upath, 'pouchdb')
+const dbPath = path.resolve(upath, 'pouchdb/chinese')
 let dbState = jetpack.exists(dbPath)
-console.log('DB STATE', dbState)
 
 if (!dbState) {
-    jetpack.copy('pouchdb', dbPath, { matching: '**/*' });
-    console.log('DB COPIED')
+    // const dumpPath = path.resolve(upath, 'pouchdb')
+    const dumpPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
+    jetpack.copy('pouchdb', dumpPath, { matching: '**/*' })
+    dbState = jetpack.exists(dbPath)
 }
 
-let chPath = path.resolve(upath, 'pouchdb/chinese')
-
-// const dpath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb/chinese')
-// const dbPath = path.resolve(app.getPath('userData'), 'pouchdb/chinese');
-
+// 新华社北京
 let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
-let db = new PouchDB(chPath)
+let db = new PouchDB(dbPath)
 // let db = PouchDB(dpath, {adapter: 'websql'})
 db.sync(remote)
 
 // function dbState(state) {
 //     try {
-//         mkdirp.sync(path.dirname(fullStoreFileName));
-//         jsonfile.writeFileSync(fullStoreFileName, state);
+//         mkdirp.sync(path.dirname(fullStoreFileName))
+//         jsonfile.writeFileSync(fullStoreFileName, state)
 //     } catch (err) {
 //         // Don't care
 //     }
@@ -102,9 +102,9 @@ app.on('ready', () => {
             if (err) return
             if (!mainWindow) return
             mainWindow.webContents.send('parsed', res)
-        });
+        })
 
-    }, 100);
+    }, 100)
 })
 
 // This method will be called when Electron has finished
