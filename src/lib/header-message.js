@@ -5,6 +5,8 @@ var delegate = require('delegate');
 import {phonetic} from './phonetic'
 const {ipcRenderer} = require('electron')
 const jetpack = require("fs-jetpack")
+const http = require('http')
+const ProgressBar = require('progress');
 
 export function headerMessage(mess) {
     let oText = create('div')
@@ -216,4 +218,36 @@ function loadDict() {
     let dname = q('#laoshi-results').dname
     if (!dname) return
     log('LOAD', dname)
+    let file = jetpack.createWriteStream("chinese_en.dict")
+    let req = http.request({
+        host: 'localhost',
+        port: 3001,
+        path: '/dicts/short_en.tar.gz'
+    })
+    req.on('response', function(res){
+        res.pipe(file)
+        let len = parseInt(res.headers['content-length'], 10)
+
+        console.log()
+        let bar = new ProgressBar('  downloading [:bar] :rate/bps :percent :etas', {
+            complete: '=',
+            incomplete: ' ',
+            width: 20,
+            total: len
+        })
+
+        res.on('data', function (chunk) {
+            bar.tick(chunk.length)
+            console.log(bar)
+        })
+
+        res.on('end', function () {
+            console.log('\n')
+            console.log('END')
+            log('R', res)
+        })
+    })
+    req.end()
 }
+
+// 新华社北京

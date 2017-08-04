@@ -39,7 +39,8 @@
     "electron-is-dev": "^0.3.0",
     "fs-jetpack": "^1.1.0",
     "hieroglyphic": "^0.2.4",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "progress": "^2.0.0"
   },
   "build": {
     "appId": "com.github.mbykov.laoshi",
