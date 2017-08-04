@@ -165,8 +165,12 @@ function createDict(seg) {
     })
 }
 
+function showMessage(str) {
+    let parent = q('#antrax-dicts')
+    parent.textContent = str
+}
+
 ipcRenderer.on('section', function(event, text) {
-    log('TEXT', text)
     showSection(text)
     // if (text == 'Update available, downloading') {
     //     let opro = q('#progress')
@@ -174,29 +178,42 @@ ipcRenderer.on('section', function(event, text) {
     // }
 })
 
-function showMessage(str) {
-    let parent = q('#antrax-dicts')
-    parent.textContent = str
-}
-
 function showSection(name) {
     let fpath = path.join('src/lib/sections', [name, 'html'].join('.') )
-    log('F', fpath)
-    // fpath = 'src/lib/sections/select-dict.html'
     let html = jetpack.read(fpath)
-    log('SECT', html)
     let odicts = q('#laoshi-dicts')
     recreate(odicts)
     odicts.innerHTML = html
     let ores = q('#laoshi-results')
     ores.appendChild(odicts)
+    let cedict = q('#cedict')
+    let bkrs = q('#bkrs')
+    let allangs
+    delegate(odicts, '.load-dict', 'click', function(e) {
+        let chcks = qs('.load-dict')
+        let size = 0
+        let langs = []
+        chcks.forEach(chck => {
+            if (!chck.checked) return
+            size += chck.getAttribute('size')*1.0
+            langs.push(chck.getAttribute('lang'))
+        })
+        let osize = q('#approx-size')
+        osize.textContent = size
+        let oname = q('#dict-name')
+        oname.textContent = ''
+        if (!langs.length) return ores.dname = null
+        langs.unshift('chinese')
+        let dname = [langs.join('_'), 'dict'].join('.')
+        oname.textContent = dname
+        ores.dname = dname
+    })
+    let submit = q('#install-dict')
+    submit.addEventListener('click', loadDict, false)
+}
 
-    // odicts.innerHTML = html
-    // let menupath = path.join(__dirname, ['lib/help-menu.html'].join(''))
-    // let menu = fs.readFileSync(menupath,'utf8').trim();
-    // let omenu = cre('div')
-    // omenu.classList.add('help-menu')
-    // omenu.innerHTML = menu
-    // odicts.insertBefore(omenu, odicts.firstChild);
-    // bindSectionEvents(odicts)
+function loadDict() {
+    let dname = q('#laoshi-results').dname
+    if (!dname) return
+    log('LOAD', dname)
 }

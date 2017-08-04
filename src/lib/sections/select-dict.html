@@ -1,3 +1,36 @@
-<div>
-  select dict
+<div id="select-dict">
+  select Chinese dictionaries:
+  <br> &nbsp;
+  <div>
+    <table>
+        <tr>
+          <th>load</th>
+          <th>lang</th>
+          <th>name</th>
+          <th>~ size</th>
+        </tr>
+        <tr>
+          <td><input id="cedict" class="load-dict" type="checkbox" checked=true lang="en" size=50></td>
+          <td>English</td>
+          <td>CEDICT</td>
+          <td>50 Mb</td>
+        </tr>
+        <tr>
+          <td><input id="bkrs" class="load-dict" type="checkbox" lang="ru" size=100></td>
+          <td>Russian</td>
+          <td>БКРС</td>
+          <td>100 Mb</td>
+        </tr>
+        <tr>
+        <tr>
+        </tr>
+    </table>
+  </div>
+  <div>
+    <p>Approx.size = <span id="approx-size">50</span></p>
+  </div>
+  <div>
+    <p><input id="install-dict" type="submit" value="install"> <span id="dict-name">chinese_en.dict</span>
+  </div>
+
 </div>

@@ -216,3 +216,14 @@ p {
     font-family: 'DejaVu Sans';
     font-size: 26px;
 }
+
+#install-dict {
+    padding: 10px;
+    font-face: bold;
+    font-size: 20px;
+}
+
+#dict-name {
+    padding: 10px;
+    font-weight: bold;
+}
