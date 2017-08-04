@@ -22,8 +22,8 @@ let dbState = jetpack.exists(dbPath)
 if (!dbState) {
     // fs.chmodSync('test', 0755)
     const toPath = path.resolve(upath, 'pouchdb')
-    const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
-    // const fromPath = path.resolve(__dirname, 'pouchdb')
+    // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
+    const fromPath = path.resolve(__dirname, 'pouchdb')
     jetpack.copy(fromPath, toPath, { matching: '**/*' })
    dbState = jetpack.exists(dbPath)
 }
@@ -50,7 +50,6 @@ db.sync(remote)
 // }
 
 
-
 let timerId = null
 let tray = null
 
@@ -75,7 +74,7 @@ function createWindow () {
 
     mainWindow.loadURL(`file://${__dirname}/build/index.html`)
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -92,11 +91,42 @@ function createWindow () {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     })
 
-
     // mainWindow.webContents.on('did-finish-load', function() {
         // mainWindow.webContents.send('parsed', 'kuku')
     // })
 }
+
+const template = [
+    {
+        role: 'window',
+        submenu: [
+            {role: 'minimize'},
+            {role: 'close'},
+            {role: 'quit'}
+        ]
+    },
+    {
+        label: 'Options',
+        submenu: [
+            {label: 'select dict',  click() { mainWindow.webContents.send('section', 'select-dict') }},
+            {label: 'click dicts',  click() { console.log('item 1 clicked') }},
+            {role: 'togglefullscreen'}
+        ]
+    },
+    {
+        role: 'help',
+        submenu: [
+            {
+                label: 'Learn More',
+                click () { electron.shell.openExternal('https://electron.atom.io') }
+            }
+        ]
+    }
+]
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
+
 
 app.on('ready', () => {
     let oldstr = null

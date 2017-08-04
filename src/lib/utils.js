@@ -20,6 +20,11 @@ export function recreateDiv(sel) {
     return el
 }
 
+export function recreate(element) {
+    var new_element = element.cloneNode(true);
+    element.parentNode.replaceChild(new_element, element);
+}
+
 function cret(str) {
     return document.createTextNode(str);
 }
