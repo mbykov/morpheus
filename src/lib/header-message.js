@@ -7,6 +7,8 @@ const {ipcRenderer} = require('electron')
 const jetpack = require("fs-jetpack")
 const http = require('http')
 const ProgressBar = require('progress');
+const tar = require('tar-fs')
+const gunzip = require('gunzip-maybe')
 
 export function headerMessage(mess) {
     let oText = create('div')
@@ -190,7 +192,7 @@ function showSection(name) {
     ores.appendChild(odicts)
     let cedict = q('#cedict')
     let bkrs = q('#bkrs')
-    let allangs
+    // let allangs
     delegate(odicts, '.load-dict', 'click', function(e) {
         let chcks = qs('.load-dict')
         let size = 0
@@ -205,30 +207,41 @@ function showSection(name) {
         let oname = q('#dict-name')
         oname.textContent = ''
         if (!langs.length) return ores.dname = null
-        langs.unshift('chinese')
-        let dname = [langs.join('_'), 'dict'].join('.')
+        let dname = ['chinese', langs.join('_')].join('_')
+        dname = [dname, 'dict'].join('.')
         oname.textContent = dname
-        ores.dname = dname
+        ores.langs = langs
     })
     let submit = q('#install-dict')
+    // submit.addEventListener('click', loadDict, false)
     submit.addEventListener('click', loadDict, false)
 }
 
+
 function loadDict() {
+    let ores = q('#laoshi-results')
+    log('L', ores.langs)
+    ipcRenderer.send('download', ores.langs)
+}
+
+function loadDict_() {
     let dname = q('#laoshi-results').dname
     if (!dname) return
     log('LOAD', dname)
-    let file = jetpack.createWriteStream("chinese_en.dict")
+    // let file = jetpack.createWriteStream("chinese_en.dict")
+    let  target = './my-other-directory'
+
     let req = http.request({
         host: 'localhost',
         port: 3001,
         path: '/dicts/short_en.tar.gz'
     })
     req.on('response', function(res){
-        res.pipe(file)
+        // res.pipe(file)
+        // res.pipe(tar.extract(target))
+        res.pipe(gunzip()).pipe(tar.extract(target));
         let len = parseInt(res.headers['content-length'], 10)
 
-        console.log()
         let bar = new ProgressBar('  downloading [:bar] :rate/bps :percent :etas', {
             complete: '=',
             incomplete: ' ',
@@ -244,7 +257,6 @@ function loadDict() {
         res.on('end', function () {
             console.log('\n')
             console.log('END')
-            log('R', res)
         })
     })
     req.end()

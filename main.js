@@ -1,6 +1,8 @@
+'use strict'
+
 const path = require('path')
 const electron = require('electron')
-const {app, Menu, Tray} = require('electron')
+const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
 const seg = require('hieroglyphic')
@@ -91,10 +93,18 @@ function createWindow () {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     })
 
+    mainWindow.webContents.on('download', function(langs) {
+        console.log('L', langs)
+    })
+
     // mainWindow.webContents.on('did-finish-load', function() {
         // mainWindow.webContents.send('parsed', 'kuku')
     // })
 }
+
+ipcMain.on('download', (event, langs) => {
+    console.log('L', langs);
+});
 
 const template = [
     {
