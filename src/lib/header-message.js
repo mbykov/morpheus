@@ -6,9 +6,9 @@ import {phonetic} from './phonetic'
 const {ipcRenderer} = require('electron')
 const jetpack = require("fs-jetpack")
 const http = require('http')
-const ProgressBar = require('progress');
 const tar = require('tar-fs')
 const gunzip = require('gunzip-maybe')
+const  Progress = require('progress-component');
 
 export function headerMessage(mess) {
     let oText = create('div')
@@ -220,46 +220,26 @@ function showSection(name) {
 
 function loadDict() {
     let ores = q('#laoshi-results')
-    log('L', ores.langs)
     ipcRenderer.send('download', ores.langs)
 }
 
-function loadDict_() {
-    let dname = q('#laoshi-results').dname
-    if (!dname) return
-    log('LOAD', dname)
-    // let file = jetpack.createWriteStream("chinese_en.dict")
-    let  target = './my-other-directory'
+let bar, len, part = 0
 
-    let req = http.request({
-        host: 'localhost',
-        port: 3001,
-        path: '/dicts/short_en.tar.gz'
-    })
-    req.on('response', function(res){
-        // res.pipe(file)
-        // res.pipe(tar.extract(target))
-        res.pipe(gunzip()).pipe(tar.extract(target));
-        let len = parseInt(res.headers['content-length'], 10)
+ipcRenderer.on('barstart', function(event, text) {
+    len = text*1.0
+    bar = new Progress;
+    let ores = q('#laoshi-results')
+    ores.appendChild(bar.el);
+})
 
-        let bar = new ProgressBar('  downloading [:bar] :rate/bps :percent :etas', {
-            complete: '=',
-            incomplete: ' ',
-            width: 20,
-            total: len
-        })
+ipcRenderer.on('bar', function(event, text) {
+    part += text*1.0
+    let n = part*100/len
+    bar.update(n);
+})
 
-        res.on('data', function (chunk) {
-            bar.tick(chunk.length)
-            console.log(bar)
-        })
-
-        res.on('end', function () {
-            console.log('\n')
-            console.log('END')
-        })
-    })
-    req.end()
-}
+ipcRenderer.on('barend', function(event, text) {
+    console.log('\n')
+})
 
 // 新华社北京

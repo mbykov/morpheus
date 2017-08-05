@@ -10,6 +10,9 @@ const seg = require('hieroglyphic')
 const PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
 const isDev = require('electron-is-dev')
+const tar = require('tar-fs')
+const gunzip = require('gunzip-maybe')
+const http = require('http')
 
 // Module to control application life.
 // const app = electron.app
@@ -95,6 +98,7 @@ function createWindow () {
 
     mainWindow.webContents.on('download', function(langs) {
         console.log('L', langs)
+
     })
 
     // mainWindow.webContents.on('did-finish-load', function() {
@@ -104,7 +108,35 @@ function createWindow () {
 
 ipcMain.on('download', (event, langs) => {
     console.log('L', langs);
+    let  target = './p/chinese'
+    let req = http.request({
+        host: 'localhost',
+        port: 3001,
+        path: '/dicts/pouch.tar.gz'
+    })
+    req.on('response', function(res){
+        res.pipe(gunzip()).pipe(tar.extract(target));
+        let len = parseInt(res.headers['content-length'], 10)
+        mainWindow.webContents.send('barstart', len);
+
+        res.on('data', function (chunk) {
+            mainWindow.webContents.send('bar', chunk.length);
+        })
+
+        res.on('end', function () {
+            mainWindow.webContents.send('barend');
+            console.log('END')
+        })
+    })
+    req.end()
+
 });
+
+function sendStatus(text) {
+    mainWindow.webContents.send('status', text);
+}
+
+
 
 const template = [
     {

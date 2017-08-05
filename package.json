@@ -41,7 +41,7 @@
     "gunzip-maybe": "^1.4.1",
     "hieroglyphic": "^0.2.4",
     "lodash": "^4.17.4",
-    "progress": "^2.0.0",
+    "progress-component": "0.0.4",
     "tar-fs": "^1.15.3"
   },
   "build": {
