@@ -211,15 +211,16 @@ function showSection(name) {
         dname = [dname, 'dict'].join('.')
         oname.textContent = dname
         ores.langs = langs
+        log('LL', ores.langs)
     })
     let submit = q('#install-dict')
-    // submit.addEventListener('click', loadDict, false)
     submit.addEventListener('click', loadDict, false)
 }
 
 
 function loadDict() {
     let ores = q('#laoshi-results')
+    if (!ores.langs.length) return
     ipcRenderer.send('download', ores.langs)
 }
 
@@ -238,8 +239,8 @@ ipcRenderer.on('bar', function(event, text) {
     bar.update(n);
 })
 
-ipcRenderer.on('barend', function(event, text) {
-    console.log('\n')
-})
+// ipcRenderer.on('barend', function(event, text) {
+//     console.log('\n')
+// })
 
 // 新华社北京

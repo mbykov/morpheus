@@ -25,10 +25,12 @@ const dbPath = path.resolve(upath, 'pouchdb/chinese')
 let dbState = jetpack.exists(dbPath)
 
 if (!dbState) {
+    console.log('COPYING')
     // fs.chmodSync('test', 0755)
     const toPath = path.resolve(upath, 'pouchdb')
     // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
-    const fromPath = path.resolve(__dirname, 'pouchdb')
+    // const fromPath = path.resolve(__dirname, 'pouchdb')
+    const fromPath = path.resolve(__dirname, '../utils/dbs/bkrs')
     jetpack.copy(fromPath, toPath, { matching: '**/*' })
    dbState = jetpack.exists(dbPath)
 }
@@ -42,7 +44,7 @@ process.on('unhandledRejection', (reason, p) => {
 // 第三十七次会议 并发表重要讲话
 let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
 let db = new PouchDB(dbPath)
-// let db = PouchDB(dpath, {adapter: 'websql'})
+// // let db = PouchDB(dpath, {adapter: 'websql'})
 db.sync(remote)
 
 // function dbState(state) {
@@ -108,14 +110,16 @@ function createWindow () {
 
 ipcMain.on('download', (event, langs) => {
     console.log('L', langs);
-    let  target = './p/chinese'
+    // const toPath = path.resolve(upath, 'pouchdb')
+    let toPath = upath
+    console.log('PATH', toPath)
     let req = http.request({
         host: 'localhost',
         port: 3001,
         path: '/dicts/pouch.tar.gz'
     })
     req.on('response', function(res){
-        res.pipe(gunzip()).pipe(tar.extract(target));
+        // res.pipe(gunzip()).pipe(tar.extract(toPath));
         let len = parseInt(res.headers['content-length'], 10)
         mainWindow.webContents.send('barstart', len);
 
@@ -124,7 +128,8 @@ ipcMain.on('download', (event, langs) => {
         })
 
         res.on('end', function () {
-            mainWindow.webContents.send('barend');
+            // mainWindow.webContents.send('barend');
+            res.pipe(gunzip()).pipe(tar.extract(toPath));
             console.log('END')
         })
     })
