@@ -200,7 +200,6 @@ app.on('ready', () => {
         if (!str) return
         if (str === oldstr) return
         oldstr = str
-        log('STR', str)
 
         seg(db, str, function(err, res) {
             if (err) return

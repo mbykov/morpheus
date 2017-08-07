@@ -164,11 +164,37 @@ function createDict(seg) {
         let oTrns = create('div')
         oTrns.classList.add('trns')
         doc.trns.forEach(trn => {
-            oTrns.appendChild(p(trn))
+            let html = cleanTrn(trn)
+            oTrns.appendChild(html)
         })
         oDoc.appendChild(oTrns)
         oDicts.appendChild(oDoc)
     })
+}
+
+// 是
+function cleanTrn(str) {
+    str = str.trim()
+    let oTrn = p()
+    if (/^\[b\]/.test(str)) {
+        oTrn.classList.add('hom')
+    } else if (/^\[ex\]/.test(str)) {
+        log('t', str)
+        oTrn.classList.add('ex')
+    } else {
+        oTrn.classList.add('trn')
+    }
+    str = cleanSpan(str)
+    oTrn.innerHTML = str
+    return oTrn
+}
+
+function cleanSpan(str) {
+    str = str.replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
+    str = str.replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
+    str = str.replace(/\[ex\]/g, '').replace(/\[\/ex\]/g, '')
+    str = str.replace(/\[p\]/g, '<span class="pos">').replace(/\[\/p\]/g, '</span>')
+    return str
 }
 
 function showMessage(str) {
@@ -213,7 +239,7 @@ function showSection(name) {
         dname = [dname, 'dict'].join('.')
         oname.textContent = dname
         ores.langs = langs
-        log('LL', ores.langs)
+        // log('LL', ores.langs)
     })
     let submit = q('#install-dict')
     submit.addEventListener('click', loadDict, false)
