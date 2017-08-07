@@ -5,18 +5,14 @@ const electron = require('electron')
 const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
-const seg = require('hieroglyphic')
-// const seg = require('../segmenter')
+// const seg = require('hieroglyphic')
+const seg = require('../segmenter')
 const PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
 const isDev = require('electron-is-dev')
 const tar = require('tar-fs')
 const gunzip = require('gunzip-maybe')
 const http = require('http')
-
-// Module to control application life.
-// const app = electron.app
-// Module to create native browser window.
 
 // console.log('ISDEV', isDev)
 
@@ -29,8 +25,7 @@ if (!dbState) {
     // fs.chmodSync('test', 0755)
     const toPath = path.resolve(upath, 'pouchdb')
     // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
-    // const fromPath = path.resolve(__dirname, 'pouchdb')
-    const fromPath = path.resolve(__dirname, '../utils/dbs/bkrs')
+    const fromPath = path.resolve(__dirname, 'pouchdb')
     jetpack.copy(fromPath, toPath, { matching: '**/*' })
    dbState = jetpack.exists(dbPath)
 }
@@ -42,10 +37,33 @@ process.on('unhandledRejection', (reason, p) => {
 
 // 新华社北京
 // 第三十七次会议 并发表重要讲话
-let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
+// let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
+let remote = new PouchDB('http:\/\/localhost:5984/chinese')
 let db = new PouchDB(dbPath)
 // // let db = PouchDB(dpath, {adapter: 'websql'})
-db.sync(remote)
+
+// var sync = PouchDB.sync(db, remote, {
+//     live: true,
+//     retry: true
+// })
+
+//     .on('change', function (info) {
+//     // handle change
+// }).on('paused', function (err) {
+//     log('paused')
+//     // replication paused (e.g. replication up to date, user went offline)
+// }).on('active', function () {
+//     log('active')
+//     // replicate resumed (e.g. new changes replicating, user went back online)
+// }).on('denied', function (err) {
+//     // a document failed to replicate (e.g. due to permissions)
+// }).on('complete', function (info) {
+//     log('complete')
+//     // handle complete
+// }).on('error', function (err) {
+//     log('sync err: ', err)
+//     // handle error
+// });
 
 // function dbState(state) {
 //     try {
@@ -182,6 +200,7 @@ app.on('ready', () => {
         if (!str) return
         if (str === oldstr) return
         oldstr = str
+        log('STR', str)
 
         seg(db, str, function(err, res) {
             if (err) return
@@ -216,3 +235,5 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+function log() { console.log.apply(console, arguments); }

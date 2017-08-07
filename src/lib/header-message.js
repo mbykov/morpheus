@@ -34,11 +34,12 @@ function parseClause(cl) {
         oSeg.classList.add(klass)
         oSeg.classList.remove('current')
         oClause.appendChild(oSeg)
-        oSeg.singles = []
+        let singles = []
         seg.dict.split('').forEach(sym => {
             let symseg = _.find(cl.singles, single => single.dict == sym)
-            oSeg.singles.push(symseg)
+            singles.push(symseg)
         })
+        oSeg.singles = _.compact(singles)
     })
     bindMouseEvents(oClause, cl)
     return oClause
@@ -70,11 +71,12 @@ function bindMouseEvents(el, cl) {
         let oSingles = recreateDiv('singles')
         cur.textContent.split('').forEach(sym => {
             let symseg = _.find(cur.singles, single => single.dict == sym)
+            if (!symseg) return
             let oSym = span(symseg.dict)
             oSym.classList.add('seg')
             oSingles.appendChild(oSym)
         })
-        oResults.appendChild(oSingles)
+        if (oSingles.childNodes.length) oResults.appendChild(oSingles)
         var coords = getCoords(cur);
         placePopup(coords, oSingles);
         delegate(oSingles, '.seg', 'mouseover', function(e) {
