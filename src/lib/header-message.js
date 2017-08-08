@@ -216,10 +216,12 @@ ipcRenderer.on('section', function(event, text) {
 })
 
 function showSection(name) {
+    let oHeader = q('#laoshi-header')
+    empty(oHeader)
     let fpath = path.join('src/lib/sections', [name, 'html'].join('.') )
     let html = jetpack.read(fpath)
     let odicts = q('#laoshi-dicts')
-    recreate(odicts)
+    empty(odicts)
     odicts.innerHTML = html
     let ores = q('#laoshi-results')
     ores.appendChild(odicts)
@@ -233,18 +235,18 @@ function showSection(name) {
         chcks.forEach(chck => {
             if (!chck.checked) return
             size += chck.getAttribute('size')*1.0
-            langs.push(chck.getAttribute('lang'))
+            langs.push(chck.getAttribute('id'))
         })
         let osize = q('#approx-size')
         osize.textContent = size
         let oname = q('#dict-name')
         oname.textContent = ''
-        if (!langs.length) return ores.dname = null
+        if (!langs.length) return ores.langs = null
         let dname = ['chinese', langs.join('_')].join('_')
         dname = [dname, 'dict'].join('.')
         oname.textContent = dname
         ores.langs = langs
-        // log('LL', ores.langs)
+        log('LL', ores.langs)
     })
     let submit = q('#install-dict')
     submit.addEventListener('click', loadDict, false)
@@ -253,7 +255,7 @@ function showSection(name) {
 
 function loadDict() {
     let ores = q('#laoshi-results')
-    if (!ores.langs.length) return
+    if (!ores.langs || !ores.langs.length) return
     ipcRenderer.send('download', ores.langs)
 }
 
@@ -262,14 +264,22 @@ let bar, len, part = 0
 ipcRenderer.on('barstart', function(event, text) {
     len = text*1.0
     bar = new Progress;
-    let ores = q('#laoshi-results')
-    ores.appendChild(bar.el);
+    let odicts = q('#laoshi-dicts')
+    // recreate(odicts)
+    odicts.appendChild(bar.el);
 })
 
 ipcRenderer.on('bar', function(event, text) {
     part += text*1.0
     let n = part*100/len
     bar.update(n);
+})
+
+ipcRenderer.on('barerr', function(event, text) {
+    let ores = q('#laoshi-results')
+    let str = 'server connection error: '+ text
+    let oerr = div(str)
+    ores.appendChild(oerr);
 })
 
 // ipcRenderer.on('barend', function(event, text) {

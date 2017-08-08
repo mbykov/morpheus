@@ -116,10 +116,9 @@ function createWindow () {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     })
 
-    mainWindow.webContents.on('download', function(langs) {
-        console.log('L', langs)
-
-    })
+    // mainWindow.webContents.on('download', function(langs) {
+    //     console.log('L', langs)
+    // })
 
     // mainWindow.webContents.on('did-finish-load', function() {
         // mainWindow.webContents.send('parsed', 'kuku')
@@ -127,17 +126,37 @@ function createWindow () {
 }
 
 ipcMain.on('download', (event, langs) => {
-    console.log('L', langs);
-    // const toPath = path.resolve(upath, 'pouchdb')
-    let toPath = upath
-    console.log('PATH', toPath)
+    langs.unshift('pouchdb')
+    const langstr = langs.join('_')
+    const resourse = ['/dicts/', langstr, '.tar.gz'].join('')
+    log('R', resourse)
+    let uPath = upath
+    let pouchPath = path.join(upath, 'pouchdb')
+    console.log('toPATH', uPath)
     let req = http.request({
         host: 'localhost',
         port: 3001,
-        path: '/dicts/pouchdb_ru.tar.gz'
+        path: resourse
     })
+    // let len
     req.on('response', function(res){
-        // res.pipe(gunzip()).pipe(tar.extract(toPath));
+        log('START')
+        // let jetpack = require("fs-jetpack")
+        db = new PouchDB('')
+
+        jetpack.dir(pouchPath, {empty: true})
+
+        if (('' + req.statusCode).match(/^2\d\d$/)) {
+            log('res: happy')
+        } else if (('' + req.statusCode).match(/^5\d\d$/)) {
+            log('res: some server error', req.statusCode)
+            mainWindow.webContents.send('barerr', req.statusCode);
+            // Server error, I have no idea what happend in the backend
+            // but server at least returned correctly (in a HTTP protocol
+            // sense) formatted response
+        }
+        res.pipe(gunzip()).pipe(tar.extract(uPath));
+
         let len = parseInt(res.headers['content-length'], 10)
         mainWindow.webContents.send('barstart', len);
 
@@ -147,10 +166,17 @@ ipcMain.on('download', (event, langs) => {
 
         res.on('end', function () {
             // mainWindow.webContents.send('barend');
-            res.pipe(gunzip()).pipe(tar.extract(toPath));
-            console.log('END')
+            console.log('EXTRACTING')
+            res.pipe(gunzip()).pipe(tar.extract(uPath));
+            console.log('END', dbPath)
+            db = new PouchDB(dbPath)
+            // app.quit()
+            // console.log('END', db)
         })
     })
+    req.on('error', function (e) {
+        mainWindow.webContents.send('barerr', e.code);
+    });
     req.end()
 
 });
