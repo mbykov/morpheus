@@ -134,7 +134,7 @@ ipcMain.on('download', (event, langs) => {
     let req = http.request({
         host: 'localhost',
         port: 3001,
-        path: '/dicts/pouch.tar.gz'
+        path: '/dicts/pouchdb_ru.tar.gz'
     })
     req.on('response', function(res){
         // res.pipe(gunzip()).pipe(tar.extract(toPath));

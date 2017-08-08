@@ -149,26 +149,32 @@ function getCoords(el) {
 }
 
 function createDict(seg) {
+    log('SEG', seg)
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
     seg.docs.forEach(doc => {
-        let oDoc = create('div')
+        log('DOC', doc)
+        let oDocs = create('div')
         let oDict = span(doc.dict)
         oDict.classList.add('dict')
-        oDoc.appendChild(oDict)
+        oDocs.appendChild(oDict)
         let odef = span(' - ')
-        oDoc.appendChild(odef)
-        let phone = phonetic(doc.pinyin)
-        let oPinyin = span(phone)
-        oDoc.appendChild(oPinyin)
-        let oTrns = create('div')
-        oTrns.classList.add('trns')
-        doc.trns.forEach(trn => {
-            let html = cleanTrn(trn)
-            oTrns.appendChild(html)
+        oDocs.appendChild(odef)
+        doc.docs.forEach(doc => {
+            let oDoc = create('div')
+            let phone = phonetic(doc.pinyin)
+            let oPinyin = span(phone)
+            oDoc.appendChild(oPinyin)
+            let oTrns = create('div')
+            oTrns.classList.add('trns')
+            doc.trns.forEach(trn => {
+                let html = cleanTrn(trn)
+                oTrns.appendChild(html)
+            })
+            oDoc.appendChild(oTrns)
+            oDocs.appendChild(oDoc)
         })
-        oDoc.appendChild(oTrns)
-        oDicts.appendChild(oDoc)
+        oDicts.appendChild(oDocs)
     })
 }
 
@@ -179,7 +185,6 @@ function cleanTrn(str) {
     if (/^\[b\]/.test(str)) {
         oTrn.classList.add('hom')
     } else if (/^\[ex\]/.test(str)) {
-        log('t', str)
         oTrn.classList.add('ex')
     } else {
         oTrn.classList.add('trn')
