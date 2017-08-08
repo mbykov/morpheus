@@ -42,6 +42,7 @@
     "hieroglyphic": "^0.2.4",
     "lodash": "^4.17.4",
     "progress-component": "0.0.4",
+    "require-reload": "^0.2.2",
     "tar-fs": "^1.15.3"
   },
   "build": {

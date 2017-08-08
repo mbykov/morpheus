@@ -6,9 +6,10 @@ const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
 // const seg = require('hieroglyphic')
-const seg = require('../segmenter')
-const PouchDB = require('pouchdb')
+let seg = require('../segmenter')
+let PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
+// const reload = require('require-reload')(require)
 const isDev = require('electron-is-dev')
 const tar = require('tar-fs')
 const gunzip = require('gunzip-maybe')
@@ -110,6 +111,7 @@ function createWindow () {
         timerId = null
         mainWindow = null
         tray = null
+        db = null
   })
 
     tray.on('click', () => {
@@ -142,7 +144,9 @@ ipcMain.on('download', (event, langs) => {
     req.on('response', function(res){
         log('START')
         // let jetpack = require("fs-jetpack")
-        db = new PouchDB('')
+        db = null
+        // seg = null
+        // PouchDB = null
 
         jetpack.dir(pouchPath, {empty: true})
 
@@ -169,7 +173,13 @@ ipcMain.on('download', (event, langs) => {
             console.log('EXTRACTING')
             res.pipe(gunzip()).pipe(tar.extract(uPath));
             console.log('END', dbPath)
-            db = new PouchDB(dbPath)
+            // PouchDB = reload('pouchdb')
+            // db = new PouchDB(dbPath)
+            // seg = reload('../segmenter')
+            var exec = require('child_process').exec
+            exec(process.argv.join(' ')) // execute the command that was used to run the app
+            app.quit() // quit the current app
+
             // app.quit()
             // console.log('END', db)
         })
@@ -222,6 +232,7 @@ Menu.setApplicationMenu(menu)
 app.on('ready', () => {
     let oldstr = null
     timerId = setInterval(function(){
+        if (!db) return
         let str = clipboard.readText()
         if (!str) return
         if (str === oldstr) return
