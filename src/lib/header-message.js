@@ -130,6 +130,8 @@ function createAmbi(e, seg) {
             oAseg.setAttribute('idx', idx)
             oAseg.setAttribute('idy', idy)
             oAmbi.appendChild(oAseg)
+            let oSpace = span(' ')
+            oAmbi.appendChild(oSpace)
         })
         oAmbis.appendChild(oAmbi)
     })
@@ -149,11 +151,9 @@ function getCoords(el) {
 }
 
 function createDict(seg) {
-    log('SEG', seg)
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
     seg.docs.forEach(doc => {
-        log('DOC', doc)
         let oDocs = create('div')
         let oDict = span(doc.dict)
         oDict.classList.add('dict')
