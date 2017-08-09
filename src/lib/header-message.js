@@ -268,11 +268,14 @@ let bar, len, part = 0
 ipcRenderer.on('bar', function(event, obj) {
     let ores = q('#laoshi-results')
     if (obj.start) {
+        log('=start=')
         len = obj.start*1.0
         bar = new Progress;
         let odicts = q('#laoshi-dicts')
         odicts.appendChild(bar.el);
     } else if (obj.part) {
+        log('=part=')
+        if (!bar) return
         part += obj.part*1.0
         let n = part*100/len
         bar.update(n);

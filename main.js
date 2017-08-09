@@ -43,38 +43,6 @@ let remote = new PouchDB('http:\/\/localhost:5984/chinese')
 let db = new PouchDB(dbPath)
 // // let db = PouchDB(dpath, {adapter: 'websql'})
 
-// var sync = PouchDB.sync(db, remote, {
-//     live: true,
-//     retry: true
-// })
-
-//     .on('change', function (info) {
-//     // handle change
-// }).on('paused', function (err) {
-//     log('paused')
-//     // replication paused (e.g. replication up to date, user went offline)
-// }).on('active', function () {
-//     log('active')
-//     // replicate resumed (e.g. new changes replicating, user went back online)
-// }).on('denied', function (err) {
-//     // a document failed to replicate (e.g. due to permissions)
-// }).on('complete', function (info) {
-//     log('complete')
-//     // handle complete
-// }).on('error', function (err) {
-//     log('sync err: ', err)
-//     // handle error
-// });
-
-// function dbState(state) {
-//     try {
-//         mkdirp.sync(path.dirname(fullStoreFileName))
-//         jsonfile.writeFileSync(fullStoreFileName, state)
-//     } catch (err) {
-//         // Don't care
-//     }
-// }
-
 
 let timerId = null
 let tray = null
@@ -117,133 +85,58 @@ function createWindow () {
     tray.on('click', () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     })
-
-    // mainWindow.webContents.on('download', function(langs) {
-    //     console.log('L', langs)
-    // })
-
-    // mainWindow.webContents.on('did-finish-load', function() {
-        // mainWindow.webContents.send('parsed', 'kuku')
-    // })
 }
 
 ipcMain.on('download', (event, lang) => {
-    var pendingMax = 0;
-    var batch_size = 1000;    // must match your replication options
+    log('LANG START', lang.length, lang)
+    // hande - 246580
+    // remote.info(function(err, info) {
+    //     remoteCount = info.doc_count;
+    //     console.log('REM SIZE', remoteCount);
+    // });
+    // tmp, for a time being...
+    let counts = {
+        hande: 246580,
+        cedict: 183236,
+        bkrs: 222
+    }
+    // let filter = ['chinese/by_', lang].join('')
 
-    log('LANG', lang)
-    let remoteCount = 0
-    remote.info(function(err, info) {
-        remoteCount = info.doc_count;
-        console.log('REM SIZE', remoteCount);
-    });
-    let progress = 0
     let bar = {}
-    var rep = PouchDB.replicate(remote, db, {
+    let rep = PouchDB.replicate(remote, db, {
         // live: true,
         retry: true,
+        filter: 'chinese/by_dict',
+        query_params: { "dict": lang },
         batches_limit: 10,
         batch_size: 1000
     })
         .on('change', function (info) {
-            // console.log('pending', info.docs.length);
-            // console.log('Replication Progress', getProgress(info.docs.length));
             bar = {part: info.docs.length}
             mainWindow.webContents.send('bar', bar);
         }).on('paused', function (err) {
             log('paused')
         }).on('active', function () {
-            bar = {start: remoteCount}
+            bar = {start: counts[lang]}
             mainWindow.webContents.send('bar', bar);
-            log('active')
-    }).on('denied', function (err) {
-        // a document failed to replicate (e.g. due to permissions)
-    }).on('complete', function (info) {
-        log('==complete==')
-        bar = {end: 'end'}
-        mainWindow.webContents.send('bar', bar);
-    }).on('error', function (err) {
-        log('sync err: ', err)
-    });
+            log('==start==')
+        }).on('denied', function (err) {
+            // a document failed to replicate (e.g. due to permissions)
+        }).on('complete', function (info) {
+            log('==complete==')
+            bar = {end: 'end'}
+            mainWindow.webContents.send('bar', bar);
+        }).on('error', function (err) {
+            log('sync err: ', err)
+        });
 
     // https://github.com/pouchdb/pouchdb/issues/5713
-    function getProgress(chunk) {
-        progress += chunk*100/remoteCount
-        return progress;
-    }
 })
 
-
-
-ipcMain.on('download_', (event, langs) => {
-    langs.unshift('pouchdb')
-    const langstr = langs.join('_')
-    const resourse = ['/dicts/', langstr, '.tar.gz'].join('')
-    log('R', resourse)
-    let uPath = upath
-    let pouchPath = path.join(upath, 'pouchdb')
-    console.log('toPATH', uPath)
-    let req = http.request({
-        host: 'localhost',
-        port: 3001,
-        path: resourse
-    })
-    // let len
-    req.on('response', function(res){
-        log('START')
-        // let jetpack = require("fs-jetpack")
-        db = null
-        // seg = null
-        // PouchDB = null
-
-        jetpack.dir(pouchPath, {empty: true})
-
-        if (('' + req.statusCode).match(/^2\d\d$/)) {
-            log('res: happy')
-        } else if (('' + req.statusCode).match(/^5\d\d$/)) {
-            log('res: some server error', req.statusCode)
-            mainWindow.webContents.send('barerr', req.statusCode);
-            // Server error, I have no idea what happend in the backend
-            // but server at least returned correctly (in a HTTP protocol
-            // sense) formatted response
-        }
-        res.pipe(gunzip()).pipe(tar.extract(uPath));
-
-        let len = parseInt(res.headers['content-length'], 10)
-        mainWindow.webContents.send('barstart', len);
-
-        res.on('data', function (chunk) {
-            mainWindow.webContents.send('bar', chunk.length);
-        })
-
-        res.on('end', function () {
-            // mainWindow.webContents.send('barend');
-            console.log('EXTRACTING')
-            res.pipe(gunzip()).pipe(tar.extract(uPath));
-            console.log('END', dbPath)
-            // PouchDB = reload('pouchdb')
-            // db = new PouchDB(dbPath)
-            // seg = reload('../segmenter')
-            var exec = require('child_process').exec
-            exec(process.argv.join(' ')) // execute the command that was used to run the app
-            app.quit() // quit the current app
-
-            // app.quit()
-            // console.log('END', db)
-        })
-    })
-    req.on('error', function (e) {
-        mainWindow.webContents.send('barerr', e.code);
-    });
-    req.end()
-
-});
 
 function sendStatus(text) {
     mainWindow.webContents.send('status', text);
 }
-
-
 
 const template = [
     {
