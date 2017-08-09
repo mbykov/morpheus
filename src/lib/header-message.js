@@ -49,13 +49,24 @@ function parseClause(cl) {
 
 // 第三十各地区要切 en arche en ho logos
 // 爾時世尊重說偈言
+
+let closePopups = function() {
+    let oAmbis = q('.ambis')
+    if (oAmbis) remove(oAmbis)
+    let oSingles = q('.singles')
+    if (oSingles) remove(oSingles)
+}
+
 function bindMouseEvents(el, cl) {
+    // el.addEventListener('mouseout', closePopups, false)
+
     delegate(el, '.seg', 'mouseover', function(e) {
         setCurrent(e)
-        let oAmbis = q('.ambis')
-        if (oAmbis) remove(oAmbis)
-        let oSingles = q('.singles')
-        if (oSingles) remove(oSingles)
+        closePopups()
+        // let oAmbis = q('.ambis')
+        // if (oAmbis) remove(oAmbis)
+        // let oSingles = q('.singles')
+        // if (oSingles) remove(oSingles)
         if (e.ctrlKey) return
         let idx = e.target.getAttribute('idx')
         let seg = cl.segs[idx]
@@ -88,8 +99,7 @@ function bindMouseEvents(el, cl) {
     // AMBIES
     delegate(el, '.ambi', 'mouseover', function(e) {
         setCurrent(e)
-        let oSingles = q('.singles')
-        if (oSingles) remove(oSingles)
+        closePopups()
         let oResults = q('#laoshi-results')
         let oDicts = q('#laoshi-dicts')
         empty(oDicts)
@@ -110,6 +120,9 @@ function bindMouseEvents(el, cl) {
             let cur = seg.ambis[idx][idy]
             createDict(cur)
         }, false);
+        // delegate(oAmbis, '.seg', 'mouseout', function(e) {
+        //     closePopups()
+        // }, false);
     }, false);
 }
 
@@ -155,19 +168,21 @@ function createDict(seg) {
     empty(oDicts)
     seg.docs.forEach(doc => {
         let oDocs = create('div')
-        let oDict = span(doc.dict)
-        oDict.classList.add('dict')
-        oDocs.appendChild(oDict)
-        let odef = span(' - ')
-        oDocs.appendChild(odef)
-        doc.docs.forEach(doc => {
-            let oDoc = create('div')
-            let phone = phonetic(doc.pinyin)
+        doc.docs.forEach(mdoc => {
+            let oType = span(doc.type)
+            oType.classList.add('type')
+            oDocs.appendChild(oType)
+            let oDict = span(doc.dict)
+            oDict.classList.add('dict')
+            oDocs.appendChild(oDict)
+            let odef = span(' - ')
+            let phone = phonetic(mdoc.pinyin)
             let oPinyin = span(phone)
-            oDoc.appendChild(oPinyin)
+            oDocs.appendChild(oPinyin)
+            let oDoc = create('div')
             let oTrns = create('div')
             oTrns.classList.add('trns')
-            doc.trns.forEach(trn => {
+            mdoc.trns.forEach(trn => {
                 let html = cleanTrn(trn)
                 oTrns.appendChild(html)
             })
@@ -218,6 +233,7 @@ ipcRenderer.on('section', function(event, text) {
 function showSection(name) {
     let oHeader = q('#laoshi-header')
     empty(oHeader)
+    oHeader.addEventListener('mouseover', closePopups(), false)
     let fpath = path.join('src/lib/sections', [name, 'html'].join('.') )
     let html = jetpack.read(fpath)
     let odicts = q('#laoshi-dicts')
@@ -266,12 +282,12 @@ function loadDict() {
 let bar, len, part = 0
 
 ipcRenderer.on('bar', function(event, obj) {
-    let ores = q('#laoshi-results')
+    // let ores = q('#laoshi-results')
+    let odicts = q('#laoshi-dicts')
     if (obj.start) {
         log('=start=')
         len = obj.start*1.0
         bar = new Progress;
-        let odicts = q('#laoshi-dicts')
         odicts.appendChild(bar.el);
     } else if (obj.part) {
         log('=part=')
@@ -282,11 +298,11 @@ ipcRenderer.on('bar', function(event, obj) {
     } else if (obj.end) {
         log('complete')
         let oend = div('success')
-        ores.appendChild(oend);
+        odicts.appendChild(oend);
     } else if (obj.err) {
         let str = 'server connection error: '+ obj.err
         let oerr = div(str)
-        ores.appendChild(oerr);
+        odicts.appendChild(oerr);
     }
 })
 

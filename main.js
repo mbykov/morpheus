@@ -100,7 +100,6 @@ ipcMain.on('download', (event, lang) => {
         cedict: 183236,
         bkrs: 222
     }
-    // let filter = ['chinese/by_', lang].join('')
 
     let bar = {}
     let rep = PouchDB.replicate(remote, db, {

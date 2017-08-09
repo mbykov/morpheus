@@ -240,3 +240,10 @@ p {
     margin-left: 25px;
     color: grey;
 }
+
+.type {
+    float: right;
+    color: maroon;
+    margin-right: 25px;
+    margin-top: 5px
+}

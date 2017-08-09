@@ -21,6 +21,7 @@ require('electron').ipcRenderer.on('parsed', (event, res) => {
 })
 
 
+
 // 第三十各地区要切 实把
 // 新华社北京
 // 第三十七次会议 并发表重要讲话
