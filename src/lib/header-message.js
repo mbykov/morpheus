@@ -228,6 +228,7 @@ function showSection(name) {
     let cedict = q('#cedict')
     let bkrs = q('#bkrs')
     // let allangs
+    let lang
     delegate(odicts, '.load-dict', 'click', function(e) {
         let chcks = qs('.load-dict')
         let size = 0
@@ -236,6 +237,7 @@ function showSection(name) {
             if (!chck.checked) return
             size += chck.getAttribute('size')*1.0
             langs.push(chck.getAttribute('id'))
+            lang = chck.getAttribute('id')
         })
         let osize = q('#approx-size')
         osize.textContent = size
@@ -246,7 +248,8 @@ function showSection(name) {
         dname = [dname, 'dict'].join('.')
         oname.textContent = dname
         ores.langs = langs
-        log('LL', ores.langs)
+        ores.lang = lang
+        log('LL', ores.lang)
     })
     let submit = q('#install-dict')
     submit.addEventListener('click', loadDict, false)
@@ -255,13 +258,37 @@ function showSection(name) {
 
 function loadDict() {
     let ores = q('#laoshi-results')
-    if (!ores.langs || !ores.langs.length) return
-    ipcRenderer.send('download', ores.langs)
+    // if (!ores.langs || !ores.langs.length) return
+    if (!ores.lang) return
+    ipcRenderer.send('download', ores.lang)
 }
 
 let bar, len, part = 0
 
-ipcRenderer.on('barstart', function(event, text) {
+ipcRenderer.on('bar', function(event, obj) {
+    let ores = q('#laoshi-results')
+    if (obj.start) {
+        len = obj.start*1.0
+        bar = new Progress;
+        let odicts = q('#laoshi-dicts')
+        odicts.appendChild(bar.el);
+    } else if (obj.part) {
+        part += obj.part*1.0
+        let n = part*100/len
+        bar.update(n);
+    } else if (obj.end) {
+        log('complete')
+        let oend = div('success')
+        ores.appendChild(oend);
+    } else if (obj.err) {
+        let str = 'server connection error: '+ obj.err
+        let oerr = div(str)
+        ores.appendChild(oerr);
+    }
+})
+
+
+ipcRenderer.on('barstart_', function(event, text) {
     len = text*1.0
     bar = new Progress;
     let odicts = q('#laoshi-dicts')
@@ -269,13 +296,13 @@ ipcRenderer.on('barstart', function(event, text) {
     odicts.appendChild(bar.el);
 })
 
-ipcRenderer.on('bar', function(event, text) {
+ipcRenderer.on('bar_', function(event, text) {
     part += text*1.0
     let n = part*100/len
     bar.update(n);
 })
 
-ipcRenderer.on('barerr', function(event, text) {
+ipcRenderer.on('barerr_', function(event, text) {
     let ores = q('#laoshi-results')
     let str = 'server connection error: '+ text
     let oerr = div(str)

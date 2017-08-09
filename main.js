@@ -127,7 +127,55 @@ function createWindow () {
     // })
 }
 
-ipcMain.on('download', (event, langs) => {
+ipcMain.on('download', (event, lang) => {
+    var pendingMax = 0;
+    var batch_size = 1000;    // must match your replication options
+
+    log('LANG', lang)
+    let remoteCount = 0
+    remote.info(function(err, info) {
+        remoteCount = info.doc_count;
+        console.log('REM SIZE', remoteCount);
+    });
+    let progress = 0
+    let bar = {}
+    var rep = PouchDB.replicate(remote, db, {
+        // live: true,
+        retry: true,
+        batches_limit: 10,
+        batch_size: 1000
+    })
+        .on('change', function (info) {
+            // console.log('pending', info.docs.length);
+            // console.log('Replication Progress', getProgress(info.docs.length));
+            bar = {part: info.docs.length}
+            mainWindow.webContents.send('bar', bar);
+        }).on('paused', function (err) {
+            log('paused')
+        }).on('active', function () {
+            bar = {start: remoteCount}
+            mainWindow.webContents.send('bar', bar);
+            log('active')
+    }).on('denied', function (err) {
+        // a document failed to replicate (e.g. due to permissions)
+    }).on('complete', function (info) {
+        log('==complete==')
+        bar = {end: 'end'}
+        mainWindow.webContents.send('bar', bar);
+    }).on('error', function (err) {
+        log('sync err: ', err)
+    });
+
+    // https://github.com/pouchdb/pouchdb/issues/5713
+    function getProgress(chunk) {
+        progress += chunk*100/remoteCount
+        return progress;
+    }
+})
+
+
+
+ipcMain.on('download_', (event, langs) => {
     langs.unshift('pouchdb')
     const langstr = langs.join('_')
     const resourse = ['/dicts/', langstr, '.tar.gz'].join('')
@@ -238,11 +286,26 @@ app.on('ready', () => {
         if (str === oldstr) return
         oldstr = str
 
-        seg(db, str, function(err, res) {
-            if (err) return
-            if (!mainWindow) return
-            mainWindow.webContents.send('parsed', res)
-        })
+        function somePromiseAPI() {
+            return Promise.resolve().then(function () {
+                seg(db, str, function(err, res) {
+                    if (err) return log('seg err', err)
+                    if (!mainWindow) return log('no main win')
+                    mainWindow.webContents.send('parsed', res)
+                })
+                return 'foo';
+            }).then(function () {
+                log('seg ok', str)
+            }).catch(console.log.bind(console))
+        }
+
+        somePromiseAPI()
+
+        // seg(db, str, function(err, res) {
+        //     if (err) return
+        //     if (!mainWindow) return
+        //     mainWindow.webContents.send('parsed', res)
+        // })
 
     }, 100)
 })
