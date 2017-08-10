@@ -18,7 +18,7 @@ const http = require('http')
 // console.log('ISDEV', isDev)
 
 const upath = app.getPath('userData')
-const dbPath = path.resolve(upath, 'pouchdb/chinese')
+const dbPath = path.resolve(upath, 'chinese')
 let dbState = jetpack.exists(dbPath)
 
 if (!dbState) {
@@ -82,13 +82,13 @@ function createWindow () {
         db = null
   })
 
-    tray.on('click', () => {
+  tray.on('click', () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
-    })
+  })
 }
 
-ipcMain.on('download', (event, lang) => {
-    log('LANG START', lang.length, lang)
+ipcMain.on('download', (event, dname) => {
+    log('LANG START', dname)
     // hande - 246580
     // remote.info(function(err, info) {
     //     remoteCount = info.doc_count;
@@ -98,17 +98,19 @@ ipcMain.on('download', (event, lang) => {
     let counts = {
         hande: 246580,
         cedict: 183236,
-        bkrs: 222
+        bkrs: 2920249
     }
 
-    let bar = {}
+    let bar = {wait: 'wait'}
+    mainWindow.webContents.send('bar', bar);
+
     let rep = PouchDB.replicate(remote, db, {
         // live: true,
         retry: true,
         filter: 'chinese/by_dict',
-        query_params: { "dict": lang },
+        query_params: { "dname": dname },
         batches_limit: 10,
-        batch_size: 1000
+        batch_size: 10000
     })
         .on('change', function (info) {
             bar = {part: info.docs.length}
@@ -116,7 +118,7 @@ ipcMain.on('download', (event, lang) => {
         }).on('paused', function (err) {
             log('paused')
         }).on('active', function () {
-            bar = {start: counts[lang]}
+            bar = {start: counts[dname]}
             mainWindow.webContents.send('bar', bar);
             log('==start==')
         }).on('denied', function (err) {
@@ -127,9 +129,83 @@ ipcMain.on('download', (event, lang) => {
             mainWindow.webContents.send('bar', bar);
         }).on('error', function (err) {
             log('sync err: ', err)
+            bar = {err: err}
+            mainWindow.webContents.send('bar', bar);
         });
 
     // https://github.com/pouchdb/pouchdb/issues/5713
+})
+
+ipcMain.on('install', (event, dname) => {
+    log('INSTALL START', dname)
+
+    let bar = {wait: 'wait'}
+    mainWindow.webContents.send('bar', bar);
+
+    const resourse = ['/dicts/chinese_', dname, '.tar.gz'].join('')
+
+    let uPath = upath
+    let pouchPath = path.join(upath, 'chinese')
+    console.log('toPATH', uPath)
+    let req = http.request({
+        host: 'localhost',
+        port: 3001,
+        path: resourse
+    })
+    // let len
+    req.on('response', function(res){
+        log('START')
+
+        jetpack.dir(pouchPath, {empty: true})
+
+        if (('' + req.statusCode).match(/^2\d\d$/)) {
+            log('res: happy')
+        } else if (('' + req.statusCode).match(/^5\d\d$/)) {
+            log('res: some server error', req.statusCode)
+            bar = {err: req.statusCode}
+            mainWindow.webContents.send('bar', bar);
+            // Server error, I have no idea what happend in the backend
+            // but server at least returned correctly (in a HTTP protocol sense) formatted response
+        }
+        res.pipe(gunzip()).pipe(tar.extract(uPath));
+
+        let len = parseInt(res.headers['content-length'], 10)
+        bar = {start: len}
+        mainWindow.webContents.send('bar', bar);
+
+        res.on('data', function (chunk) {
+            bar = {part: chunk.length}
+            mainWindow.webContents.send('bar', bar);
+        })
+
+        res.on('end', function () {
+            // mainWindow.webContents.send('barend');
+            // console.log('EXTRACTING END')
+            res.pipe(gunzip()).pipe(tar.extract(uPath));
+            // console.log('END', dbPath)
+            log('==complete==')
+            // bar = {end: 'end'}
+            // mainWindow.webContents.send('bar', bar);
+
+            app.relaunch()
+            // var exec = require('child_process').exec
+            // exec(process.argv.join(' ')) // execute the command that was used to run the app
+
+            // // // timerId = null
+            // // // mainWindow = null
+            // // // tray = null
+            // // // db = null
+            app.quit() // quit the current app
+            log('APP NOT QUITTED')
+
+        })
+    })
+    req.on('error', function (err) {
+        bar = {err: err}
+        mainWindow.webContents.send('bar', bar);
+    });
+    req.end()
+
 })
 
 
@@ -147,11 +223,11 @@ const template = [
         ]
     },
     {
-        label: 'Options',
+        label: 'Actions',
         submenu: [
-            {label: 'select dict',  click() { mainWindow.webContents.send('section', 'select-dict') }},
-            {label: 'click dicts',  click() { console.log('item 1 clicked') }},
-            {role: 'togglefullscreen'}
+            {label: 'replicate dict',  click() { mainWindow.webContents.send('section', 'replicate-dict') }},
+            {label: 'install dict.tar.gz',  click() { mainWindow.webContents.send('section', 'install-dict') }},
+            {label: 'signup/login'}
         ]
     },
     {
@@ -173,6 +249,8 @@ app.on('ready', () => {
     let oldstr = null
     timerId = setInterval(function(){
         if (!db) return
+        if (!mainWindow) return
+        // if (mainWindow.isVisible()) return
         let str = clipboard.readText()
         if (!str) return
         if (str === oldstr) return
@@ -182,7 +260,6 @@ app.on('ready', () => {
             return Promise.resolve().then(function () {
                 seg(db, str, function(err, res) {
                     if (err) return log('seg err', err)
-                    if (!mainWindow) return log('no main win')
                     mainWindow.webContents.send('parsed', res)
                 })
                 return 'foo';

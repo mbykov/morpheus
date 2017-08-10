@@ -230,16 +230,23 @@ ipcRenderer.on('section', function(event, text) {
     // }
 })
 
+/*
+  как все-таки быть, делать tar.gz, или нет?
+*/
+
+
 function showSection(name) {
     let oHeader = q('#laoshi-header')
     empty(oHeader)
     oHeader.addEventListener('mouseover', closePopups(), false)
     let fpath = path.join('src/lib/sections', [name, 'html'].join('.') )
     let html = jetpack.read(fpath)
+    if (!html) return
     let odicts = q('#laoshi-dicts')
     empty(odicts)
     odicts.innerHTML = html
     let ores = q('#laoshi-results')
+    ores.name = name
     ores.appendChild(odicts)
     let cedict = q('#cedict')
     let bkrs = q('#bkrs')
@@ -248,24 +255,24 @@ function showSection(name) {
     delegate(odicts, '.load-dict', 'click', function(e) {
         let chcks = qs('.load-dict')
         let size = 0
-        let langs = []
+        // let langs = []
         chcks.forEach(chck => {
             if (!chck.checked) return
-            size += chck.getAttribute('size')*1.0
-            langs.push(chck.getAttribute('id'))
+            size = chck.getAttribute('size')*1.0
+            // langs.push(chck.getAttribute('id'))
             lang = chck.getAttribute('id')
         })
-        let osize = q('#approx-size')
-        osize.textContent = size
+        // let osize = q('#approx-size')
+        // osize.textContent = size
         let oname = q('#dict-name')
         oname.textContent = ''
-        if (!langs.length) return ores.langs = null
-        let dname = ['chinese', langs.join('_')].join('_')
+        // if (!langs.length) return ores.langs = null
+        let dname = ['chinese', lang].join('_')
         dname = [dname, 'dict'].join('.')
         oname.textContent = dname
-        ores.langs = langs
+        // ores.langs = langs
         ores.lang = lang
-        log('LL', ores.lang)
+        // log('LL', ores.lang)
     })
     let submit = q('#install-dict')
     submit.addEventListener('click', loadDict, false)
@@ -274,62 +281,40 @@ function showSection(name) {
 
 function loadDict() {
     let ores = q('#laoshi-results')
-    // if (!ores.langs || !ores.langs.length) return
-    if (!ores.lang) return
-    ipcRenderer.send('download', ores.lang)
+    if (!ores.lang || !ores.name) return
+    if (ores.name == 'replicate-dict') {
+        ipcRenderer.send('download', ores.lang)
+    } else {
+        ipcRenderer.send('install', ores.lang)
+    }
 }
 
 let bar, len, part = 0
 
 ipcRenderer.on('bar', function(event, obj) {
-    // let ores = q('#laoshi-results')
     let odicts = q('#laoshi-dicts')
-    if (obj.start) {
+    let ores = div('')
+    odicts.appendChild(ores);
+    if (obj.wait) {
+        log('wait')
+        ores.textContent = 'process starting, please wait...'
+    } else if (obj.start) {
         log('=start=')
         len = obj.start*1.0
         bar = new Progress;
         odicts.appendChild(bar.el);
     } else if (obj.part) {
-        log('=part=')
         if (!bar) return
         part += obj.part*1.0
         let n = part*100/len
         bar.update(n);
     } else if (obj.end) {
         log('complete')
-        let oend = div('success')
-        odicts.appendChild(oend);
+        ores.textContent = 'sucsess'
     } else if (obj.err) {
         let str = 'server connection error: '+ obj.err
-        let oerr = div(str)
-        odicts.appendChild(oerr);
+        ores.textContent = str
     }
 })
-
-
-ipcRenderer.on('barstart_', function(event, text) {
-    len = text*1.0
-    bar = new Progress;
-    let odicts = q('#laoshi-dicts')
-    // recreate(odicts)
-    odicts.appendChild(bar.el);
-})
-
-ipcRenderer.on('bar_', function(event, text) {
-    part += text*1.0
-    let n = part*100/len
-    bar.update(n);
-})
-
-ipcRenderer.on('barerr_', function(event, text) {
-    let ores = q('#laoshi-results')
-    let str = 'server connection error: '+ text
-    let oerr = div(str)
-    ores.appendChild(oerr);
-})
-
-// ipcRenderer.on('barend', function(event, text) {
-//     console.log('\n')
-// })
 
 // 新华社北京

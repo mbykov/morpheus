@@ -247,3 +247,11 @@ p {
     margin-right: 25px;
     margin-top: 5px
 }
+
+.table {
+    width: 75%;
+}
+
+.red {
+    color: red;
+}
