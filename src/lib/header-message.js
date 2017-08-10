@@ -304,6 +304,7 @@ ipcRenderer.on('bar', function(event, obj) {
         bar = new Progress;
         odicts.appendChild(bar.el);
     } else if (obj.part) {
+        log('part', obj.part)
         if (!bar) return
         part += obj.part*1.0
         let n = part*100/len
@@ -318,3 +319,6 @@ ipcRenderer.on('bar', function(event, obj) {
 })
 
 // 新华社北京
+// [notice] 2017-08-10T21:15:20.627891Z couchdb@localhost <0.17171.490> 8710c8be6e localhost:5984 127.0.0.1 undefined GET /chinese/_changes?style=all_docs&filter=chinese%2Fby_dict&dname=hande&since=0&limit=10000 404 ok 2
+
+// [notice] 2017-08-10T21:17:22.051373Z couchdb@localhost <0.19659.490> fa38cee2d2 localhost:5984 127.0.0.1 undefined GET /chinese/_changes?style=all_docs&filter=chinese%2Fby_dict&dname=cedict&since=0&limit=10000 404 ok 3

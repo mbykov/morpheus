@@ -179,22 +179,10 @@ ipcMain.on('install', (event, dname) => {
         })
 
         res.on('end', function () {
-            // mainWindow.webContents.send('barend');
-            // console.log('EXTRACTING END')
             res.pipe(gunzip()).pipe(tar.extract(uPath));
-            // console.log('END', dbPath)
             log('==complete==')
-            // bar = {end: 'end'}
-            // mainWindow.webContents.send('bar', bar);
 
             app.relaunch()
-            // var exec = require('child_process').exec
-            // exec(process.argv.join(' ')) // execute the command that was used to run the app
-
-            // // // timerId = null
-            // // // mainWindow = null
-            // // // tray = null
-            // // // db = null
             app.quit() // quit the current app
             log('APP NOT QUITTED')
 
