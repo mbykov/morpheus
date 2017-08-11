@@ -4,7 +4,7 @@
   "description": "Morpheus for Chinese and other Oriental languages",
   "main": "main.js",
   "scripts": {
-    "postinstall_": "electron-rebuild",
+    "postinstall": "electron-rebuild",
     "build": "webpack",
     "start": "electron .",
     "test": "echo \"Error: no test specified\"",
@@ -39,7 +39,7 @@
     "electron-is-dev": "^0.3.0",
     "fs-jetpack": "^1.1.0",
     "gunzip-maybe": "^1.4.1",
-    "hieroglyphic": "^0.2.4",
+    "hieroglyphic": "^0.2.5",
     "lodash": "^4.17.4",
     "progress-component": "0.0.4",
     "require-reload": "^0.2.2",
