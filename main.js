@@ -38,8 +38,8 @@ process.on('unhandledRejection', (reason, p) => {
 
 // 新华社北京
 // 第三十七次会议 并发表重要讲话
-// let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
-let remote = new PouchDB('http:\/\/localhost:5984/chinese')
+let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
+// let remote = new PouchDB('http:\/\/localhost:5984/chinese')
 let db = new PouchDB(dbPath)
 // // let db = PouchDB(dpath, {adapter: 'websql'})
 
