@@ -5,8 +5,8 @@ const electron = require('electron')
 const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
-// const seg = require('hieroglyphic')
-let seg = require('../segmenter')
+const seg = require('hieroglyphic')
+// let seg = require('../segmenter')
 let PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
 // const reload = require('require-reload')(require)
@@ -24,9 +24,9 @@ let dbState = jetpack.exists(dbPath)
 if (!dbState) {
     console.log('COPYING')
     // fs.chmodSync('test', 0755)
-    const toPath = path.resolve(upath, 'pouchdb')
-    // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/pouchdb')
-    const fromPath = path.resolve(__dirname, 'pouchdb')
+    const toPath = path.resolve(upath, 'chinese')
+    // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
+    const fromPath = path.resolve(__dirname, 'chinese')
     jetpack.copy(fromPath, toPath, { matching: '**/*' })
    dbState = jetpack.exists(dbPath)
 }
@@ -143,18 +143,19 @@ ipcMain.on('install', (event, dname) => {
     mainWindow.webContents.send('bar', bar);
 
     const resourse = ['/dicts/chinese_', dname, '.tar.gz'].join('')
+    log('RESOURSE', resourse)
 
     let uPath = upath
     let pouchPath = path.join(upath, 'chinese')
     console.log('toPATH', uPath)
     let req = http.request({
-        host: 'localhost',
-        port: 3001,
+        host: 'en.diglossa.org', // 'localhost'
+        // port: 80, // 3001,
         path: resourse
     })
     // let len
     req.on('response', function(res){
-        log('START')
+        log('START', req.statusCode)
 
         jetpack.dir(pouchPath, {empty: true})
 
@@ -181,15 +182,15 @@ ipcMain.on('install', (event, dname) => {
         res.on('end', function () {
             res.pipe(gunzip()).pipe(tar.extract(uPath));
             log('==complete==')
-
             app.relaunch()
             app.quit() // quit the current app
-            log('APP NOT QUITTED')
+            // log('APP NOT QUITTED')
 
         })
     })
     req.on('error', function (err) {
-        bar = {err: err}
+        log('ERR', err)
+        bar = {err: JSON.stringify(err)}
         mainWindow.webContents.send('bar', bar);
     });
     req.end()

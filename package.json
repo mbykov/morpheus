@@ -1,7 +1,7 @@
 {
-  "name": "laoshi",
-  "version": "0.2.36",
-  "description": "Morpheus for Chinese",
+  "name": "morpheus-eastern",
+  "version": "0.2.37",
+  "description": "Morpheus for Chinese and other Oriental languages",
   "main": "main.js",
   "scripts": {
     "postinstall_": "electron-rebuild",
