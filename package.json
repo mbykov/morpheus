@@ -46,7 +46,7 @@
     "tar-fs": "^1.15.3"
   },
   "build": {
-    "appId": "com.github.mbykov.laoshi",
+    "appId": "com.github.mbykov.morpheus-eastern",
     "files": [
       "build/",
       "assets/",
@@ -54,12 +54,12 @@
       "main.js",
       "package.json"
     ],
-    "asarUnpack": "pouchdb",
+    "asarUnpack": "chinese",
     "publish": [
       {
         "provider": "github",
         "owner": "mbykov",
-        "repo": "laoshi"
+        "repo": "morpheus-eastern"
       }
     ],
     "mac": {

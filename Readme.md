@@ -1,4 +1,4 @@
-# laoshi.js
+# morpheus-eastern.js
 
 in progress
 
