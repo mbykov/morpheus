@@ -109,8 +109,8 @@ ipcMain.on('download', (event, dname) => {
         retry: true,
         filter: 'chinese/by_dict',
         query_params: { "dname": dname },
-        batches_limit: 1,
-        batch_size: 10
+        batches_limit: 10,
+        batch_size: 1000
     })
         .on('change', function (info) {
             bar = {part: info.docs.length}
