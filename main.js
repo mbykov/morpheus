@@ -25,8 +25,8 @@ if (!dbState) {
     console.log('COPYING')
     // fs.chmodSync('test', 0755)
     const toPath = path.resolve(upath, 'chinese')
-    const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
-    // const fromPath = path.resolve(__dirname, 'chinese')
+    // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
+    const fromPath = path.resolve(__dirname, 'chinese')
     jetpack.copy(fromPath, toPath, { matching: '**/*' })
    dbState = jetpack.exists(dbPath)
 }
