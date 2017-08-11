@@ -253,7 +253,7 @@ app.on('ready', () => {
                 })
                 return 'foo';
             }).then(function () {
-                log('seg ok', str)
+                // log('seg ok', str)
             }).catch(console.log.bind(console))
         }
 
