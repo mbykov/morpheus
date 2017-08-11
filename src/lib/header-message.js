@@ -296,21 +296,21 @@ ipcRenderer.on('bar', function(event, obj) {
     let ores = div('')
     odicts.appendChild(ores);
     if (obj.wait) {
-        log('wait')
+        // log('wait')
         ores.textContent = 'process starting, please wait...'
     } else if (obj.start) {
-        log('=start=')
+        // log('=start=')
         len = obj.start*1.0
         bar = new Progress;
         odicts.appendChild(bar.el);
     } else if (obj.part) {
-        log('part', obj.part)
+        // log('part', obj.part)
         if (!bar) return
         part += obj.part*1.0
         let n = part*100/len
         bar.update(n);
     } else if (obj.end) {
-        log('complete')
+        // log('complete')
         ores.textContent = 'sucsess'
     } else if (obj.err) {
         let str = 'server connection error: '+ obj.err

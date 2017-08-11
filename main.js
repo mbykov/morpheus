@@ -55,7 +55,7 @@ app.on('ready', () => {
         {label: 'learn more', click () { electron.shell.openExternal('http:\/\/diglossa.org') }},
         {label: 'quit', role: 'quit'}
     ])
-    tray.setToolTip('This is my application.')
+    tray.setToolTip('Morpheus-eastern')
     tray.setContextMenu(contextMenu)
 })
 
@@ -68,7 +68,7 @@ function createWindow () {
 
     mainWindow.loadURL(`file://${__dirname}/build/index.html`)
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
