@@ -5,8 +5,8 @@ const electron = require('electron')
 const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
-const seg = require('hieroglyphic')
-// let seg = require('../segmenter')
+// const seg = require('hieroglyphic')
+let seg = require('../segmenter')
 let PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
 // const reload = require('require-reload')(require)
@@ -17,19 +17,58 @@ const http = require('http')
 
 // console.log('ISDEV', isDev)
 
-const upath = app.getPath('userData')
-const dbPath = path.resolve(upath, 'chinese')
-let dbState = jetpack.exists(dbPath)
+/*
+  - читаю options - список dbnames
+  - если нет dbmnames, createDefault - cedict
+  - создаю dbs
+*/
 
-if (!dbState) {
-    console.log('COPYING')
-    // fs.chmodSync('test', 0755)
-    const toPath = path.resolve(upath, 'chinese')
-    const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
-    // const fromPath = path.resolve(__dirname, 'chinese')
-    jetpack.copy(fromPath, toPath, { matching: '**/*' })
-   dbState = jetpack.exists(dbPath)
+const upath = app.getPath('userData')
+// читаю options:
+let dbnames = ['chinese-cedict', 'chinese-hande']
+
+if (!dbnames) {
+    log('NO DBS')
 }
+
+let dbs = createDbs(dbnames)
+// log(dbs)
+
+function createDbs(dbnames) {
+    log('AAA')
+    let dbs = []
+    dbnames.forEach(dn => {
+        let dpath = path.resolve(upath, dn)
+        let dstate = jetpack.exists(dpath)
+        if (dstate) {
+            let db = new PouchDB(dpath)
+            db.dname = dn
+            dbs.push(db)
+            // log('D', db)
+        } else {
+            log('NO DB', dn, dpath)
+        }
+    })
+    return dbs
+}
+
+
+
+// app.quit()
+
+// const dbPath = path.resolve(upath, 'chinese')
+// let dbState = jetpack.exists(dbPath)
+
+
+// if (!dbState) {
+//     console.log('COPYING')
+//     // fs.chmodSync('test', 0755)
+//     const toPath = path.resolve(upath, 'chinese')
+//     const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
+//     // const fromPath = path.resolve(__dirname, 'chinese')
+//     jetpack.copy(fromPath, toPath, { matching: '**/*' })
+//    dbState = jetpack.exists(dbPath)
+// }
 
 process.on('unhandledRejection', (reason, p) => {
   // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
@@ -40,7 +79,7 @@ process.on('unhandledRejection', (reason, p) => {
 // 第三十七次会议 并发表重要讲话
 let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
 // let remote = new PouchDB('http:\/\/localhost:5984/chinese')
-let db = new PouchDB(dbPath)
+// let db = new PouchDB(dbPath)
 // // let db = PouchDB(dpath, {adapter: 'websql'})
 
 
@@ -68,7 +107,7 @@ function createWindow () {
 
     mainWindow.loadURL(`file://${__dirname}/build/index.html`)
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -79,7 +118,7 @@ function createWindow () {
         timerId = null
         mainWindow = null
         tray = null
-        db = null
+        dbs = null
   })
 
   tray.on('click', () => {
@@ -87,54 +126,54 @@ function createWindow () {
   })
 }
 
-ipcMain.on('download', (event, dname) => {
-    log('LANG START', dname)
-    // hande - 246580
-    // remote.info(function(err, info) {
-    //     remoteCount = info.doc_count;
-    //     console.log('REM SIZE', remoteCount);
-    // });
-    // tmp, for a time being...
-    let counts = {
-        hande: 246580,
-        cedict: 183236,
-        bkrs: 2920249
-    }
+// ipcMain.on('download', (event, dname) => {
+//     log('LANG START', dname)
+//     // hande - 246580
+//     // remote.info(function(err, info) {
+//     //     remoteCount = info.doc_count;
+//     //     console.log('REM SIZE', remoteCount);
+//     // });
+//     // tmp, for a time being...
+//     let counts = {
+//         hande: 246580,
+//         cedict: 183236,
+//         bkrs: 2920249
+//     }
 
-    let bar = {wait: 'wait'}
-    mainWindow.webContents.send('bar', bar);
+//     let bar = {wait: 'wait'}
+//     mainWindow.webContents.send('bar', bar);
 
-    let rep = PouchDB.replicate(remote, db, {
-        // live: true,
-        retry: true,
-        filter: 'chinese/by_dict',
-        query_params: { "dname": dname },
-        batches_limit: 10,
-        batch_size: 1000
-    })
-        .on('change', function (info) {
-            bar = {part: info.docs.length}
-            mainWindow.webContents.send('bar', bar);
-        }).on('paused', function (err) {
-            log('paused')
-        }).on('active', function () {
-            bar = {start: counts[dname]}
-            mainWindow.webContents.send('bar', bar);
-            log('==start==')
-        }).on('denied', function (err) {
-            // a document failed to replicate (e.g. due to permissions)
-        }).on('complete', function (info) {
-            log('==complete==')
-            bar = {end: 'end'}
-            mainWindow.webContents.send('bar', bar);
-        }).on('error', function (err) {
-            log('sync err: ', err)
-            bar = {err: err}
-            mainWindow.webContents.send('bar', bar);
-        });
+//     let rep = PouchDB.replicate(remote, db, {
+//         // live: true,
+//         retry: true,
+//         filter: 'chinese/by_dict',
+//         query_params: { "dname": dname },
+//         batches_limit: 10,
+//         batch_size: 1000
+//     })
+//         .on('change', function (info) {
+//             bar = {part: info.docs.length}
+//             mainWindow.webContents.send('bar', bar);
+//         }).on('paused', function (err) {
+//             log('paused')
+//         }).on('active', function () {
+//             bar = {start: counts[dname]}
+//             mainWindow.webContents.send('bar', bar);
+//             log('==start==')
+//         }).on('denied', function (err) {
+//             // a document failed to replicate (e.g. due to permissions)
+//         }).on('complete', function (info) {
+//             log('==complete==')
+//             bar = {end: 'end'}
+//             mainWindow.webContents.send('bar', bar);
+//         }).on('error', function (err) {
+//             log('sync err: ', err)
+//             bar = {err: err}
+//             mainWindow.webContents.send('bar', bar);
+//         });
 
-    // https://github.com/pouchdb/pouchdb/issues/5713
-})
+//     // https://github.com/pouchdb/pouchdb/issues/5713
+// })
 
 ipcMain.on('install', (event, dname) => {
     log('INSTALL START', dname)
@@ -237,7 +276,7 @@ Menu.setApplicationMenu(menu)
 app.on('ready', () => {
     let oldstr = null
     timerId = setInterval(function(){
-        if (!db) return
+        if (!dbs) return
         if (!mainWindow) return
         // if (mainWindow.isVisible()) return
         let str = clipboard.readText()
@@ -247,7 +286,7 @@ app.on('ready', () => {
 
         function somePromiseAPI() {
             return Promise.resolve().then(function () {
-                seg(db, str, function(err, res) {
+                seg(dbs, str, function(err, res) {
                     if (err) return log('seg err', err)
                     mainWindow.webContents.send('parsed', res)
                 })
