@@ -6,8 +6,10 @@ const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
 // const seg = require('hieroglyphic')
-let seg = require('../segmenter')
-// let config = require('./lib/options')
+let seg = require('../../segmenter')
+
+let setDefauts = require('./lib/defaults')
+
 let PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
 // const reload = require('require-reload')(require)
@@ -18,93 +20,31 @@ const http = require('http')
 
 // console.log('ISDEV', isDev)
 
-/*
-  - читаю options - список dbnames
-  - если нет dbmnames, createDefault - cedict
-  - создаю dbs
-*/
+let config = setDefauts(app)
+log('=OPTIONS=', config)
 
-let config = {
-    default: 'chinese-cedict',
-    file: 'morpheus-config.json',
-    upath: app.getPath('userData')
-}
+let dbs = createDbs(config)
+log('dbs', dbs.length)
 
-// path to config:
-config.cpath = path.join(config.upath, config.file)
-
-// config.opath = path.join(config.upath, config.dbpath);
-log('CONF', config)
-
-try {
-    let ostate = jetpack.exists(config.cpath)
-    if (!ostate){
-        config.dbs = [config.default]
-        jetpack.write(config.cpath, config)
-        const toPath = path.resolve(config.upath, config.default)
-        // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
-        if (!jetpack.exists(toPath)) {
-            const fromPath = path.resolve(__dirname, config.default)
-            jetpack.copy(fromPath, toPath, { matching: '**\/*' })
-        }
-    } else {
-        config = jetpack.read(config.cpath, 'json')
-        log('already exists', config)
-    }
-} catch (err) {
-    log('ERR options', err)
-    app.quit()
-}
-
-app.quit()
-
-
-
-const upath = app.getPath('userData')
-// читаю options:
-let dbnames = ['chinese-cedict', 'chinese-hande']
-
-if (!dbnames) {
-    log('NO DBS')
-}
-
-let dbs = createDbs(dbnames)
-// log(dbs)
-
-function createDbs(dbnames) {
-    log('AAA')
-    let dbs = []
-    dbnames.forEach(dn => {
-        let dpath = path.resolve(upath, dn)
+function createDbs(config) {
+    let dbs = config.dbs
+    let databases = []
+    dbs.forEach(dn => {
+        let dpath = path.resolve(config.upath, config.dtype, dn)
         let dstate = jetpack.exists(dpath)
         if (dstate) {
             let db = new PouchDB(dpath)
             db.dname = dn
-            dbs.push(db)
+            databases.push(db)
             // log('D', db)
         } else {
             log('NO DB', dn, dpath)
         }
     })
-    return dbs
+    return databases
 }
 
-
-
-
-// const dbPath = path.resolve(upath, 'chinese')
-// let dbState = jetpack.exists(dbPath)
-
-
-// if (!dbState) {
-//     console.log('COPYING')
-//     // fs.chmodSync('test', 0755)
-//     const toPath = path.resolve(upath, 'chinese')
-//     const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
-//     // const fromPath = path.resolve(__dirname, 'chinese')
-//     jetpack.copy(fromPath, toPath, { matching: '**/*' })
-//    dbState = jetpack.exists(dbPath)
-// }
+// app.quit()
 
 process.on('unhandledRejection', (reason, p) => {
   // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
@@ -141,7 +81,8 @@ let mainWindow
 function createWindow () {
     mainWindow = new BrowserWindow({width: 800, height: 600, webPreferences: { webSecurity: false }})
 
-    mainWindow.loadURL(`file://${__dirname}/build/index.html`)
+    let rootpath = path.resolve(__dirname, '..')
+    mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
     mainWindow.webContents.openDevTools()
     mainWindow.focus()
@@ -264,14 +205,12 @@ const template = [
 const menu = Menu.buildFromTemplate(template)
 Menu.setApplicationMenu(menu)
 
-
 app.on('ready', () => {
     let oldstr = null
     timerId = setInterval(function(){
         if (!dbs) return
         if (!mainWindow) return
-        // if (mainWindow.isVisible()) return
-        let str = clipboard.readText()
+        let str = clipboard.readText('selection')
         if (!str) return
         if (str === oldstr) return
         oldstr = str
@@ -281,6 +220,7 @@ app.on('ready', () => {
                 seg(dbs, str, function(err, res) {
                     if (err) return log('seg err', err)
                     mainWindow.webContents.send('parsed', res)
+                    clipboard.writeText('', 'selection')
                 })
                 return 'foo';
             }).then(function () {
@@ -289,13 +229,6 @@ app.on('ready', () => {
         }
 
         somePromiseAPI()
-
-        // seg(db, str, function(err, res) {
-        //     if (err) return
-        //     if (!mainWindow) return
-        //     mainWindow.webContents.send('parsed', res)
-        // })
-
     }, 100)
 })
 

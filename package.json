@@ -2,7 +2,7 @@
   "name": "morpheus-eastern",
   "version": "0.2.37",
   "description": "Morpheus for Chinese and other Oriental languages",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "postinstall": "electron-rebuild",
     "build": "webpack",
