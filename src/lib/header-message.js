@@ -9,6 +9,8 @@ const http = require('http')
 const tar = require('tar-fs')
 const gunzip = require('gunzip-maybe')
 const  Progress = require('progress-component');
+import png from './sections/check.png'
+
 
 export function headerMessage(mess) {
     let oText = create('div')
@@ -270,29 +272,22 @@ function showSection(name) {
     let ores = q('#laoshi-results')
     ores.name = name
     ores.appendChild(odicts)
+    let ocheck = q('#check')
+    ocheck.src = png
     let cedict = q('#cedict')
     let bkrs = q('#bkrs')
-    // let allangs
     let lang
     delegate(odicts, '.load-dict', 'click', function(e) {
         let chcks = qs('.load-dict')
-        let size = 0
-        // let langs = []
         chcks.forEach(chck => {
             if (!chck.checked) return
-            size = chck.getAttribute('size')*1.0
-            // langs.push(chck.getAttribute('id'))
             lang = chck.getAttribute('id')
         })
-        // let osize = q('#approx-size')
-        // osize.textContent = size
         let oname = q('#dict-name')
         oname.textContent = ''
-        // if (!langs.length) return ores.langs = null
         let dname = ['chinese', lang].join('_')
         dname = [dname, 'dict'].join('.')
         oname.textContent = dname
-        // ores.langs = langs
         ores.lang = lang
         // log('LL', ores.lang)
     })

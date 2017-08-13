@@ -23,6 +23,33 @@ const http = require('http')
   - создаю dbs
 */
 
+let config = {
+    dname: 'chinese-cedict',
+    dbpath: 'db-state.json',
+    upath: app.getPath('userData')
+}
+
+config.opath = path.join(config.upath, config.dbpath);
+log('CONF', config)
+
+try {
+    let ostate = jetpack.exists(config.opath)
+    if (!ostate){
+        let defaultdb = {dbs: [config.dname]}
+        jetpack.write(config.opath, defaultdb)
+        const toPath = path.resolve(config.upath, config.dname)
+        // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
+        const fromPath = path.resolve(__dirname, config.dname)
+        jetpack.copy(fromPath, toPath, { matching: '**/*' })
+    }
+    else { log('already exists') }
+} catch (err) {
+    log('ERR options', err)
+    app.quit()
+}
+
+
+
 const upath = app.getPath('userData')
 // читаю options:
 let dbnames = ['chinese-cedict', 'chinese-hande']
@@ -175,8 +202,16 @@ function createWindow () {
 //     // https://github.com/pouchdb/pouchdb/issues/5713
 // })
 
+/*
+  читаю options, если нет, создаю default
+  добавляю-удаляю dict в options
+
+*/
+
+
 ipcMain.on('install', (event, dname) => {
     log('INSTALL START', dname)
+    let optionsPath = path.join(config.upath, config.dbpath);
 
     let bar = {wait: 'wait'}
     mainWindow.webContents.send('bar', bar);
@@ -253,7 +288,7 @@ const template = [
     {
         label: 'Actions',
         submenu: [
-            {label: 'replicate dict',  click() { mainWindow.webContents.send('section', 'replicate-dict') }},
+            // {label: 'replicate dict',  click() { mainWindow.webContents.send('section', 'replicate-dict') }},
             {label: 'install dict.tar.gz',  click() { mainWindow.webContents.send('section', 'install-dict') }},
             {label: 'signup/login'}
         ]
