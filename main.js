@@ -24,29 +24,37 @@ const http = require('http')
 */
 
 let config = {
-    dname: 'chinese-cedict',
-    dbpath: 'db-state.json',
+    default: 'chinese-cedict',
+    file: 'morpheus-config.json',
     upath: app.getPath('userData')
 }
 
-config.opath = path.join(config.upath, config.dbpath);
+// path to config:
+config.cpath = path.join(config.upath, config.file)
+
+// config.opath = path.join(config.upath, config.dbpath);
 log('CONF', config)
 
 try {
-    let ostate = jetpack.exists(config.opath)
+    let ostate = jetpack.exists(config.cpath)
     if (!ostate){
-        let defaultdb = {dbs: [config.dname]}
-        jetpack.write(config.opath, defaultdb)
-        const toPath = path.resolve(config.upath, config.dname)
+        config.dbs = [config.default]
+        jetpack.write(config.cpath, config)
+        const toPath = path.resolve(config.upath, config.default)
         // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
-        const fromPath = path.resolve(__dirname, config.dname)
-        jetpack.copy(fromPath, toPath, { matching: '**/*' })
+        if (!jetpack.exists(toPath)) {
+            const fromPath = path.resolve(__dirname, config.default)
+            jetpack.copy(fromPath, toPath, { matching: '**\/*' })
+        }
+    } else {
+        config = jetpack.read(config.cpath, 'json')
+        log('already exists', config)
     }
-    else { log('already exists') }
 } catch (err) {
     log('ERR options', err)
     app.quit()
 }
+
 
 
 
@@ -81,7 +89,6 @@ function createDbs(dbnames) {
 
 
 
-// app.quit()
 
 // const dbPath = path.resolve(upath, 'chinese')
 // let dbState = jetpack.exists(dbPath)
@@ -153,61 +160,9 @@ function createWindow () {
   })
 }
 
-// ipcMain.on('download', (event, dname) => {
-//     log('LANG START', dname)
-//     // hande - 246580
-//     // remote.info(function(err, info) {
-//     //     remoteCount = info.doc_count;
-//     //     console.log('REM SIZE', remoteCount);
-//     // });
-//     // tmp, for a time being...
-//     let counts = {
-//         hande: 246580,
-//         cedict: 183236,
-//         bkrs: 2920249
-//     }
-
-//     let bar = {wait: 'wait'}
-//     mainWindow.webContents.send('bar', bar);
-
-//     let rep = PouchDB.replicate(remote, db, {
-//         // live: true,
-//         retry: true,
-//         filter: 'chinese/by_dict',
-//         query_params: { "dname": dname },
-//         batches_limit: 10,
-//         batch_size: 1000
-//     })
-//         .on('change', function (info) {
-//             bar = {part: info.docs.length}
-//             mainWindow.webContents.send('bar', bar);
-//         }).on('paused', function (err) {
-//             log('paused')
-//         }).on('active', function () {
-//             bar = {start: counts[dname]}
-//             mainWindow.webContents.send('bar', bar);
-//             log('==start==')
-//         }).on('denied', function (err) {
-//             // a document failed to replicate (e.g. due to permissions)
-//         }).on('complete', function (info) {
-//             log('==complete==')
-//             bar = {end: 'end'}
-//             mainWindow.webContents.send('bar', bar);
-//         }).on('error', function (err) {
-//             log('sync err: ', err)
-//             bar = {err: err}
-//             mainWindow.webContents.send('bar', bar);
-//         });
-
-//     // https://github.com/pouchdb/pouchdb/issues/5713
-// })
-
-/*
-  читаю options, если нет, создаю default
-  добавляю-удаляю dict в options
-
-*/
-
+ipcMain.on('config', (event) => {
+    mainWindow.webContents.send('config', config);
+})
 
 ipcMain.on('install', (event, dname) => {
     log('INSTALL START', dname)

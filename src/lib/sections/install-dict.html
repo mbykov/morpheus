@@ -2,7 +2,7 @@
   install the only one dictionary from dict.tar.gz. If you have already installed dicts, they will be lost. Later you can replicate any other dictionaries over installed dict. But this method is much faster. Has a sens for a huge Russian dict.
   <br> &nbsp;
   <div>
-    <table>
+    <table width="100%">
         <tr>
           <th>load</th>
           <th>&nbsp;</th>
@@ -10,28 +10,34 @@
           <th>name</th>
           <th>~ size</th>
           <th>~ time</th>
+          <th>remove</th>
         </tr>
-        <tr>
-          <td><input id="cedict" class="load-dict" type="radio" name="dict" lang="en" size=32></td>
-          <td><img id="check"/ class="check"></td>
+        <tr id="chinese-cedict"  lang="en">
+          <td><input type="radio" name="dict"></td>
+          <td><img class="check"></td>
           <td>en</td>
           <td>CEDICT</td>
           <td>53 Mb</td>
           <td>3 sec</td>
+          <td><input type="checkbox" class="remove-dict"></td>
         </tr>
-        <tr>
-          <td><input id="bkrs" class="load-dict" type="radio" name="dict" lang="ru" size=383></td>
+        <tr id="chinese-bkrs" lang="ru">
+          <td><input type="radio" name="dict"></td>
+          <td><img id="chinese-bkrs" class="check"></td>
           <td>ru</td>
           <td>БКРС</td>
           <td>583 Mb</td>
           <td>10 sec</td>
+          <td><input type="checkbox" class="remove-dict"></td>
         </tr>
-        <tr>
-          <td><input id="hande" class="load-dict" type="radio" name="dict" lang="de" size=32></td>
+        <tr id="chinese-hande" lang="de">
+          <td><input type="radio" name="dict"></td>
+          <td><img class="check"></td>
           <td>de</td>
           <td>Hande</td>
           <td>51 Mb</td>
           <td>3 sec</td>
+          <td><input type="checkbox" class="remove-dict"></td>
         </tr>
         <tr>
         <tr>
@@ -39,7 +45,7 @@
     </table>
   </div>
   <div>
-    <p>Approx.size = <span id="approx-size">0</span></p>
+    <p>&nbsp;
   </div>
   <div>
     <p><input id="install-dict" type="submit" value="install"> <span id="dict-name"></span>

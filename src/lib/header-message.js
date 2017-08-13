@@ -255,25 +255,79 @@ ipcRenderer.on('section', function(event, text) {
 })
 
 /*
-  как все-таки быть, делать tar.gz, или нет?
+  читаю options
+  клик на файле
 */
 
+// install from tar.gz
 
 function showSection(name) {
+    ipcRenderer.send('config')
+    ipcRenderer.on('config', function(event, config) {
+        log('DBS', config.dbs)
+        setInstallSection(config.dbs)
+    })
+    // let oHeader = q('#laoshi-header')
+    // empty(oHeader)
+    // oHeader.addEventListener('mouseover', closePopups(), false)
+    // let fpath = path.join('src/lib/sections', [name, 'html'].join('.') )
+    // let html = jetpack.read(fpath)
+    // if (!html) return
+    // let odicts = q('#laoshi-dicts')
+    // empty(odicts)
+    // odicts.innerHTML = html
+    // let ores = q('#laoshi-results')
+    // ores.name = name
+    // ores.appendChild(odicts)
+    // let ochecks = qs('.check')
+    // ochecks.forEach(ocheck => {
+    //     log('OCH', ocheck)
+    //     log('PREV-id', ocheck.id)
+    //     ocheck.src = png
+    // })
+
+    // let cedict = q('#cedict')
+    // let bkrs = q('#bkrs')
+    // let lang
+    // delegate(odicts, '.load-dict', 'click', function(e) {
+    //     let chcks = qs('.load-dict')
+    //     chcks.forEach(chck => {
+    //         if (!chck.checked) return
+    //         lang = chck.getAttribute('id')
+    //     })
+    //     let oname = q('#dict-name')
+    //     oname.textContent = ''
+    //     let dname = ['chinese', lang].join('_')
+    //     dname = [dname, 'dict'].join('.')
+    //     oname.textContent = dname
+    //     ores.lang = lang
+    //     // log('LL', ores.lang)
+    // })
+    // let submit = q('#install-dict')
+    // submit.addEventListener('click', loadDict, false)
+}
+
+function setInstallSection(dbs) {
+    log('DBS', dbs)
     let oHeader = q('#laoshi-header')
     empty(oHeader)
-    oHeader.addEventListener('mouseover', closePopups(), false)
-    let fpath = path.join('src/lib/sections', [name, 'html'].join('.') )
-    let html = jetpack.read(fpath)
-    if (!html) return
     let odicts = q('#laoshi-dicts')
     empty(odicts)
-    odicts.innerHTML = html
-    let ores = q('#laoshi-results')
-    ores.name = name
-    ores.appendChild(odicts)
-    let ocheck = q('#check')
-    ocheck.src = png
+    oHeader.addEventListener('mouseover', closePopups(), false)
+    let fpath = path.join('src/lib/sections/install-dict.html')
+    try {
+        let html = jetpack.read(fpath)
+        if (!html) return
+        odicts.innerHTML = html
+    } catch (err) {
+        return
+    }
+
+    let ochecks = qs('.check')
+    ochecks.forEach(ocheck => {
+        ocheck.src = png
+    })
+
     let cedict = q('#cedict')
     let bkrs = q('#bkrs')
     let lang
@@ -282,13 +336,16 @@ function showSection(name) {
         chcks.forEach(chck => {
             if (!chck.checked) return
             lang = chck.getAttribute('id')
+            let td = chck.parentNode
+            let tr = td.parentNode
+            log('parent', tr)
         })
         let oname = q('#dict-name')
         oname.textContent = ''
         let dname = ['chinese', lang].join('_')
         dname = [dname, 'dict'].join('.')
         oname.textContent = dname
-        ores.lang = lang
+        odicts.lang = lang
         // log('LL', ores.lang)
     })
     let submit = q('#install-dict')
@@ -297,13 +354,14 @@ function showSection(name) {
 
 
 function loadDict() {
-    let ores = q('#laoshi-results')
-    if (!ores.lang || !ores.name) return
-    if (ores.name == 'replicate-dict') {
-        ipcRenderer.send('download', ores.lang)
-    } else {
-        ipcRenderer.send('install', ores.lang)
-    }
+    let odicts = q('#laoshi-dicts')
+    ipcRenderer.send('install', odicts.lang)
+    // if (!ores.lang || !ores.name) return
+    // if (ores.name == 'replicate-dict') {
+    //     ipcRenderer.send('download', ores.lang)
+    // } else {
+    //     ipcRenderer.send('install', ores.lang)
+    // }
 }
 
 let bar, len, part = 0
@@ -336,6 +394,3 @@ ipcRenderer.on('bar', function(event, obj) {
 })
 
 // 新华社北京
-// [notice] 2017-08-10T21:15:20.627891Z couchdb@localhost <0.17171.490> 8710c8be6e localhost:5984 127.0.0.1 undefined GET /chinese/_changes?style=all_docs&filter=chinese%2Fby_dict&dname=hande&since=0&limit=10000 404 ok 2
-
-// [notice] 2017-08-10T21:17:22.051373Z couchdb@localhost <0.19659.490> fa38cee2d2 localhost:5984 127.0.0.1 undefined GET /chinese/_changes?style=all_docs&filter=chinese%2Fby_dict&dname=cedict&since=0&limit=10000 404 ok 3
