@@ -109,27 +109,26 @@ ipcMain.on('config', (event) => {
 
 ipcMain.on('install', (event, dname) => {
     log('INSTALL START', dname)
-    let optionsPath = path.join(config.upath, config.dbpath);
 
+    if (!dname) return
     let bar = {wait: 'wait'}
     mainWindow.webContents.send('bar', bar);
 
-    const resourse = ['/dicts/chinese_', dname, '.tar.gz'].join('')
+    const resourse = ['/dicts/', dname, '.tar.gz'].join('')
     log('RESOURSE', resourse)
 
-    let uPath = upath
-    let pouchPath = path.join(upath, 'chinese')
-    console.log('toPATH', uPath)
+    let dest = path.join(config.upath, 'chinese')
+    console.log('dest:', dest)
     let req = http.request({
         host: 'en.diglossa.org', // 'localhost'
         // port: 80, // 3001,
         path: resourse
     })
-    // let len
-    req.on('response', function(res){
-        log('START', req.statusCode)
 
-        jetpack.dir(pouchPath, {empty: true})
+    req.on('response', function(res){
+        log('=start=', req.statusCode)
+
+        jetpack.dir(dest) // , {empty: true}
 
         if (('' + req.statusCode).match(/^2\d\d$/)) {
             log('res: happy')
@@ -140,11 +139,13 @@ ipcMain.on('install', (event, dname) => {
             // Server error, I have no idea what happend in the backend
             // but server at least returned correctly (in a HTTP protocol sense) formatted response
         }
-        res.pipe(gunzip()).pipe(tar.extract(uPath));
-
         let len = parseInt(res.headers['content-length'], 10)
+        log('LEN', len)
         bar = {start: len}
         mainWindow.webContents.send('bar', bar);
+
+        res.pipe(gunzip()).pipe(tar.extract(dest));
+
 
         res.on('data', function (chunk) {
             bar = {part: chunk.length}
@@ -152,12 +153,11 @@ ipcMain.on('install', (event, dname) => {
         })
 
         res.on('end', function () {
-            res.pipe(gunzip()).pipe(tar.extract(uPath));
+            res.pipe(gunzip()).pipe(tar.extract(dest));
             log('==complete==')
             app.relaunch()
             app.quit() // quit the current app
             // log('APP NOT QUITTED')
-
         })
     })
     req.on('error', function (err) {

@@ -72,6 +72,7 @@ function bindMouseEvents(el, cl) {
         if (e.ctrlKey) return
         let idx = e.target.getAttribute('idx')
         let seg = cl.segs[idx]
+        log('SEG', seg)
         createDict(seg)
     }, false);
 
@@ -172,7 +173,7 @@ function createDict(seg) {
     if (!seg.docs) return
     seg.docs.forEach(doc => {
         let oDocs = create('div')
-        let oType = span(doc.name)
+        let oType = span(doc.dname)
         oType.classList.add('type')
         oDocs.appendChild(oType)
         let oDict = span(doc.dict)
@@ -190,29 +191,6 @@ function createDict(seg) {
             oTrns.appendChild(html)
         })
         oDocs.appendChild(oTrns)
-
-        // oDocs.appendChild(oDoc)
-        // doc.docs.forEach(mdoc => {
-        //     let oType = span(doc.type)
-        //     oType.classList.add('type')
-        //     oDocs.appendChild(oType)
-        //     let oDict = span(doc.dict)
-        //     oDict.classList.add('dict')
-        //     oDocs.appendChild(oDict)
-        //     let odef = span(' - ')
-        //     let phone = phonetic(mdoc.pinyin)
-        //     let oPinyin = span(phone)
-        //     oDocs.appendChild(oPinyin)
-        //     let oDoc = create('div')
-        //     let oTrns = create('div')
-        //     oTrns.classList.add('trns')
-        //     mdoc.trns.forEach(trn => {
-        //         let html = cleanTrn(trn)
-        //         oTrns.appendChild(html)
-        //     })
-        //     oDoc.appendChild(oTrns)
-        //     oDocs.appendChild(oDoc)
-        // })
         oDicts.appendChild(oDocs)
     })
 }
@@ -265,50 +243,11 @@ function showSection(name) {
     ipcRenderer.send('config')
     ipcRenderer.on('config', function(event, config) {
         log('DBS', config.dbs)
-        setInstallSection(config.dbs)
+        setInstallSection(config)
     })
-    // let oHeader = q('#laoshi-header')
-    // empty(oHeader)
-    // oHeader.addEventListener('mouseover', closePopups(), false)
-    // let fpath = path.join('src/lib/sections', [name, 'html'].join('.') )
-    // let html = jetpack.read(fpath)
-    // if (!html) return
-    // let odicts = q('#laoshi-dicts')
-    // empty(odicts)
-    // odicts.innerHTML = html
-    // let ores = q('#laoshi-results')
-    // ores.name = name
-    // ores.appendChild(odicts)
-    // let ochecks = qs('.check')
-    // ochecks.forEach(ocheck => {
-    //     log('OCH', ocheck)
-    //     log('PREV-id', ocheck.id)
-    //     ocheck.src = png
-    // })
-
-    // let cedict = q('#cedict')
-    // let bkrs = q('#bkrs')
-    // let lang
-    // delegate(odicts, '.load-dict', 'click', function(e) {
-    //     let chcks = qs('.load-dict')
-    //     chcks.forEach(chck => {
-    //         if (!chck.checked) return
-    //         lang = chck.getAttribute('id')
-    //     })
-    //     let oname = q('#dict-name')
-    //     oname.textContent = ''
-    //     let dname = ['chinese', lang].join('_')
-    //     dname = [dname, 'dict'].join('.')
-    //     oname.textContent = dname
-    //     ores.lang = lang
-    //     // log('LL', ores.lang)
-    // })
-    // let submit = q('#install-dict')
-    // submit.addEventListener('click', loadDict, false)
 }
 
-function setInstallSection(dbs) {
-    log('DBS', dbs)
+function setInstallSection(config) {
     let oHeader = q('#laoshi-header')
     empty(oHeader)
     let odicts = q('#laoshi-dicts')
@@ -323,45 +262,42 @@ function setInstallSection(dbs) {
         return
     }
 
-    let ochecks = qs('.check')
-    ochecks.forEach(ocheck => {
-        ocheck.src = png
+    let ochcks = qs('.check')
+    ochcks.forEach(ochck => {
+        let tr = ochck.parentNode
+        if (!config.dbs.includes(tr.id)) return
+        let img = create('img')
+        img.src = png
+        img.classList.add('check')
+        ochck.appendChild(img)
     })
 
     let cedict = q('#cedict')
     let bkrs = q('#bkrs')
-    let lang
+    let name
     delegate(odicts, '.load-dict', 'click', function(e) {
         let chcks = qs('.load-dict')
         chcks.forEach(chck => {
             if (!chck.checked) return
-            lang = chck.getAttribute('id')
             let td = chck.parentNode
             let tr = td.parentNode
-            log('parent', tr)
+            name = tr.id
         })
         let oname = q('#dict-name')
         oname.textContent = ''
-        let dname = ['chinese', lang].join('_')
-        dname = [dname, 'dict'].join('.')
+        // let dname = ['chinese', name].join('_')
+        let dname = [name, 'tar.gz'].join('.')
         oname.textContent = dname
-        odicts.lang = lang
+        odicts.name = name
         // log('LL', ores.lang)
     })
     let submit = q('#install-dict')
     submit.addEventListener('click', loadDict, false)
 }
 
-
 function loadDict() {
     let odicts = q('#laoshi-dicts')
-    ipcRenderer.send('install', odicts.lang)
-    // if (!ores.lang || !ores.name) return
-    // if (ores.name == 'replicate-dict') {
-    //     ipcRenderer.send('download', ores.lang)
-    // } else {
-    //     ipcRenderer.send('install', ores.lang)
-    // }
+    ipcRenderer.send('install', odicts.name)
 }
 
 let bar, len, part = 0
@@ -371,10 +307,10 @@ ipcRenderer.on('bar', function(event, obj) {
     let ores = div('')
     odicts.appendChild(ores);
     if (obj.wait) {
-        // log('wait')
+        log('wait')
         ores.textContent = 'process starting, please wait...'
     } else if (obj.start) {
-        // log('=start=')
+        log('=start=')
         len = obj.start*1.0
         bar = new Progress;
         odicts.appendChild(bar.el);
@@ -385,7 +321,7 @@ ipcRenderer.on('bar', function(event, obj) {
         let n = part*100/len
         bar.update(n);
     } else if (obj.end) {
-        // log('complete')
+        log('complete')
         ores.textContent = 'sucsess'
     } else if (obj.err) {
         let str = 'server connection error: '+ obj.err
