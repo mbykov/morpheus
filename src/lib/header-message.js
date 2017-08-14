@@ -253,7 +253,8 @@ function setInstallSection(config) {
     let odicts = q('#laoshi-dicts')
     empty(odicts)
     oHeader.addEventListener('mouseover', closePopups(), false)
-    let fpath = path.join('src/lib/sections/install-dict.html')
+    // let fpath = path.join('src/lib/sections/install-dict.html')
+    let fpath = 'src/lib/sections/install-dict.html'
     try {
         let html = jetpack.read(fpath)
         if (!html) return
@@ -274,30 +275,39 @@ function setInstallSection(config) {
 
     let cedict = q('#cedict')
     let bkrs = q('#bkrs')
-    let name
-    delegate(odicts, '.load-dict', 'click', function(e) {
-        let chcks = qs('.load-dict')
-        chcks.forEach(chck => {
-            if (!chck.checked) return
-            let td = chck.parentNode
-            let tr = td.parentNode
-            name = tr.id
-        })
-        let oname = q('#dict-name')
-        oname.textContent = ''
-        // let dname = ['chinese', name].join('_')
-        let dname = [name, 'tar.gz'].join('.')
-        oname.textContent = dname
-        odicts.name = name
-        // log('LL', ores.lang)
-    })
     let submit = q('#install-dict')
+    let oname = q('#dict-name')
+    // let name
+    delegate(odicts, '.load-dict', 'click', function(e) {
+        let chck = e.target
+        let tr = chck.parentNode.parentNode
+        if (config.dbs.includes(tr.id)) return chck.checked = false
+        odicts.name = tr.id
+        let dname = [odicts.name, 'tar.gz'].join('.')
+        oname.textContent = dname
+        let rem = q('.remove-dict:checked')
+        if (rem) rem.checked = false
+        submit.value = 'install'
+    })
+    delegate(odicts, '.remove-dict', 'click', function(e) {
+        let chck = e.target
+        let tr = chck.parentNode.parentNode
+        if (!config.dbs.includes(tr.id)) return chck.checked = false
+        odicts.name = tr.id
+        odicts.remove = true
+        let dname = ['installed', odicts.name, 'dictionary'].join(' ')
+        oname.textContent = dname
+        let load = q('.load-dict:checked')
+        if (load) load.checked = false
+        submit.value = 'remove'
+    })
     submit.addEventListener('click', loadDict, false)
 }
 
 function loadDict() {
     let odicts = q('#laoshi-dicts')
-    ipcRenderer.send('install', odicts.name)
+    if (odicts.remove) ipcRenderer.send('remove', odicts.name)
+    else ipcRenderer.send('install', odicts.name)
 }
 
 let bar, len, part = 0

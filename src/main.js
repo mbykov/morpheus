@@ -107,6 +107,10 @@ ipcMain.on('config', (event) => {
     mainWindow.webContents.send('config', config);
 })
 
+ipcMain.on('remove', (event, dname) => {
+    log('REMOVE', dname)
+})
+
 ipcMain.on('install', (event, dname) => {
     log('INSTALL START', dname)
 
@@ -146,7 +150,6 @@ ipcMain.on('install', (event, dname) => {
 
         res.pipe(gunzip()).pipe(tar.extract(dest));
 
-
         res.on('data', function (chunk) {
             bar = {part: chunk.length}
             mainWindow.webContents.send('bar', bar);
@@ -156,7 +159,7 @@ ipcMain.on('install', (event, dname) => {
             res.pipe(gunzip()).pipe(tar.extract(dest));
             log('==complete==')
             app.relaunch()
-            app.quit() // quit the current app
+            app.quit()
             // log('APP NOT QUITTED')
         })
     })
