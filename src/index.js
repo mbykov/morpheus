@@ -107,7 +107,8 @@ function bindMouseEvents(el, cl) {
         let cur = e.target
         if (!cur || cur.textContent.length < 2) return
         if (cur.classList.contains('ambis')) return
-        let oResults = q('#results')
+        // let oResults = q('#results')
+        let oHeader = q('#text')
         let oSingles = recreateDiv('singles')
         cur.textContent.split('').forEach(sym => {
             let symseg = _.find(cur.singles, single => single.dict == sym)
@@ -116,7 +117,7 @@ function bindMouseEvents(el, cl) {
             oSym.classList.add('seg')
             oSingles.appendChild(oSym)
         })
-        if (oSingles.childNodes.length) oResults.appendChild(oSingles)
+        if (oSingles.childNodes.length) oHeader.appendChild(oSingles)
         var coords = getCoords(cur);
         placePopup(coords, oSingles);
         delegate(oSingles, '.seg', 'mouseover', function(e) {
@@ -130,6 +131,7 @@ function bindMouseEvents(el, cl) {
         setCurrent(e)
         closePopups()
         let oResults = q('#results')
+        let oHeader = q('#text')
         let oDicts = q('#laoshi-dicts')
         empty(oDicts)
         let test = q('.ambis')
@@ -138,7 +140,7 @@ function bindMouseEvents(el, cl) {
         let idx = e.target.getAttribute('idx')
         let seg = cl.segs[idx]
         let oAmbis  = createAmbi(e, seg)
-        oResults.appendChild(oAmbis)
+        oHeader.appendChild(oAmbis)
         var coords = getCoords(e.target);
         placePopup(coords, oAmbis);
 

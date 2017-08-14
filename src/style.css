@@ -67,7 +67,7 @@ p {
     padding-left: 25px;
     padding-top: 25px;
     /* position: relative; */
-    line-height: 16px;
+    /* line-height: 16px; */
 }
 
 .laoshi-close {
@@ -180,7 +180,8 @@ p {
 
 #ambis {
     border: 1px solid rgba(0, 0, 0, 0.2);
-    color: white;
+    /* background-color: #8aba87; */
+    /* color: white; */
     /* line-height: 24px; */
     display: 'block';
     padding: 3px;
@@ -190,10 +191,9 @@ p {
     height: auto;
     top: 250px;
     left: 300px;
-    background-color: #8aba87;
     font-family: 'DejaVu Sans';
     font-size: 26px;
-    padding: 10px;
+    padding: 3px;
 }
 
 .dict {
@@ -209,7 +209,9 @@ p {
 
 #singles {
     border: 1px solid rgba(0, 0, 0, 0.2);
+    /* background-color: #8aba87; */
     /* color: white; */
+    background-color: white;
     color: black;
     /* line-height: 24px; */
     display: 'block';
@@ -220,10 +222,9 @@ p {
     height: auto;
     top: 250px;
     left: 300px;
-    /* background-color: #8aba87; */
-    background-color: white;
     font-family: 'DejaVu Sans';
     font-size: 26px;
+    padding: 3px;
 }
 
 #install-dict {
