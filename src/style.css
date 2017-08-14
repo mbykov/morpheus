@@ -41,32 +41,34 @@ p {
     -webkit-margin-after: 3px;
 }
 
-/* #header { */
-/*     font-family: 'DejaVu Sans'; */
-/*     color: #fff; */
-/*     background-color: #8aba87; */
-/*     text-align: center; */
-/*     font-size: 26px; */
-/*     padding: 5px; */
-/*     margin-top: 15px; */
-/*     margin-bottom: 25px; */
-/*     padding-top: 15px; */
-/*     padding-bottom: 25px; */
-/*     -webkit-app-region: drag; */
-/*     /\* margin-right: 15px; *\/ */
-/* } */
+.text {
+    font-family: 'DejaVu Sans';
+    /* color: #fff; */
+    /* background-color: #8aba87; */
+    text-align: center;
+    font-size: 26px;
+    padding: 5px;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    padding-top: 15px;
+    padding-bottom: 25px;
+    -webkit-app-region: drag;
+    /* position: relative; */
+    /* margin-right: 15px; */
+}
 
-/* #laoshi-header:focus{ */
-/*     outline: none; */
-/* } */
+#text:focus{
+    outline: none;
+}
 
-/* #laoshi-results { */
-/*     font-family: 'DejaVu Sans'; */
-/*     font-size: 16px; */
-/*     margin-left: 25px; */
-/*     margin-top: 25px; */
-/*     /\* line-height: 16px; *\/ */
-/* } */
+#results {
+    font-family: 'DejaVu Sans';
+    font-size: 16px;
+    padding-left: 25px;
+    padding-top: 25px;
+    /* position: relative; */
+    line-height: 16px;
+}
 
 .laoshi-close {
     float: right;
@@ -191,6 +193,7 @@ p {
     background-color: #8aba87;
     font-family: 'DejaVu Sans';
     font-size: 26px;
+    padding: 10px;
 }
 
 .dict {
@@ -228,6 +231,15 @@ p {
     font-face: bold;
     font-size: 20px;
     margin-bottom: 15px;
+    align-text: left;
+}
+
+.font16 {
+    font-size: 16px;
+}
+
+.font26 {
+    font-size: 26px;
 }
 
 #dict-name {

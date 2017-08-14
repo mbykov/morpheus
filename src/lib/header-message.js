@@ -9,8 +9,15 @@ const http = require('http')
 const tar = require('tar-fs')
 const gunzip = require('gunzip-maybe')
 const  Progress = require('progress-component');
+import Split from 'split.js'
 import png from './sections/check.png'
 
+let split = Split(['#text', '#results'], {
+    sizes: [50, 50],
+    cursor: 'col-resize',
+    // snapOffset: 0,
+    minSize: [0, 0]
+});
 
 export function headerMessage(mess) {
     let oText = create('div')
@@ -77,7 +84,7 @@ function bindMouseEvents(el, cl) {
         let cur = e.target
         if (!cur || cur.textContent.length < 2) return
         if (cur.classList.contains('ambis')) return
-        let oResults = q('#laoshi-results')
+        let oResults = q('#results')
         let oSingles = recreateDiv('singles')
         cur.textContent.split('').forEach(sym => {
             let symseg = _.find(cur.singles, single => single.dict == sym)
@@ -99,7 +106,7 @@ function bindMouseEvents(el, cl) {
     delegate(el, '.ambi', 'mouseover', function(e) {
         setCurrent(e)
         closePopups()
-        let oResults = q('#laoshi-results')
+        let oResults = q('#results')
         let oDicts = q('#laoshi-dicts')
         empty(oDicts)
         let test = q('.ambis')
@@ -168,6 +175,7 @@ function createDict(seg) {
     empty(oDicts)
     if (!seg.docs) return
     seg.docs.forEach(doc => {
+        // log('DOC', doc)
         let oDocs = create('div')
         let oType = span(doc.dname)
         oType.classList.add('type')
@@ -244,20 +252,26 @@ function showSection(name) {
 }
 
 function setInstallSection(config) {
-    let oHeader = q('#laoshi-header')
+    let oHeader = q('#text')
     empty(oHeader)
+    // recreate(oHeader)
+    oHeader.classList.add('font16')
     let odicts = q('#laoshi-dicts')
     empty(odicts)
+    split.setSizes([100, 0])
+
     oHeader.addEventListener('mouseover', closePopups(), false)
     // let fpath = path.join('src/lib/sections/install-dict.html')
     let fpath = 'src/lib/sections/install-dict.html'
     try {
         let html = jetpack.read(fpath)
         if (!html) return
-        odicts.innerHTML = html
+        oHeader.innerHTML = html
     } catch (err) {
         return
     }
+
+    return
 
     let ochcks = qs('.check')
     ochcks.forEach(ochck => {
@@ -269,30 +283,31 @@ function setInstallSection(config) {
         ochck.appendChild(img)
     })
 
+
     let cedict = q('#cedict')
     let bkrs = q('#bkrs')
     let submit = q('#install-dict')
     let oname = q('#dict-name')
     // let name
-    delegate(odicts, '.load-dict', 'click', function(e) {
+    delegate(oHeader, '.load-dict', 'click', function(e) {
         let chck = e.target
         let tr = chck.parentNode.parentNode
         if (config.dbs.includes(tr.id)) return chck.checked = false
-        odicts.name = tr.id
-        odicts.remove = false
-        let dname = [odicts.name, 'tar.gz'].join('.')
+        oHeader.name = tr.id
+        oHeader.remove = false
+        let dname = [oHeader.name, 'tar.gz'].join('.')
         oname.textContent = dname
         let rem = q('.remove-dict:checked')
         if (rem) rem.checked = false
         submit.value = 'install'
     })
-    delegate(odicts, '.remove-dict', 'click', function(e) {
+    delegate(oHeader, '.remove-dict', 'click', function(e) {
         let chck = e.target
         let tr = chck.parentNode.parentNode
         if (!config.dbs.includes(tr.id)) return chck.checked = false
-        odicts.name = tr.id
-        odicts.remove = true
-        let dname = ['installed', odicts.name, 'dictionary'].join(' ')
+        oHeader.name = tr.id
+        oHeader.remove = true
+        let dname = ['installed', oHeader.name, 'dictionary'].join(' ')
         oname.textContent = dname
         let load = q('.load-dict:checked')
         if (load) load.checked = false
@@ -302,9 +317,9 @@ function setInstallSection(config) {
 }
 
 function loadDict() {
-    let odicts = q('#laoshi-dicts')
-    if (odicts.remove) ipcRenderer.send('remove', odicts.name)
-    else ipcRenderer.send('install', odicts.name)
+    let oHeader = q('#text')
+    if (oHeader.remove) ipcRenderer.send('remove', oHeader.name)
+    else ipcRenderer.send('install', oHeader.name)
 }
 
 let bar, len, part = 0
