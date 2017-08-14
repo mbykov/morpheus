@@ -84,7 +84,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -221,13 +221,14 @@ app.on('ready', () => {
         if (!str) return
         if (str === oldstr) return
         oldstr = str
+        // log('CLIP', str)
 
         function somePromiseAPI() {
             return Promise.resolve().then(function () {
                 seg(dbs, str, function(err, res) {
                     if (err) return log('seg err', err)
                     mainWindow.webContents.send('parsed', res)
-                    clipboard.writeText('', 'selection')
+                    // clipboard.writeText('', 'selection')
                 })
                 return 'foo';
             }).then(function () {

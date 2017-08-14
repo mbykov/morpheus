@@ -20,7 +20,7 @@ const  Progress = require('progress-component');
 import png from './lib/sections/check.png'
 
 let split = Split(['#text', '#results'], {
-    sizes: [50, 50],
+    sizes: [60, 40],
     cursor: 'col-resize',
     // snapOffset: 0,
     minSize: [0, 0]
@@ -30,7 +30,7 @@ require('electron').ipcRenderer.on('parsed', (event, res) => {
     // let opro = q('#progress')
     // opro.classList.remove('hidden')
     // console.log('R:', res)
-    split.setSizes([50, 50])
+    split.setSizes([60, 40])
     let oHeader = q('#text')
     oHeader.classList.remove('font16')
     empty(oHeader)

@@ -28,6 +28,7 @@ html {
     height: 100%;
     overflow-y: hidden;
     overflow-x: hidden;
+    padding: 10px;
 }
 
 
@@ -45,7 +46,7 @@ p {
     font-family: 'DejaVu Sans';
     /* color: #fff; */
     /* background-color: #8aba87; */
-    text-align: center;
+    /* text-align: center; */
     font-size: 26px;
     padding: 5px;
     margin-top: 15px;
@@ -164,6 +165,8 @@ p {
 
 .ambi {
     cursor: pointer;
+    background-color: white;
+    color: black;
 }
 
 .ambi:hover {
@@ -183,6 +186,8 @@ p {
     /* background-color: #8aba87; */
     /* color: white; */
     /* line-height: 24px; */
+    background-color: white;
+    color: black;
     display: 'block';
     padding: 3px;
     position: absolute;
@@ -199,6 +204,7 @@ p {
 .dict {
     font-size: 26px;
     padding: 10px;
+    color: maroon;
 }
 
 .trns {
