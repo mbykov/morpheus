@@ -108,7 +108,11 @@ ipcMain.on('config', (event) => {
 })
 
 ipcMain.on('remove', (event, dname) => {
-    log('REMOVE', dname)
+    let dest = path.join(config.upath, 'chinese', dname)
+    log('REMOVE', dest)
+    jetpack.remove(dest)
+    app.relaunch()
+    app.quit()
 })
 
 ipcMain.on('install', (event, dname) => {

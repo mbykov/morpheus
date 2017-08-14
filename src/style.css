@@ -15,6 +15,7 @@ body {
     margin-top: 0;
     /* height: 100%; */
     min-height: 600px;
+    height: 100%;
 }
 
 html {
@@ -24,7 +25,9 @@ html {
 }
 
 #container {
-    /* height: 100%; */
+    height: 100%;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 
@@ -38,24 +41,32 @@ p {
     -webkit-margin-after: 3px;
 }
 
-#header {
-    font-family: 'DejaVu Sans';
-    color: #fff;
-    background-color: #8aba87;
-    text-align: center;
-    font-size: 26px;
-    padding: 5px;
-    margin-top: 15px;
-    margin-bottom: 25px;
-    padding-top: 15px;
-    padding-bottom: 25px;
-    -webkit-app-region: drag;
-    /* margin-right: 15px; */
-}
+/* #header { */
+/*     font-family: 'DejaVu Sans'; */
+/*     color: #fff; */
+/*     background-color: #8aba87; */
+/*     text-align: center; */
+/*     font-size: 26px; */
+/*     padding: 5px; */
+/*     margin-top: 15px; */
+/*     margin-bottom: 25px; */
+/*     padding-top: 15px; */
+/*     padding-bottom: 25px; */
+/*     -webkit-app-region: drag; */
+/*     /\* margin-right: 15px; *\/ */
+/* } */
 
-#laoshi-header:focus{
-    outline: none;
-}
+/* #laoshi-header:focus{ */
+/*     outline: none; */
+/* } */
+
+/* #laoshi-results { */
+/*     font-family: 'DejaVu Sans'; */
+/*     font-size: 16px; */
+/*     margin-left: 25px; */
+/*     margin-top: 25px; */
+/*     /\* line-height: 16px; *\/ */
+/* } */
 
 .laoshi-close {
     float: right;
@@ -74,14 +85,6 @@ p {
 
 .laoshi-current {
     background-color: grey;
-}
-
-#laoshi-results {
-    font-family: 'DejaVu Sans';
-    font-size: 16px;
-    margin-left: 25px;
-    margin-top: 25px;
-    /* line-height: 16px; */
 }
 
 #laoshi-morphs {
@@ -259,4 +262,47 @@ p {
 .check {
     width: 12px;
     height: 12px;
+}
+
+.split {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.gutter {
+    background-color: #eee;
+    /* background-color: black; */
+    background-repeat: no-repeat;
+    background-position: 50%;
+    height: 100%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('./lib/sections/vertical.png');
+    cursor: col-resize;
+}
+
+.split, .gutter.gutter-horizontal {
+    height: 100%;
+    float: left;
+}
+
+#left {
+    padding: 10px;
+    padding-top: 50px;
+    position: relative;
+    /* min-height: 100%; */
+    /* overflow-y: hidden; */
+    /* overflow-x: hidden; */
+}
+
+#right {
+    padding: 10px;
+    padding-top: 50px;
+    position: relative;
+    height: 100%;
+    /* min-height: 100%; */
+    /* overflow-y: hidden; */
+    /* overflow-x: hidden; */
 }

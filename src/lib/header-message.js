@@ -14,6 +14,7 @@ import png from './sections/check.png'
 
 export function headerMessage(mess) {
     let oText = create('div')
+    if (!mess) return
     mess.forEach(cl => {
         if (cl.segs) {
             let oClause = parseClause(cl)
@@ -65,14 +66,9 @@ function bindMouseEvents(el, cl) {
     delegate(el, '.seg', 'mouseover', function(e) {
         setCurrent(e)
         closePopups()
-        // let oAmbis = q('.ambis')
-        // if (oAmbis) remove(oAmbis)
-        // let oSingles = q('.singles')
-        // if (oSingles) remove(oSingles)
         if (e.ctrlKey) return
         let idx = e.target.getAttribute('idx')
         let seg = cl.segs[idx]
-        log('SEG', seg)
         createDict(seg)
     }, false);
 
@@ -283,6 +279,7 @@ function setInstallSection(config) {
         let tr = chck.parentNode.parentNode
         if (config.dbs.includes(tr.id)) return chck.checked = false
         odicts.name = tr.id
+        odicts.remove = false
         let dname = [odicts.name, 'tar.gz'].join('.')
         oname.textContent = dname
         let rem = q('.remove-dict:checked')
