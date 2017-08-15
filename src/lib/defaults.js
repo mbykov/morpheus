@@ -26,9 +26,9 @@ function setOptions(app) {
     // path to config:
     config.cpath = path.join(config.upath, config.file)
 
-    let rootdir = path.join(__dirname, '../..')
+    config.rootdir = path.join(__dirname, '../..')
     // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')
-    const src = path.resolve(rootdir, config.default)
+    const src = path.resolve(config.rootdir, config.default)
     const folder = path.resolve(config.upath, config.dtype)
     const dest = path.resolve(folder, config.default)
     // log('S', src)

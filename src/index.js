@@ -286,7 +286,7 @@ function setInstallSection(config) {
 
     oHeader.addEventListener('mouseover', closePopups(), false)
     // let fpath = path.join('src/lib/sections/install-dict.html')
-    let fpath = 'src/lib/sections/install-dict.html'
+    let fpath = path.join(config.rootdir, 'src/lib/sections/install-dict.html')
     try {
         let html = jetpack.read(fpath)
         if (!html) return
