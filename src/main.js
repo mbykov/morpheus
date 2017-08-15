@@ -5,8 +5,8 @@ const electron = require('electron')
 const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
-// const seg = require('hieroglyphic')
-let seg = require('../../segmenter')
+const seg = require('hieroglyphic')
+// let seg = require('../../segmenter')
 
 let setDefauts = require('./lib/defaults')
 
@@ -21,10 +21,9 @@ const http = require('http')
 // console.log('ISDEV', isDev)
 
 let config = setDefauts(app)
-log('=OPTIONS=', config)
+// log('=OPTIONS=', config)
 
 let dbs = createDbs(config)
-log('dbs', dbs.length)
 
 function createDbs(config) {
     let dbs = config.dbs
@@ -51,13 +50,10 @@ process.on('unhandledRejection', (reason, p) => {
 });
 
 
-// 新华社北京
-// 第三十七次会议 并发表重要讲话
 let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
 // let remote = new PouchDB('http:\/\/localhost:5984/chinese')
 // let db = new PouchDB(dbPath)
 // // let db = PouchDB(dpath, {adapter: 'websql'})
-
 
 let timerId = null
 let tray = null
@@ -84,7 +80,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -109,7 +105,6 @@ ipcMain.on('config', (event) => {
 
 ipcMain.on('remove', (event, dname) => {
     let dest = path.join(config.upath, 'chinese', dname)
-    log('REMOVE', dest)
     jetpack.remove(dest)
     app.relaunch()
     app.quit()

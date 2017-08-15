@@ -31,9 +31,9 @@ function setOptions(app) {
     const src = path.resolve(rootdir, config.default)
     const folder = path.resolve(config.upath, config.dtype)
     const dest = path.resolve(folder, config.default)
-    log('S', src)
-    log('F', folder)
-    log('D', dest)
+    // log('S', src)
+    // log('F', folder)
+    // log('D', dest)
     let dbs
     try {
         let dstate = jetpack.exists(folder)
@@ -42,7 +42,6 @@ function setOptions(app) {
         }
         dbs = jetpack.list(folder)
         if (!dbs || !dbs.length) {
-            log('COPY')
             jetpack.copy(src, dest, { matching: '**/*' })
         }
     } catch (err) {

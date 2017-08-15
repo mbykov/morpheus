@@ -271,7 +271,6 @@ ipcRenderer.on('section', function(event, text) {
 function showSection(name) {
     ipcRenderer.send('config')
     ipcRenderer.on('config', function(event, config) {
-        log('DBS', config.dbs)
         setInstallSection(config)
     })
 }
@@ -348,17 +347,17 @@ function loadDict() {
 let bar, len, part = 0
 
 ipcRenderer.on('bar', function(event, obj) {
-    let odicts = q('#laoshi-dicts')
+    let oHeader = q('#text')
     let ores = div('')
-    odicts.appendChild(ores);
+    oHeader.appendChild(ores);
     if (obj.wait) {
-        log('wait')
+        // log('wait')
         ores.textContent = 'process starting, please wait...'
     } else if (obj.start) {
-        log('=start=')
+        // log('=start=')
         len = obj.start*1.0
         bar = new Progress;
-        odicts.appendChild(bar.el);
+        ores.appendChild(bar.el);
     } else if (obj.part) {
         // log('part', obj.part)
         if (!bar) return
@@ -366,7 +365,7 @@ ipcRenderer.on('bar', function(event, obj) {
         let n = part*100/len
         bar.update(n);
     } else if (obj.end) {
-        log('complete')
+        // log('complete')
         ores.textContent = 'sucsess'
     } else if (obj.err) {
         let str = 'server connection error: '+ obj.err
