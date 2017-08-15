@@ -51,8 +51,8 @@
     "files": [
       "build/",
       "assets/",
-      "pouchdb/",
-      "main.js",
+      "cedict/",
+      "src",
       "package.json"
     ],
     "asarUnpack": "chinese",
