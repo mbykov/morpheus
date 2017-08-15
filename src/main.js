@@ -80,7 +80,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -111,17 +111,17 @@ ipcMain.on('remove', (event, dname) => {
 })
 
 ipcMain.on('install', (event, dname) => {
-    log('INSTALL START', dname)
+    // log('INSTALL START', dname)
 
     if (!dname) return
     let bar = {wait: 'wait'}
     mainWindow.webContents.send('bar', bar);
 
     const resourse = ['/dicts/', dname, '.tar.gz'].join('')
-    log('RESOURSE', resourse)
+    // log('RESOURSE', resourse)
 
     let dest = path.join(config.upath, 'chinese')
-    console.log('dest:', dest)
+    // console.log('dest:', dest)
     let req = http.request({
         host: 'en.diglossa.org', // 'localhost'
         // port: 80, // 3001,
@@ -129,12 +129,12 @@ ipcMain.on('install', (event, dname) => {
     })
 
     req.on('response', function(res){
-        log('=start=', req.statusCode)
+        // log('=start=', req.statusCode)
 
         jetpack.dir(dest) // , {empty: true}
 
         if (('' + req.statusCode).match(/^2\d\d$/)) {
-            log('res: happy')
+            // log('res: happy')
         } else if (('' + req.statusCode).match(/^5\d\d$/)) {
             log('res: some server error', req.statusCode)
             bar = {err: req.statusCode}
@@ -143,7 +143,7 @@ ipcMain.on('install', (event, dname) => {
             // but server at least returned correctly (in a HTTP protocol sense) formatted response
         }
         let len = parseInt(res.headers['content-length'], 10)
-        log('LEN', len)
+        // log('LEN', len)
         bar = {start: len}
         mainWindow.webContents.send('bar', bar);
 
@@ -156,7 +156,7 @@ ipcMain.on('install', (event, dname) => {
 
         res.on('end', function () {
             res.pipe(gunzip()).pipe(tar.extract(dest));
-            log('==complete==')
+            // log('==complete==')
             app.relaunch()
             app.quit()
             // log('APP NOT QUITTED')
