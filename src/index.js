@@ -50,7 +50,9 @@ function headerMessage(mess) {
             let oClause = parseClause(cl)
             oText.appendChild(oClause)
         } else {
-            let oSpace = span(cl.sp)
+            let oSpace = span()
+            let sp = cl.sp.replace('\n', '<br><br>')
+            oSpace.innerHTML = sp
             oText.appendChild(oSpace)
         }
     })
