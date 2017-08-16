@@ -212,18 +212,17 @@ app.on('ready', () => {
     let oldstr = null
     timerId = setInterval(function(){
         if (!dbs) return
-        if (!mainWindow) return
         let str = clipboard.readText('selection')
         if (!str) return
         if (str === oldstr) return
         oldstr = str
-        log('CLIP', str)
         // 胆探索和成功实践
 
         function somePromiseAPI() {
             return Promise.resolve().then(function () {
                 seg(dbs, str, function(err, res) {
                     if (err) return log('seg err', err)
+                    if (!mainWindow) return
                     mainWindow.webContents.send('parsed', res)
                 })
                 return 'foo';
