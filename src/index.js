@@ -148,7 +148,7 @@ function bindMouseEvents(el, cl) {
             let aseg = e.target
             let idx = e.target.getAttribute('idx')
             let idy = e.target.getAttribute('idy')
-            let cur = seg.ambis[idx][idy]
+            let cur = seg.ambis[idy][idx]
             createDict(cur)
         }, false);
         // delegate(oAmbis, '.seg', 'mouseout', function(e) {

@@ -82,6 +82,7 @@ function createWindow () {
 
     // mainWindow.webContents.openDevTools()
     mainWindow.focus()
+    // 胆探索和成功实践胆
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -216,14 +217,14 @@ app.on('ready', () => {
         if (!str) return
         if (str === oldstr) return
         oldstr = str
-        // log('CLIP', str)
+        log('CLIP', str)
+        // 胆探索和成功实践
 
         function somePromiseAPI() {
             return Promise.resolve().then(function () {
                 seg(dbs, str, function(err, res) {
                     if (err) return log('seg err', err)
                     mainWindow.webContents.send('parsed', res)
-                    // clipboard.writeText('', 'selection')
                 })
                 return 'foo';
             }).then(function () {
