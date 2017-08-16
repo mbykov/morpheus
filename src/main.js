@@ -80,7 +80,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
     mainWindow.focus()
     // 胆探索和成功实践胆
 
