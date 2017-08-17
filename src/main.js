@@ -5,8 +5,9 @@ const electron = require('electron')
 const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
-const seg = require('hieroglyphic')
-// let seg = require('../../segmenter')
+const band = require('speckled-band')
+// const seg = require('hieroglyphic')
+let seg = require('../../segmenter')
 
 let setDefauts = require('./lib/defaults')
 
@@ -80,7 +81,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
     mainWindow.focus()
     // 胆探索和成功实践胆
 
@@ -216,11 +217,18 @@ app.on('ready', () => {
         if (!str) return
         if (str === oldstr) return
         oldstr = str
-        // 胆探索和成功实践
 
-        function somePromiseAPI() {
+        let code = 'zh'
+        band(code, str, function(err, clauses) {
+            if (err) return
+            let clean = clauses.map(cl => {return cl.cl }).join('')
+            if (!clean.length) return
+            somePromiseAPI(clauses)
+        })
+
+        function somePromiseAPI(clauses) {
             return Promise.resolve().then(function () {
-                seg(dbs, str, function(err, res) {
+                seg(dbs, clauses, function(err, res) {
                     if (err) return log('seg err', err)
                     if (!mainWindow) return
                     mainWindow.webContents.send('parsed', res)
@@ -231,7 +239,6 @@ app.on('ready', () => {
             }).catch(console.log.bind(console))
         }
 
-        somePromiseAPI()
     }, 100)
 })
 

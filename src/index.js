@@ -22,7 +22,6 @@ import png from './lib/sections/check.png'
 let split = Split(['#text', '#results'], {
     sizes: [60, 40],
     cursor: 'col-resize',
-    // snapOffset: 0,
     minSize: [0, 0]
 });
 
@@ -42,6 +41,7 @@ require('electron').ipcRenderer.on('parsed', (event, res) => {
     oHeader.appendChild(oMess)
 })
 
+// 在构成上可分为单纯字和合体字两大类
 function headerMessage(mess) {
     let oText = create('div')
     if (!mess) return
