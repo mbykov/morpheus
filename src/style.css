@@ -9,25 +9,29 @@
 
 body {
     font-family: 'DejaVu Sans';
-    box-shadow: inset 0 2px 0px #dcffa6, 0 2px 5px #000;
-    margin: 2px;
-    margin-bottom: 5px;
-    margin-top: 0;
+    /* box-shadow: inset 0 2px 0px #dcffa6, 0 2px 5px #000; */
+    /* margin: 2px; */
+    /* margin-bottom: 5px; */
+    margin: 0;
     /* height: 100%; */
-    min-height: 600px;
+    /* min-height: 600px; */
     height: 100%;
+    background: none repeat scroll 0 0 #ffffee;
+    color: #333;
 }
 
 html {
     margin: 0;
     overflow-y: scroll;
+    overflow-x: hidden;
     height: 100%;
+    padding: 10px;
 }
 
 #container {
     height: 100%;
-    overflow-y: hidden;
-    overflow-x: hidden;
+    /* overflow-y: hidden; */
+    /* overflow-x: hidden; */
     padding: 10px;
 }
 
@@ -192,7 +196,8 @@ p {
     padding: 3px;
     position: absolute;
     z-index: 1000;
-    box-shadow: 0 0 10px 1px rgba(0,0,0,.3);
+    box-shadow: 0.15em 0.15em 1em rgba(0, 0, 0, 0.75);
+    /* box-shadow: 0 0 10px 1px rgba(0,0,0,.3); */
     height: auto;
     top: 250px;
     left: 300px;
@@ -224,7 +229,8 @@ p {
     padding: 3px;
     position: absolute;
     z-index: 1000;
-    box-shadow: 0 0 10px 1px rgba(0,0,0,.3);
+    box-shadow: 0.15em 0.15em 1em rgba(0, 0, 0, 0.75);
+    /* box-shadow: 0 0 10px 1px rgba(0,0,0,.3); */
     height: auto;
     top: 250px;
     left: 300px;
@@ -305,23 +311,4 @@ p {
 .split, .gutter.gutter-horizontal {
     height: 100%;
     float: left;
-}
-
-#left {
-    padding: 10px;
-    padding-top: 50px;
-    position: relative;
-    /* min-height: 100%; */
-    /* overflow-y: hidden; */
-    /* overflow-x: hidden; */
-}
-
-#right {
-    padding: 10px;
-    padding-top: 50px;
-    position: relative;
-    height: 100%;
-    /* min-height: 100%; */
-    /* overflow-y: hidden; */
-    /* overflow-x: hidden; */
 }
