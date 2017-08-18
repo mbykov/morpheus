@@ -33,6 +33,7 @@ require('electron').ipcRenderer.on('parsed', (event, res) => {
     let oHeader = q('#text')
     oHeader.classList.remove('font16')
     empty(oHeader)
+    oHeader.addEventListener("wheel", onWheel)
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
 
@@ -41,7 +42,14 @@ require('electron').ipcRenderer.on('parsed', (event, res) => {
     oHeader.appendChild(oMess)
 })
 
-// 在构成上可分为单纯字和合体字两大类
+function onWheel(e) {
+    let isShift = !!e.shiftKey;
+    if (!isShift) return
+    let oRes = q('#results')
+    oRes.scrollTop += e.deltaY
+    e.preventDefault()
+}
+
 function headerMessage(mess) {
     let oText = create('div')
     if (!mess) return
