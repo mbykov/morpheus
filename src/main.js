@@ -213,7 +213,7 @@ app.on('ready', () => {
     let oldstr = null
     timerId = setInterval(function(){
         if (!dbs) return
-        let str = clipboard.readText('selection')
+        let str = clipboard.readText()
         if (!str) return
         if (str === oldstr) return
         oldstr = str
