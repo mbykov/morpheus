@@ -6,8 +6,8 @@ const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
 const band = require('speckled-band')
-// const seg = require('hieroglyphic')
-let seg = require('../../segmenter')
+let seg = require('hieroglyphic')
+// let seg = require('../../segmenter')
 
 let setDefauts = require('./lib/defaults')
 
@@ -81,9 +81,8 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
     mainWindow.focus()
-    // 胆探索和成功实践胆
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -92,8 +91,9 @@ function createWindow () {
         // when you should delete the corresponding element.
         timerId = null
         mainWindow = null
-        tray = null
+        // tray = null
         dbs = null
+        seg = null
   })
 
   tray.on('click', () => {
@@ -223,21 +223,33 @@ app.on('ready', () => {
             if (err) return
             let clean = clauses.map(cl => {return cl.cl }).join('')
             if (!clean.length) return
-            somePromiseAPI(clauses)
-        })
+            // somePromiseAPI(clauses)
 
-        function somePromiseAPI(clauses) {
-            return Promise.resolve().then(function () {
+            Promise.resolve().then(function () {
                 seg(dbs, clauses, function(err, res) {
                     if (err) return log('seg err', err)
                     if (!mainWindow) return
                     mainWindow.webContents.send('parsed', res)
                 })
-                return 'foo';
+                // return 'foo';
             }).then(function () {
                 // log('seg ok', str)
             }).catch(console.log.bind(console))
-        }
+
+        })
+
+        // function somePromiseAPI(clauses) {
+        //     return Promise.resolve().then(function () {
+        //         seg(dbs, clauses, function(err, res) {
+        //             if (err) return log('seg err', err)
+        //             if (!mainWindow) return
+        //             mainWindow.webContents.send('parsed', res)
+        //         })
+        //         return 'foo';
+        //     }).then(function () {
+        //         // log('seg ok', str)
+        //     }).catch(console.log.bind(console))
+        // }
 
     }, 100)
 })
