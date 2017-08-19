@@ -25,10 +25,11 @@ let split = Split(['#text', '#results'], {
     minSize: [0, 0]
 });
 
-require('electron').ipcRenderer.on('parsed', (event, res) => {
+require('electron').ipcRenderer.on('parsed', (event, obj) => {
     // let opro = q('#progress')
     // opro.classList.remove('hidden')
     // console.log('R:', res)
+    let res = obj.res
     split.setSizes([60, 40])
     let oHeader = q('#text')
     oHeader.classList.remove('font16')
@@ -36,11 +37,27 @@ require('electron').ipcRenderer.on('parsed', (event, res) => {
     oHeader.addEventListener("wheel", onWheel)
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
+    let oRes = q('#results')
+    oRes.dnames = obj.dnames
+    setDictList(obj.dnames)
 
     let oMess = headerMessage(res)
     if (!oMess) return
     oHeader.appendChild(oMess)
 })
+
+function setDictList(dnames) {
+    // log('DN', dnames)
+    let oList = q('#dicts-list')
+    empty(oList)
+    oList.classList.add('dicts-list')
+    dnames.forEach(dn => {
+        let odn = span(dn)
+        odn.id = dn
+        oList.appendChild(odn)
+    })
+    return oList
+}
 
 function onWheel(e) {
     let isShift = !!e.shiftKey;
@@ -88,11 +105,6 @@ function parseClause(cl) {
     return oClause
 }
 
-// document.addEventListener("keydown", keyDown, false)
-
-// 第三十各地区要切 en arche en ho logos
-// 爾時世尊重說偈言
-
 let closePopups = function() {
     let oAmbis = q('.ambis')
     if (oAmbis) remove(oAmbis)
@@ -101,7 +113,6 @@ let closePopups = function() {
 }
 
 function bindMouseEvents(el, cl) {
-    // el.addEventListener('mouseout', closePopups, false)
 
     delegate(el, '.seg', 'mouseover', function(e) {
         setCurrent(e)
@@ -109,7 +120,7 @@ function bindMouseEvents(el, cl) {
         if (e.ctrlKey) return
         let idx = e.target.getAttribute('idx')
         let seg = cl.segs[idx]
-        createDict(seg)
+        showDicts(seg)
     }, false);
 
     delegate(el, '.seg', 'click', function(e) {
@@ -132,7 +143,7 @@ function bindMouseEvents(el, cl) {
         placePopup(coords, oSingles);
         delegate(oSingles, '.seg', 'mouseover', function(e) {
             let single = _.find(cur.singles, single => single.dict == e.target.textContent)
-            createDict(single)
+            showDicts(single)
         }, false);
     }, false)
 
@@ -159,7 +170,7 @@ function bindMouseEvents(el, cl) {
             let idx = e.target.getAttribute('idx')
             let idy = e.target.getAttribute('idy')
             let cur = seg.ambis[idy][idx]
-            createDict(cur)
+            showDicts(cur)
         }, false);
         // delegate(oAmbis, '.seg', 'mouseout', function(e) {
         //     closePopups()
@@ -204,11 +215,13 @@ function getCoords(el) {
     return {top: rect.top+28, left: rect.left};
 }
 
-function createDict(seg) {
+function showDicts(seg) {
     // log('SEG', seg)
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
     if (!seg.docs) return
+    // let oRes = q('#results')
+    // let oDicts = recreateDiv('#laoshi-dicts')
     seg.docs.forEach(doc => {
         // log('DOC', doc)
         let oDocs = create('div')
@@ -232,9 +245,11 @@ function createDict(seg) {
         oDocs.appendChild(oTrns)
         oDicts.appendChild(oDocs)
     })
+    // oRes.appendChild(oDicts)
 }
 
-// 是
+
+
 function cleanTrn(str) {
     str = str.trim()
     let oTrn = p()
@@ -265,18 +280,7 @@ function showMessage(str) {
 
 ipcRenderer.on('section', function(event, text) {
     showSection(text)
-    // if (text == 'Update available, downloading') {
-    //     let opro = q('#progress')
-    //     opro.classList.remove('hidden')
-    // }
 })
-
-/*
-  читаю options
-  клик на файле
-*/
-
-// install from tar.gz
 
 function showSection(name) {
     ipcRenderer.send('config')

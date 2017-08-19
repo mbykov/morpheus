@@ -81,7 +81,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -190,8 +190,7 @@ const template = [
     {
         label: 'Actions',
         submenu: [
-            // {label: 'replicate dict',  click() { mainWindow.webContents.send('section', 'replicate-dict') }},
-            {label: 'install dict.tar.gz',  click() { mainWindow.webContents.send('section', 'install-dict') }},
+            {label: 'dictionaries',  click() { mainWindow.webContents.send('section', 'install-dict') }},
             {label: 'signup/login'}
         ]
     },
@@ -223,13 +222,12 @@ app.on('ready', () => {
             if (err) return
             let clean = clauses.map(cl => {return cl.cl }).join('')
             if (!clean.length) return
-            // somePromiseAPI(clauses)
 
             Promise.resolve().then(function () {
                 seg(dbs, clauses, function(err, res) {
                     if (err) return log('seg err', err)
                     if (!mainWindow) return
-                    mainWindow.webContents.send('parsed', res)
+                    mainWindow.webContents.send('parsed', {res: res, dnames: config.dbs})
                 })
                 // return 'foo';
             }).then(function () {
@@ -237,19 +235,6 @@ app.on('ready', () => {
             }).catch(console.log.bind(console))
 
         })
-
-        // function somePromiseAPI(clauses) {
-        //     return Promise.resolve().then(function () {
-        //         seg(dbs, clauses, function(err, res) {
-        //             if (err) return log('seg err', err)
-        //             if (!mainWindow) return
-        //             mainWindow.webContents.send('parsed', res)
-        //         })
-        //         return 'foo';
-        //     }).then(function () {
-        //         // log('seg ok', str)
-        //     }).catch(console.log.bind(console))
-        // }
 
     }, 100)
 })
