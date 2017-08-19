@@ -28,7 +28,6 @@ let split = Split(['#text', '#results'], {
 require('electron').ipcRenderer.on('parsed', (event, obj) => {
     // let opro = q('#progress')
     // opro.classList.remove('hidden')
-    // console.log('R:', res)
     let res = obj.res
     split.setSizes([60, 40])
     let oHeader = q('#text')
@@ -47,7 +46,7 @@ require('electron').ipcRenderer.on('parsed', (event, obj) => {
 })
 
 function setDictList(dnames) {
-    // log('DN', dnames)
+    let oRes = q('#results')
     let oList = q('#dicts-list')
     empty(oList)
     oList.classList.add('dicts-list')
@@ -55,6 +54,18 @@ function setDictList(dnames) {
         let odn = span(dn)
         odn.id = dn
         oList.appendChild(odn)
+    })
+    delegate(oList, 'span', 'click', function(e) {
+        let dn = e.target.id
+        if (!dn) return
+        let index =  dnames.indexOf(dn)
+        if (index < 1) return
+        dnames.splice(index, 1)
+        dnames.unshift(dn)
+        oRes.dnames = dnames
+        ipcRenderer.send('dnames', dnames)
+        setDictList(dnames)
+        showDicts()
     })
     return oList
 }
@@ -113,13 +124,14 @@ let closePopups = function() {
 }
 
 function bindMouseEvents(el, cl) {
-
+    let oRes = q('#results')
     delegate(el, '.seg', 'mouseover', function(e) {
         setCurrent(e)
         closePopups()
         if (e.ctrlKey) return
         let idx = e.target.getAttribute('idx')
         let seg = cl.segs[idx]
+        oRes.current = seg
         showDicts(seg)
     }, false);
 
@@ -143,7 +155,7 @@ function bindMouseEvents(el, cl) {
         placePopup(coords, oSingles);
         delegate(oSingles, '.seg', 'mouseover', function(e) {
             let single = _.find(cur.singles, single => single.dict == e.target.textContent)
-            showDicts(single)
+            // showDicts(single)
         }, false);
     }, false)
 
@@ -170,7 +182,7 @@ function bindMouseEvents(el, cl) {
             let idx = e.target.getAttribute('idx')
             let idy = e.target.getAttribute('idy')
             let cur = seg.ambis[idy][idx]
-            showDicts(cur)
+            // showDicts(cur)
         }, false);
         // delegate(oAmbis, '.seg', 'mouseout', function(e) {
         //     closePopups()
@@ -215,15 +227,19 @@ function getCoords(el) {
     return {top: rect.top+28, left: rect.left};
 }
 
-function showDicts(seg) {
-    // log('SEG', seg)
+function showDicts() {
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
-    if (!seg.docs) return
-    // let oRes = q('#results')
-    // let oDicts = recreateDiv('#laoshi-dicts')
-    seg.docs.forEach(doc => {
-        // log('DOC', doc)
+    let oRes = q('#results')
+    let seg = oRes.current
+    if (!seg || !seg.docs) return
+    let ordered = []
+    oRes.dnames.forEach(dn => {
+        let tmps = _.filter(seg.docs, (doc) => { return doc.dname === dn})
+        ordered.push(tmps)
+    })
+
+    _.flatten(_.compact(ordered)).forEach(doc => {
         let oDocs = create('div')
         let oType = span(doc.dname)
         oType.classList.add('type')
@@ -283,10 +299,10 @@ ipcRenderer.on('section', function(event, text) {
 })
 
 function showSection(name) {
-    ipcRenderer.send('config')
-    ipcRenderer.on('config', function(event, config) {
-        setInstallSection(config)
-    })
+    // ipcRenderer.send('config')
+    // ipcRenderer.on('config', function(event, config) {
+    //     setInstallSection(config)
+    // })
 }
 
 function setInstallSection(config) {

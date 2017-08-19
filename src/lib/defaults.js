@@ -7,24 +7,29 @@ const gunzip = require('gunzip-maybe')
 
 // console.log('ISDEV', isDev)
 
-/*
-  - читаю options - список dbnames
-  - если нет dbmnames, createDefault - cedict
-  - создаю dbs
-*/
-
 module.exports = setOptions
 
 function setOptions(app) {
-    let config = {
-        dtype: 'chinese',
-        default: 'cedict',
-        file: 'morpheus-config.json',
-        upath: app.getPath('userData')
+    // path to config:
+    let upath = app.getPath('userData')
+    let fname = 'morpheus-config.json'
+    let cpath = path.join(upath, fname)
+    let config
+    try {
+        config = jetpack.read(cpath, 'json')
+    } catch (err) {
+        log('ERR', err)
     }
 
-    // path to config:
-    config.cpath = path.join(config.upath, config.file)
+    if (config) return config
+
+    config = {
+        dtype: 'chinese',
+        default: 'cedict',
+        file: fname,
+        upath: upath,
+        cpath: cpath
+    }
 
     config.rootdir = path.join(__dirname, '../..')
     // const fromPath = path.resolve(__dirname, '../app.asar.unpacked/chinese')

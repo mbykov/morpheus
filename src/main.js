@@ -105,6 +105,15 @@ ipcMain.on('config', (event) => {
     mainWindow.webContents.send('config', config);
 })
 
+ipcMain.on('dnames', (event, dnames) => {
+    config.dbs = dnames
+    try {
+        jetpack.write(config.cpath, config)
+    } catch (err) {
+        console.log('ERR', err)
+    }
+})
+
 ipcMain.on('remove', (event, dname) => {
     let dest = path.join(config.upath, 'chinese', dname)
     jetpack.remove(dest)
