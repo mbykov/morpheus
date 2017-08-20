@@ -2,8 +2,6 @@ const path = require('path')
 import {q, qs, create, span, div, p, empty, remove, recreate, recreateDiv, log} from './lib/utils.js'
 import _ from 'lodash'
 import './style.css'
-// import {q, qs, create, span, empty, log} from './lib/utils.js'
-// import {headerMessage} from './lib/header-message.js'
 import Split from 'split.js'
 import gutter from './lib/sections/vertical.png'
 let delegate = require('delegate');
@@ -27,8 +25,6 @@ let split = Split(['#text', '#results'], {
 });
 
 require('electron').ipcRenderer.on('parsed', (event, res) => {
-    // let opro = q('#progress')
-    // opro.classList.remove('hidden')
     split.setSizes([60, 40])
     let oHeader = q('#text')
     oHeader.classList.remove('font16')
@@ -60,39 +56,6 @@ function doc4seg(res) {
         }
     })
     return mess
-}
-
-function setDictList(dnames) {
-    let oRes = q('#results')
-    let oList = q('#dicts-list')
-    empty(oList)
-    oList.classList.add('dicts-list')
-    dnames.forEach(dn => {
-        let odn = span(dn)
-        odn.id = dn
-        oList.appendChild(odn)
-    })
-    delegate(oList, 'span', 'click', function(e) {
-        let dn = e.target.id
-        if (!dn) return
-        let index =  dnames.indexOf(dn)
-        if (index < 1) return
-        dnames.splice(index, 1)
-        dnames.unshift(dn)
-        oRes.dnames = dnames
-        ipcRenderer.send('dnames', dnames)
-        setDictList(dnames)
-        showDicts()
-    })
-    return oList
-}
-
-function onWheel(e) {
-    let isShift = !!e.shiftKey;
-    if (!isShift) return
-    let oRes = q('#results')
-    oRes.scrollTop += e.deltaY
-    e.preventDefault()
 }
 
 function headerMessage(mess) {
@@ -135,12 +98,13 @@ function parseClause(cl) {
         })
         oSeg.singles = _.compact(singles)
     })
-    bindMouseEvents(oClause, cl)
-    bindSegEvent(oClause, cl)
+    // bindMouseEvents(oClause, cl)
+    bindOverEvent(oClause, cl)
+    bindClickEvent(oClause, cl)
     return oClause
 }
 
-function bindSegEvent(el, cl) {
+function bindOverEvent(el, cl) {
     let oRes = q('#results')
     delegate(el, '.seg', 'mouseover', function(e) {
         moveCurrent(e)
@@ -150,6 +114,43 @@ function bindSegEvent(el, cl) {
         oRes.current = seg
         showDicts(seg)
     }, false);
+}
+
+function bindClickEvent(el, cl) {
+    delegate(el, '.seg', 'click', function(e) {
+        let oHeader = q('#text')
+        let cur = e.target
+        let idx = e.target.getAttribute('idx')
+        let seg = cl.segs[idx]
+        // log('SEG', seg)
+        let gdocs = compactDocs(seg.dict, cl.gdocs)
+        gdocs = _.filter(gdocs, (doc) => { return doc.dict != seg.dict })
+        // log('G', gdocs)
+        let segs = segmenter(seg.dict, gdocs)
+        // log('SG', segs)
+        let osegs = createSegPopup(segs, cl)
+        // log('OS', osegs)
+        oHeader.appendChild(osegs)
+        let coords = getCoords(cur);
+        // log('coord', coords)
+        placePopup(coords, osegs);
+    })
+}
+
+function createSegPopup(segs, cl) {
+    let oSegs = create('div')
+    oSegs.classList.add('segs')
+    segs.forEach(seg => {
+        let oseg = span(seg.dict)
+        oseg.classList.add('seg')
+        let idx = _.find(cl.segs, s => { return s.dict == seg.dict})
+        oseg.setAttribute('idx', idx)
+        oSegs.appendChild(oseg)
+        let oSpace = span(' ')
+        oSegs.appendChild(oSpace)
+    })
+    bindClickEvent(oSegs, cl)
+    return oSegs
 }
 
 function bindMouseEvents(el, cl) {
@@ -164,12 +165,6 @@ function bindMouseEvents(el, cl) {
     //     showDicts(seg)
     // }, false);
 
-    delegate(el, '.seg', 'click', function(e) {
-        let cur = e.target
-        let idx = e.target.getAttribute('idx')
-        let seg = cl.segs[idx]
-        log('C', seg.docs)
-    })
     // SINGLES
     delegate(el, '.seg_', 'click', function(e) {
         moveCurrent(e)
@@ -186,7 +181,7 @@ function bindMouseEvents(el, cl) {
             oSingles.appendChild(oSym)
         })
         if (oSingles.childNodes.length) oHeader.appendChild(oSingles)
-        var coords = getCoords(cur);
+        let coords = getCoords(cur);
         placePopup(coords, oSingles);
         delegate(oSingles, '.seg', 'mouseover', function(e) {
             let single = _.find(cur.singles, single => single.dict == e.target.textContent)
@@ -206,9 +201,9 @@ function bindMouseEvents(el, cl) {
 
         let idx = e.target.getAttribute('idx')
         let seg = cl.segs[idx]
-        let oAmbis  = createAmbi(e, seg)
+        let oAmbis  = createAmbi(seg)
         oHeader.appendChild(oAmbis)
-        var coords = getCoords(e.target);
+        let coords = getCoords(e.target);
         placePopup(coords, oAmbis);
 
         delegate(oAmbis, '.seg', 'mouseover', function(e) {
@@ -221,14 +216,14 @@ function bindMouseEvents(el, cl) {
     }, false);
 }
 
+
 function moveCurrent(e) {
     let curs = qs('.current')
     curs.forEach(cur => {cur.classList.remove('current')})
     e.target.classList.add('current')
 }
 
-// 第三十各地区要切 实把
-function createAmbi(e, seg) {
+function createAmbi(seg) {
     let oAmbis = recreateDiv('ambis')
     seg.ambis.forEach((asegs, idy) => {
         let oAmbi = create('div')
@@ -450,4 +445,37 @@ function compactDocs(str, docs) {
         })
     }
     return _.sortBy(cdocs, 'start')
+}
+
+function setDictList(dnames) {
+    let oRes = q('#results')
+    let oList = q('#dicts-list')
+    empty(oList)
+    oList.classList.add('dicts-list')
+    dnames.forEach(dn => {
+        let odn = span(dn)
+        odn.id = dn
+        oList.appendChild(odn)
+    })
+    delegate(oList, 'span', 'click', function(e) {
+        let dn = e.target.id
+        if (!dn) return
+        let index =  dnames.indexOf(dn)
+        if (index < 1) return
+        dnames.splice(index, 1)
+        dnames.unshift(dn)
+        oRes.dnames = dnames
+        ipcRenderer.send('dnames', dnames)
+        setDictList(dnames)
+        showDicts()
+    })
+    return oList
+}
+
+function onWheel(e) {
+    let isShift = !!e.shiftKey;
+    if (!isShift) return
+    let oRes = q('#results')
+    oRes.scrollTop += e.deltaY
+    e.preventDefault()
 }

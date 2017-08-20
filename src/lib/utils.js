@@ -57,6 +57,11 @@ export function remove(el) {
     el.parentElement.removeChild(el);
 }
 
+export function removeAll(sel) {
+    let els = document.querySelectorAll(sel);
+    els.forEach(el => { el.parentElement.removeChild(el)})
+}
+
 // function closeAll() {
 //     words = null
 //     // window.close()
