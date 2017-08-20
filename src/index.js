@@ -8,6 +8,7 @@ import Split from 'split.js'
 import gutter from './lib/sections/vertical.png'
 let delegate = require('delegate');
 import {phonetic} from './lib/phonetic'
+import {segmenter} from '../../segmenter'
 
 const {ipcRenderer} = require('electron')
 // const shell = require('electron').shell
@@ -25,10 +26,9 @@ let split = Split(['#text', '#results'], {
     minSize: [0, 0]
 });
 
-require('electron').ipcRenderer.on('parsed', (event, obj) => {
+require('electron').ipcRenderer.on('parsed', (event, res) => {
     // let opro = q('#progress')
     // opro.classList.remove('hidden')
-    let res = obj.res
     split.setSizes([60, 40])
     let oHeader = q('#text')
     oHeader.classList.remove('font16')
@@ -36,14 +36,31 @@ require('electron').ipcRenderer.on('parsed', (event, obj) => {
     oHeader.addEventListener("wheel", onWheel)
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
-    let oRes = q('#results')
-    oRes.dnames = obj.dnames
-    setDictList(obj.dnames)
 
-    let oMess = headerMessage(res)
-    if (!oMess) return
+    // log('R', res)
+    if (!res.docs) return
+    let oRes = q('#results')
+    oRes.dnames = res.dnames
+    setDictList(res.dnames)
+
+    let mess = doc4seg(res)
+    // log('M', mess)
+
+    let oMess = headerMessage(mess)
     oHeader.appendChild(oMess)
 })
+
+function doc4seg(res) {
+    let mess = []
+    res.clauses.forEach(clause => {
+        if (clause.sp) mess.push({sp: clause.sp})
+        else {
+            let gdocs = compactDocs(clause.cl, res.docs)
+            mess.push({cl: clause.cl, segs: segmenter(clause.cl, gdocs), gdocs: gdocs })
+        }
+    })
+    return mess
+}
 
 function setDictList(dnames) {
     let oRes = q('#results')
@@ -80,7 +97,6 @@ function onWheel(e) {
 
 function headerMessage(mess) {
     let oText = create('div')
-    if (!mess) return
     mess.forEach(cl => {
         if (cl.segs) {
             let oClause = parseClause(cl)
@@ -93,6 +109,13 @@ function headerMessage(mess) {
         }
     })
     return oText
+}
+
+let closePopups = function() {
+    let oAmbis = q('.ambis')
+    if (oAmbis) remove(oAmbis)
+    let oSingles = q('.singles')
+    if (oSingles) remove(oSingles)
 }
 
 function parseClause(cl) {
@@ -113,34 +136,46 @@ function parseClause(cl) {
         oSeg.singles = _.compact(singles)
     })
     bindMouseEvents(oClause, cl)
+    bindSegEvent(oClause, cl)
     return oClause
 }
 
-let closePopups = function() {
-    let oAmbis = q('.ambis')
-    if (oAmbis) remove(oAmbis)
-    let oSingles = q('.singles')
-    if (oSingles) remove(oSingles)
-}
-
-function bindMouseEvents(el, cl) {
+function bindSegEvent(el, cl) {
     let oRes = q('#results')
     delegate(el, '.seg', 'mouseover', function(e) {
-        setCurrent(e)
-        closePopups()
+        moveCurrent(e)
         if (e.ctrlKey) return
         let idx = e.target.getAttribute('idx')
         let seg = cl.segs[idx]
         oRes.current = seg
         showDicts(seg)
     }, false);
+}
+
+function bindMouseEvents(el, cl) {
+    // let oRes = q('#results')
+    // delegate(el, '.seg', 'mouseover', function(e) {
+    //     moveCurrent(e)
+    //     closePopups()
+    //     if (e.ctrlKey) return
+    //     let idx = e.target.getAttribute('idx')
+    //     let seg = cl.segs[idx]
+    //     oRes.current = seg
+    //     showDicts(seg)
+    // }, false);
 
     delegate(el, '.seg', 'click', function(e) {
-        setCurrent(e)
+        let cur = e.target
+        let idx = e.target.getAttribute('idx')
+        let seg = cl.segs[idx]
+        log('C', seg.docs)
+    })
+    // SINGLES
+    delegate(el, '.seg_', 'click', function(e) {
+        moveCurrent(e)
         let cur = e.target
         if (!cur || cur.textContent.length < 2) return
         if (cur.classList.contains('ambis')) return
-        // let oResults = q('#results')
         let oHeader = q('#text')
         let oSingles = recreateDiv('singles')
         cur.textContent.split('').forEach(sym => {
@@ -161,9 +196,8 @@ function bindMouseEvents(el, cl) {
 
     // AMBIES
     delegate(el, '.ambi', 'mouseover', function(e) {
-        setCurrent(e)
+        moveCurrent(e)
         closePopups()
-        let oResults = q('#results')
         let oHeader = q('#text')
         let oDicts = q('#laoshi-dicts')
         empty(oDicts)
@@ -182,15 +216,12 @@ function bindMouseEvents(el, cl) {
             let idx = e.target.getAttribute('idx')
             let idy = e.target.getAttribute('idy')
             let cur = seg.ambis[idy][idx]
-            // showDicts(cur)
+            showDicts(cur)
         }, false);
-        // delegate(oAmbis, '.seg', 'mouseout', function(e) {
-        //     closePopups()
-        // }, false);
     }, false);
 }
 
-function setCurrent(e) {
+function moveCurrent(e) {
     let curs = qs('.current')
     curs.forEach(cur => {cur.classList.remove('current')})
     e.target.classList.add('current')
@@ -227,11 +258,11 @@ function getCoords(el) {
     return {top: rect.top+28, left: rect.left};
 }
 
-function showDicts() {
+function showDicts(seg) {
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
     let oRes = q('#results')
-    let seg = oRes.current
+    seg = seg || oRes.current
     if (!seg || !seg.docs) return
     let ordered = []
     oRes.dnames.forEach(dn => {
@@ -299,10 +330,10 @@ ipcRenderer.on('section', function(event, text) {
 })
 
 function showSection(name) {
-    // ipcRenderer.send('config')
-    // ipcRenderer.on('config', function(event, config) {
-    //     setInstallSection(config)
-    // })
+    ipcRenderer.send('config')
+    ipcRenderer.on('config', function(event, config) {
+        setInstallSection(config)
+    })
 }
 
 function setInstallSection(config) {
@@ -403,4 +434,20 @@ ipcRenderer.on('bar', function(event, obj) {
     }
 })
 
-// 新华社北京
+function compactDocs(str, docs) {
+    let gdocs = _.groupBy(docs, 'dict')
+    let cdocs = []
+    for (let dict in gdocs) {
+        let indices = []
+        let idx = str.indexOf(dict)
+        while (idx != -1) {
+            indices.push(idx);
+            idx = str.indexOf(dict, idx + 1);
+        }
+        indices.forEach(idx => {
+            let res = {dict: dict, size: dict.length, start: idx, docs: gdocs[dict]}
+            cdocs.push(res)
+        })
+    }
+    return _.sortBy(cdocs, 'start')
+}

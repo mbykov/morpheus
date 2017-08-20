@@ -6,10 +6,11 @@ const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
 const band = require('speckled-band')
-let seg = require('hieroglyphic')
+// let seg = require('hieroglyphic')
 // let seg = require('../../segmenter')
 
 let setDefauts = require('./lib/defaults')
+let query = require('./lib/queryDBs')
 
 let PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
@@ -24,25 +25,25 @@ const http = require('http')
 let config = setDefauts(app)
 // log('=OPTIONS=', config)
 
-let dbs = createDbs(config)
+// let dbs = createDbs(config)
 
-function createDbs(config) {
-    let dbs = config.dbs
-    let databases = []
-    dbs.forEach(dn => {
-        let dpath = path.resolve(config.upath, config.dtype, dn)
-        let dstate = jetpack.exists(dpath)
-        if (dstate) {
-            let db = new PouchDB(dpath)
-            db.dname = dn
-            databases.push(db)
-            // log('D', db)
-        } else {
-            log('NO DB', dn, dpath)
-        }
-    })
-    return databases
-}
+// function createDbs(config) {
+//     let dbs = config.dbs
+//     let databases = []
+//     dbs.forEach(dn => {
+//         let dpath = path.resolve(config.upath, config.dtype, dn)
+//         let dstate = jetpack.exists(dpath)
+//         if (dstate) {
+//             let db = new PouchDB(dpath)
+//             db.dname = dn
+//             databases.push(db)
+//             // log('D', db)
+//         } else {
+//             log('NO DB', dn, dpath)
+//         }
+//     })
+//     return databases
+// }
 
 // app.quit()
 
@@ -92,8 +93,8 @@ function createWindow () {
         timerId = null
         mainWindow = null
         // tray = null
-        dbs = null
-        seg = null
+        query = null
+        // seg = null
   })
 
   tray.on('click', () => {
@@ -220,7 +221,7 @@ Menu.setApplicationMenu(menu)
 app.on('ready', () => {
     let oldstr = null
     timerId = setInterval(function(){
-        if (!dbs) return
+        if (!query) return
         let str = clipboard.readText()
         if (!str) return
         if (str === oldstr) return
@@ -233,11 +234,17 @@ app.on('ready', () => {
             if (!clean.length) return
 
             Promise.resolve().then(function () {
-                seg(dbs, clauses, function(err, res) {
+                query(clauses, config, function(err, res) {
                     if (err) return log('seg err', err)
                     if (!mainWindow) return
-                    mainWindow.webContents.send('parsed', {res: res, dnames: config.dbs})
+                    // log('QRES', res[0])
+                    mainWindow.webContents.send('parsed', {clauses: clauses, docs: res, dnames: config.dbs})
                 })
+                // seg(dbs, clauses, function(err, res) {
+                //     if (err) return log('seg err', err)
+                //     if (!mainWindow) return
+                //     mainWindow.webContents.send('parsed', {res: res, dnames: config.dbs})
+                // })
                 // return 'foo';
             }).then(function () {
                 // log('seg ok', str)
