@@ -1,5 +1,5 @@
 const path = require('path')
-import {q, qs, create, span, div, p, empty, remove, recreate, recreateDiv, log} from './lib/utils.js'
+import {q, qs, create, span, div, p, empty, remove, removeAll, recreate, recreateDiv, log} from './lib/utils.js'
 import _ from 'lodash'
 import './style.css'
 import Split from 'split.js'
@@ -77,16 +77,17 @@ function headerMessage(mess) {
 let closePopups = function() {
     let oAmbis = q('.ambis')
     if (oAmbis) remove(oAmbis)
-    let oSingles = q('.singles')
-    if (oSingles) remove(oSingles)
+    // let oSegs = qs('.segs')
+    // if (oSegs)
+    removeAll('.segs')
 }
 
 function parseClause(cl) {
     let oClause = create('span')
     oClause.classList.add('clause')
-    cl.segs.forEach((seg, idx) => {
+    cl.segs.forEach(seg => {
         let oSeg = span(seg.dict)
-        oSeg.setAttribute('idx', idx)
+        oSeg.setAttribute('idx', seg.idx)
         let klass = (seg.docs) ? 'seg' : 'ambi'
         oSeg.classList.add(klass)
         oSeg.classList.remove('current')
@@ -107,10 +108,12 @@ function parseClause(cl) {
 function bindOverEvent(el, cl) {
     let oRes = q('#results')
     delegate(el, '.seg', 'mouseover', function(e) {
+        closePopups()
         moveCurrent(e)
         if (e.ctrlKey) return
         let idx = e.target.getAttribute('idx')
-        let seg = cl.segs[idx]
+        // log('IDX', idx)
+        let seg = cl.gdocs[idx]
         oRes.current = seg
         showDicts(seg)
     }, false);
@@ -121,7 +124,8 @@ function bindClickEvent(el, cl) {
         let oHeader = q('#text')
         let cur = e.target
         let idx = e.target.getAttribute('idx')
-        let seg = cl.segs[idx]
+        let seg = cl.gdocs[idx]
+        if (seg.dict.length == 1) return
         // log('SEG', seg)
         let gdocs = compactDocs(seg.dict, cl.gdocs)
         gdocs = _.filter(gdocs, (doc) => { return doc.dict != seg.dict })
@@ -143,7 +147,7 @@ function createSegPopup(segs, cl) {
     segs.forEach(seg => {
         let oseg = span(seg.dict)
         oseg.classList.add('seg')
-        let idx = _.find(cl.segs, s => { return s.dict == seg.dict})
+        let idx = _.findIndex(cl.gdocs, s => { return s.dict == seg.dict})
         oseg.setAttribute('idx', idx)
         oSegs.appendChild(oseg)
         let oSpace = span(' ')
