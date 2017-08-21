@@ -47,17 +47,20 @@ require('electron').ipcRenderer.on('parsed', (event, res) => {
 })
 
 function doc4seg(res) {
+    // log('=R=', res)
     let mess = []
     res.clauses.forEach(clause => {
         if (clause.sp) mess.push({sp: clause.sp})
         else {
-            let gdocs = compactDocs(clause.cl, res.docs)
-            // ========= повторяю gdocs в каждом clause
-            mess.push({cl: clause.cl, segs: segmenter(clause.cl, gdocs), gdocs: gdocs })
+            let sres = segmenter(clause.cl, res.docs)
+            // log('=SRES=', sres)
+            mess.push({cl: clause.cl, segs: sres.segs, gdocs: sres.gdocs })
         }
     })
+    // log('=M=', mess)
     return mess
 }
+// 内蒙古自治区
 
 function headerMessage(mess) {
     let oText = create('div')
@@ -78,8 +81,6 @@ function headerMessage(mess) {
 let closePopups = function() {
     let oAmbis = q('.ambis')
     if (oAmbis) remove(oAmbis)
-    // let oSegs = qs('.segs')
-    // if (oSegs)
     removeAll('.segs')
 }
 
@@ -88,35 +89,51 @@ function parseClause(cl) {
     oClause.classList.add('clause')
     cl.segs.forEach((seg, idx) => {
         let oSeg = span(seg.dict)
-        let sidx = (seg.docs) ? seg.idx : idx // there are no ambis in gdocs by definition
-        oSeg.setAttribute('idx', sidx)
+        // let sidx = (seg.docs) ? seg.idx : idx // there are no ambis in gdocs by definition
+        oSeg.setAttribute('idx', seg.idx)
         let klass = (seg.docs) ? 'seg' : 'ambi'
         oSeg.classList.add(klass)
-        oSeg.classList.remove('current')
+        // oSeg.classList.remove('current')
         oClause.appendChild(oSeg)
-        // let singles = []
-        // seg.dict.split('').forEach(sym => {
-        //     let symseg = _.find(cl.singles, single => single.dict == sym)
-        //     singles.push(symseg)
-        // })
-        // oSeg.singles = _.compac(singles)
     })
     bindOverEvent(oClause, cl)
     bindClickEvent(oClause, cl)
-    bindAmbiEvents(oClause, cl)
+    // bindAmbiEvents(oClause, cl)
     return oClause
 }
 
 function bindOverEvent(el, cl) {
     let oRes = q('#results')
+    // show dicts:
     delegate(el, '.seg', 'mouseover', function(e) {
         if (el.classList.contains('clause')) closePopups()
         moveCurrent(e)
         if (e.ctrlKey) return
+        log('EL', e.target)
         let idx = e.target.getAttribute('idx')
         let seg = cl.gdocs[idx]
         oRes.current = seg
         showDicts(seg)
+    }, false);
+
+    // born ambis popup:
+    delegate(el, '.ambi', 'mouseover', function(e) {
+        let test = q('#ambis')
+        if (test) return
+        moveCurrent(e)
+        closePopups()
+        let oHeader = q('#text')
+        let oDicts = q('#laoshi-dicts')
+        empty(oDicts)
+
+        let idx = e.target.getAttribute('idx')
+        let seg = cl.segs[idx] // there are no ambis in gdocs
+        // seg.aidx = idx
+        // log('S', idx, seg)
+        let oAmbis  = createAmbis(seg, cl)
+        oHeader.appendChild(oAmbis)
+        let coords = getCoords(e.target);
+        placePopup(coords, oAmbis);
     }, false);
 }
 
@@ -135,21 +152,25 @@ function bindClickEvent(el, cl) {
         else seg = cl.gdocs[idx]
         // log('SEG', seg)
         if (seg.dict.length == 1) return
+        // log('ELEM', e.target)
 
-        // let gdocs = compactDocs(seg.dict, cl.gdocs)
-        let gdocs = _.filter(cl.gdocs, (doc) => { return doc.dict != seg.dict })
-        // глупость написана - gdocs - obj
-        // log('Gdocs', gdocs)
-        let segs = segmenter(seg.dict, gdocs)
+        // let gdocs = _.filter(cl.gdocs, (doc) => { return doc.dict != seg.dict })
+        // log('Gdocs', cl.gdocs)
+        let docs = _.values(cl.gdocs)
+        docs = _.flatten(docs.map(doc => { return doc.docs}))
+        // log('Vdocs', docs)
+        docs = _.filter(docs, (doc) => { return doc.dict.length < seg.dict.length })
+        let segs = segmenter(seg.dict, docs).segs
         // log('SGs', segs)
+
         let osegs
         if (segs[0].ambis) {
             let aseg = segs[0]
             aseg.aidx = _.findIndex(cl.segs, s => { return s.dict == aseg.dict})
             // log('aSG', aseg)
+            let test = q('#ambis')
+            if (test) return
             osegs = createAmbis(segs[0], cl)
-            // bindOverEvent(osegs, cl)
-            // bindAmbiEvents(osegs, cl)
         }
         else osegs = createSegPopup(segs, cl)
         // log('OS', osegs)
@@ -158,6 +179,7 @@ function bindClickEvent(el, cl) {
         // log('coord', coords)
         placePopup(coords, osegs);
     })
+
 }
 
 // 内蒙古自治区
@@ -166,9 +188,9 @@ function createSegPopup(segs, cl) {
     oSegs.classList.add('segs')
     segs.forEach(seg => {
         let oseg = span(seg.dict)
-        let idx = _.findIndex(cl.gdocs, s => { return s.dict == seg.dict})
-        oseg.classList.add('seg')
-        oseg.setAttribute('idx', idx)
+        oseg.setAttribute('idx', seg.idx)
+        if (seg.docs) oseg.classList.add('seg')
+        else oseg.classList.add('ambi')
         oSegs.appendChild(oseg)
         let oSpace = span(' ')
         oSegs.appendChild(oSpace)
@@ -178,30 +200,8 @@ function createSegPopup(segs, cl) {
     return oSegs
 }
 
-function bindAmbiEvents(el, cl) {
-    delegate(el, '.ambi', 'mouseover', function(e) {
-        moveCurrent(e)
-        closePopups()
-        let oHeader = q('#text')
-        let oDicts = q('#laoshi-dicts')
-        empty(oDicts)
-        let test = q('.ambis')
-        if (test) return
-
-        let idx = e.target.getAttribute('idx')
-        let seg = cl.segs[idx] // there are no ambis in gdocs
-        seg.aidx = idx
-        // log('S', idx, seg)
-        let oAmbis  = createAmbis(seg, cl)
-        oHeader.appendChild(oAmbis)
-        let coords = getCoords(e.target);
-        placePopup(coords, oAmbis);
-    }, false);
-}
-
-
 function createAmbis(seg, cl) {
-    log('CRE AMB SG', seg)
+    // log('CRE AMB SG', seg)
     let oAmbis = recreateDiv('ambis')
     seg.ambis.forEach((asegs, idy) => {
         let oAmbi = create('div')
@@ -225,11 +225,13 @@ function createAmbis(seg, cl) {
 // .seg внутри .ambis
 function bindOverAmbis(el, seg) {
     delegate(el, '.seg', 'mouseover', function(e) {
-        let aseg = e.target
+        // let aseg = e.target
+        log('OAm', e.target)
+        log('OAms', seg)
         let idx = e.target.getAttribute('idx')
         let idy = e.target.getAttribute('idy')
         let cur = seg.ambis[idy][idx]
-        log('CUR', cur)
+        log('OACur', cur)
         showDicts(cur)
     }, false);
 }
@@ -257,8 +259,8 @@ function showDicts(seg) {
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
     let oRes = q('#results')
-    log('SEG', seg)
-    console.log('ORD1', seg.docs)
+    log('DICTseg:', seg)
+    // console.log('ORD1', seg.docs)
     // seg = seg || oRes.current
     if (!seg || !seg.docs) return
     let ordered = []
@@ -267,8 +269,8 @@ function showDicts(seg) {
         ordered.push(tmps)
     })
     let flats = _.flatten(_.compact(ordered))
-    log('ORD2', seg.docs)
-    log('FL', flats)
+    // log('ORD2', seg.docs)
+    // log('FL', flats)
 
     flats.forEach(doc => {
         let oDocs = create('div')
