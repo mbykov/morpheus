@@ -91,8 +91,8 @@ function parseClause(cl) {
         let oSeg = span(seg.dict)
         // let sidx = (seg.docs) ? seg.idx : idx // there are no ambis in gdocs by definition
         oSeg.setAttribute('idx', seg.idx)
-        let klass = (seg.docs) ? 'seg' : 'ambi'
-        oSeg.classList.add(klass)
+        // let klass = (seg.docs) ? 'seg' : 'ambi'
+        oSeg.classList.add('seg')
         // oSeg.classList.remove('current')
         oClause.appendChild(oSeg)
     })
@@ -104,86 +104,51 @@ function parseClause(cl) {
 
 function bindOverEvent(el, cl) {
     let oRes = q('#results')
-    // show dicts:
     delegate(el, '.seg', 'mouseover', function(e) {
         if (el.classList.contains('clause')) closePopups()
         moveCurrent(e)
         if (e.ctrlKey) return
-        log('EL', e.target)
-        let idx = e.target.getAttribute('idx')
-        let seg = cl.gdocs[idx]
-        oRes.current = seg
-        showDicts(seg)
+        let dict = e.target.textContent
+        let seg = _.find(cl.segs, s => { return s.dict == dict}) || _.find(cl.gdocs, s => { return s.dict == dict})
+        if (seg && seg.docs) return showDicts(seg)
+        else if (seg && seg.ambis) return createAmbis(e, seg, cl)
     }, false);
 
-    // born ambis popup:
-    delegate(el, '.ambi', 'mouseover', function(e) {
-        let test = q('#ambis')
-        if (test) return
-        moveCurrent(e)
-        closePopups()
-        let oHeader = q('#text')
-        let oDicts = q('#laoshi-dicts')
-        empty(oDicts)
-
-        let idx = e.target.getAttribute('idx')
-        let seg = cl.segs[idx] // there are no ambis in gdocs
-        // seg.aidx = idx
-        // log('S', idx, seg)
-        let oAmbis  = createAmbis(seg, cl)
-        oHeader.appendChild(oAmbis)
-        let coords = getCoords(e.target);
-        placePopup(coords, oAmbis);
-    }, false);
 }
 
 function bindClickEvent(el, cl) {
     delegate(el, '.seg', 'click', function(e) {
         let oHeader = q('#text')
-        let cur = e.target
-        let idx = e.target.getAttribute('idx')
-        let idy = e.target.getAttribute('idy')
-        let idz = e.target.getAttribute('idz')
-        let seg
-        if (idz && idz > -1) {
-            let ambi = cl.segs[idz]
-            seg = ambi.ambis[idy][idx]
-        }
-        else seg = cl.gdocs[idx]
-        // log('SEG', seg)
-        if (seg.dict.length == 1) return
-        // log('ELEM', e.target)
+        if (e.target.textContent.length < 2) return
 
-        // let gdocs = _.filter(cl.gdocs, (doc) => { return doc.dict != seg.dict })
-        // log('Gdocs', cl.gdocs)
+        // log('=Gdocs=', cl.gdocs)
         let docs = _.values(cl.gdocs)
         docs = _.flatten(docs.map(doc => { return doc.docs}))
-        // log('Vdocs', docs)
-        docs = _.filter(docs, (doc) => { return doc.dict.length < seg.dict.length })
-        let segs = segmenter(seg.dict, docs).segs
-        // log('SGs', segs)
+        docs = _.filter(docs, (doc) => { return doc.dict.length < e.target.textContent.length })
+        let segs = segmenter(e.target.textContent, docs).segs
+        log('SGs', segs)
 
-        let osegs
-        if (segs[0].ambis) {
+        // let osegs
+        if (segs.length == 1 && segs[0].ambis) {
             let aseg = segs[0]
-            aseg.aidx = _.findIndex(cl.segs, s => { return s.dict == aseg.dict})
-            // log('aSG', aseg)
-            let test = q('#ambis')
-            if (test) return
-            osegs = createAmbis(segs[0], cl)
+            // let test = q('#ambis')
+            // if (test && test.getAttribute('dict') == aseg.dict) return
+            createAmbis(e, aseg, cl)
         }
-        else osegs = createSegPopup(segs, cl)
-        // log('OS', osegs)
-        oHeader.appendChild(osegs)
-        let coords = getCoords(cur);
-        // log('coord', coords)
-        placePopup(coords, osegs);
+        else createSegPopup(e, segs, cl)
+        // // log('OS', osegs)
+        // oHeader.appendChild(osegs)
+        // let coords = getCoords(e.target);
+        // // log('coord', coords)
+        // placePopup(coords, osegs);
     })
-
 }
 
 // 内蒙古自治区
-function createSegPopup(segs, cl) {
+function createSegPopup(e, segs, cl) {
+    let oHeader = q('#text')
+    let oDicts = q('#laoshi-dicts')
+    empty(oDicts)
     let oSegs = create('div')
     oSegs.classList.add('segs')
     segs.forEach(seg => {
@@ -197,41 +162,54 @@ function createSegPopup(segs, cl) {
     })
     bindOverEvent(oSegs, cl)
     bindClickEvent(oSegs, cl)
-    return oSegs
+    oHeader.appendChild(oSegs)
+    let coords = getCoords(e.target);
+    // log('coord', coords)
+    placePopup(coords, oSegs);
+    // return oSegs
 }
 
-function createAmbis(seg, cl) {
+function createAmbis(e, seg, cl) {
+    let oHeader = q('#text')
+    let oDicts = q('#laoshi-dicts')
+    empty(oDicts)
     // log('CRE AMB SG', seg)
     let oAmbis = recreateDiv('ambis')
+    oAmbis.setAttribute('dict', seg.dict)
     seg.ambis.forEach((asegs, idy) => {
         let oAmbi = create('div')
         asegs.forEach((aseg, idx) => {
             let oAseg = span(aseg.dict)
             oAseg.classList.add('seg')
-            oAseg.setAttribute('idx', idx)
-            oAseg.setAttribute('idy', idy)
-            oAseg.setAttribute('idz', seg.aidx)
+            // oAseg.setAttribute('idx', idx)
+            // oAseg.setAttribute('idy', idy)
+            // oAseg.setAttribute('idz', seg.aidx)
             oAmbi.appendChild(oAseg)
             let oSpace = span(' ')
             oAmbi.appendChild(oSpace)
         })
         oAmbis.appendChild(oAmbi)
     })
+    bindOverEvent(oAmbis, cl)
     bindClickEvent(oAmbis, cl)
-    bindOverAmbis(oAmbis, seg)
-    return oAmbis
+    // bindOverAmbis(oAmbis, seg)
+
+    oHeader.appendChild(oAmbis)
+    let coords = getCoords(e.target);
+    placePopup(coords, oAmbis);
+    // return oAmbis
 }
 
 // .seg внутри .ambis
 function bindOverAmbis(el, seg) {
     delegate(el, '.seg', 'mouseover', function(e) {
         // let aseg = e.target
-        log('OAm', e.target)
-        log('OAms', seg)
+        // log('OAm', e.target)
+        // log('OAms', seg)
         let idx = e.target.getAttribute('idx')
         let idy = e.target.getAttribute('idy')
         let cur = seg.ambis[idy][idx]
-        log('OACur', cur)
+        // log('OACur', cur)
         showDicts(cur)
     }, false);
 }
