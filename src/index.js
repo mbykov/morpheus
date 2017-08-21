@@ -6,7 +6,8 @@ import Split from 'split.js'
 import gutter from './lib/sections/vertical.png'
 let delegate = require('delegate');
 import {phonetic} from './lib/phonetic'
-import {segmenter} from '../../segmenter'
+// import {segmenter} from '../../segmenter'
+import {segmenter} from 'recursive-segmenter'
 
 const {ipcRenderer} = require('electron')
 // const shell = require('electron').shell
