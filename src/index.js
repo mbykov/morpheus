@@ -33,31 +33,26 @@ require('electron').ipcRenderer.on('parsed', (event, res) => {
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
 
-    // log('R', res)
     if (!res.docs) return
     let oRes = q('#results')
     oRes.dnames = res.dnames
     setDictList(res.dnames)
 
     let mess = doc4seg(res)
-    // log('M', mess)
 
     let oMess = headerMessage(mess)
     oHeader.appendChild(oMess)
 })
 
 function doc4seg(res) {
-    // log('=R=', res)
     let mess = []
     res.clauses.forEach(clause => {
         if (clause.sp) mess.push({sp: clause.sp})
         else {
             let sres = segmenter(clause.cl, res.docs)
-            // log('=SRES=', sres)
             mess.push({cl: clause.cl, segs: sres.segs, gdocs: sres.gdocs })
         }
     })
-    // log('=M=', mess)
     return mess
 }
 // 内蒙古自治区
@@ -89,16 +84,12 @@ function parseClause(cl) {
     oClause.classList.add('clause')
     cl.segs.forEach((seg, idx) => {
         let oSeg = span(seg.dict)
-        // let sidx = (seg.docs) ? seg.idx : idx // there are no ambis in gdocs by definition
         oSeg.setAttribute('idx', seg.idx)
-        // let klass = (seg.docs) ? 'seg' : 'ambi'
         oSeg.classList.add('seg')
-        // oSeg.classList.remove('current')
         oClause.appendChild(oSeg)
     })
     bindOverEvent(oClause, cl)
     bindClickEvent(oClause, cl)
-    // bindAmbiEvents(oClause, cl)
     return oClause
 }
 
@@ -121,14 +112,11 @@ function bindClickEvent(el, cl) {
         let oHeader = q('#text')
         if (e.target.textContent.length < 2) return
 
-        // log('=Gdocs=', cl.gdocs)
         let docs = _.values(cl.gdocs)
         docs = _.flatten(docs.map(doc => { return doc.docs}))
         docs = _.filter(docs, (doc) => { return doc.dict.length < e.target.textContent.length })
         let segs = segmenter(e.target.textContent, docs).segs
-        log('SGs', segs)
 
-        // let osegs
         if (segs.length == 1 && segs[0].ambis) {
             let aseg = segs[0]
             // let test = q('#ambis')
@@ -136,11 +124,6 @@ function bindClickEvent(el, cl) {
             createAmbis(e, aseg, cl)
         }
         else createSegPopup(e, segs, cl)
-        // // log('OS', osegs)
-        // oHeader.appendChild(osegs)
-        // let coords = getCoords(e.target);
-        // // log('coord', coords)
-        // placePopup(coords, osegs);
     })
 }
 
@@ -149,8 +132,11 @@ function createSegPopup(e, segs, cl) {
     let oHeader = q('#text')
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
-    let oSegs = create('div')
+    let oSegs = q('#segs')
+    if (oSegs && oSegs.getAttribute('dict') == e.target.textContent) return
+    oSegs = recreateDiv('segs')
     oSegs.classList.add('segs')
+
     segs.forEach(seg => {
         let oseg = span(seg.dict)
         oseg.setAttribute('idx', seg.idx)
@@ -162,28 +148,26 @@ function createSegPopup(e, segs, cl) {
     })
     bindOverEvent(oSegs, cl)
     bindClickEvent(oSegs, cl)
+    oSegs.setAttribute('dict', e.target.textContent)
     oHeader.appendChild(oSegs)
     let coords = getCoords(e.target);
-    // log('coord', coords)
     placePopup(coords, oSegs);
-    // return oSegs
 }
 
 function createAmbis(e, seg, cl) {
     let oHeader = q('#text')
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
-    // log('CRE AMB SG', seg)
-    let oAmbis = recreateDiv('ambis')
+    let oAmbis = q('#ambis')
+    if (oAmbis && oAmbis.getAttribute('dict') == seg.dict) return
+    oAmbis = recreateDiv('ambis')
     oAmbis.setAttribute('dict', seg.dict)
+
     seg.ambis.forEach((asegs, idy) => {
         let oAmbi = create('div')
         asegs.forEach((aseg, idx) => {
             let oAseg = span(aseg.dict)
             oAseg.classList.add('seg')
-            // oAseg.setAttribute('idx', idx)
-            // oAseg.setAttribute('idy', idy)
-            // oAseg.setAttribute('idz', seg.aidx)
             oAmbi.appendChild(oAseg)
             let oSpace = span(' ')
             oAmbi.appendChild(oSpace)
@@ -192,26 +176,10 @@ function createAmbis(e, seg, cl) {
     })
     bindOverEvent(oAmbis, cl)
     bindClickEvent(oAmbis, cl)
-    // bindOverAmbis(oAmbis, seg)
 
     oHeader.appendChild(oAmbis)
     let coords = getCoords(e.target);
     placePopup(coords, oAmbis);
-    // return oAmbis
-}
-
-// .seg внутри .ambis
-function bindOverAmbis(el, seg) {
-    delegate(el, '.seg', 'mouseover', function(e) {
-        // let aseg = e.target
-        // log('OAm', e.target)
-        // log('OAms', seg)
-        let idx = e.target.getAttribute('idx')
-        let idy = e.target.getAttribute('idy')
-        let cur = seg.ambis[idy][idx]
-        // log('OACur', cur)
-        showDicts(cur)
-    }, false);
 }
 
 function moveCurrent(e) {
@@ -232,23 +200,18 @@ function getCoords(el) {
     return {top: rect.top+28, left: rect.left};
 }
 
-// 内蒙古自治区
 function showDicts(seg) {
     let oDicts = q('#laoshi-dicts')
     empty(oDicts)
     let oRes = q('#results')
-    log('DICTseg:', seg)
-    // console.log('ORD1', seg.docs)
-    // seg = seg || oRes.current
     if (!seg || !seg.docs) return
+    // TODO: вынести
     let ordered = []
     oRes.dnames.forEach(dn => {
         let tmps = _.filter(seg.docs, (doc) => { return doc.dname === dn})
         ordered.push(tmps)
     })
     let flats = _.flatten(_.compact(ordered))
-    // log('ORD2', seg.docs)
-    // log('FL', flats)
 
     flats.forEach(doc => {
         let oDocs = create('div')
@@ -262,7 +225,6 @@ function showDicts(seg) {
         let phone = phonetic(doc.pinyin)
         let oPinyin = span(phone)
         oDocs.appendChild(oPinyin)
-        // let oDoc = create('div')
         let oTrns = create('div')
         oTrns.classList.add('trns')
         doc.trns.forEach(trn => {
@@ -272,7 +234,6 @@ function showDicts(seg) {
         oDocs.appendChild(oTrns)
         oDicts.appendChild(oDocs)
     })
-    // oRes.appendChild(oDicts)
 }
 
 
@@ -351,7 +312,7 @@ function setInstallSection(config) {
     let bkrs = q('#bkrs')
     let submit = q('#install-dict')
     let oname = q('#dict-name')
-    // let name
+
     delegate(oHeader, '.load-dict', 'click', function(e) {
         let chck = e.target
         let tr = chck.parentNode.parentNode

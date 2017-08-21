@@ -23,39 +23,12 @@ const http = require('http')
 // console.log('ISDEV', isDev)
 
 let config = setDefauts(app)
-// log('=OPTIONS=', config)
 
-// let dbs = createDbs(config)
-
-// function createDbs(config) {
-//     let dbs = config.dbs
-//     let databases = []
-//     dbs.forEach(dn => {
-//         let dpath = path.resolve(config.upath, config.dtype, dn)
-//         let dstate = jetpack.exists(dpath)
-//         if (dstate) {
-//             let db = new PouchDB(dpath)
-//             db.dname = dn
-//             databases.push(db)
-//             // log('D', db)
-//         } else {
-//             log('NO DB', dn, dpath)
-//         }
-//     })
-//     return databases
-// }
-
-// app.quit()
 
 process.on('unhandledRejection', (reason, p) => {
   // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 });
 
-
-let remote = new PouchDB('http:\/\/diglossa.org:5984/chinese')
-// let remote = new PouchDB('http:\/\/localhost:5984/chinese')
-// let db = new PouchDB(dbPath)
-// // let db = PouchDB(dpath, {adapter: 'websql'})
 
 let timerId = null
 let tray = null
@@ -82,7 +55,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -237,15 +210,8 @@ app.on('ready', () => {
                 query(clauses, config, function(err, res) {
                     if (err) return log('seg err', err)
                     if (!mainWindow) return
-                    // log('QRES', res[0])
                     mainWindow.webContents.send('parsed', {clauses: clauses, docs: res, dnames: config.dbs})
                 })
-                // seg(dbs, clauses, function(err, res) {
-                //     if (err) return log('seg err', err)
-                //     if (!mainWindow) return
-                //     mainWindow.webContents.send('parsed', {res: res, dnames: config.dbs})
-                // })
-                // return 'foo';
             }).then(function () {
                 // log('seg ok', str)
             }).catch(console.log.bind(console))
