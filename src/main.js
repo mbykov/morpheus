@@ -6,8 +6,6 @@ const {app, Menu, Tray, ipcMain} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
 const band = require('speckled-band')
-// let seg = require('hieroglyphic')
-// let seg = require('../../segmenter')
 
 let setDefauts = require('./lib/defaults')
 let query = require('./lib/queryDBs')
@@ -65,9 +63,7 @@ function createWindow () {
         // when you should delete the corresponding element.
         timerId = null
         mainWindow = null
-        // tray = null
         query = null
-        // seg = null
   })
 
   tray.on('click', () => {
