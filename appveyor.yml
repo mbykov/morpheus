@@ -67,7 +67,8 @@ deploy:
   auth_token:
     secure: 14ALPfeLn40YUtMzUuY2YcJajVec9zZa3NA6ONgKT6U6El6PjyPXntFmkb15TjgS
 #   artifact: felix-$(FLX_VERSION)-msvc-win64.zip
-#   draft: false
+    artifact: /.*\.exe/
+    draft: true
 #   prerelease: false
 #   on:
 #     appveyor_repo_tag: true
