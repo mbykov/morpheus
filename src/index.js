@@ -288,7 +288,7 @@ function setInstallSection(config) {
     split.setSizes([100, 0])
 
     oHeader.addEventListener('mouseover', closePopups(), false)
-    // let fpath = path.join('src/lib/sections/install-dict.html')
+
     let fpath = path.join(config.rootdir, 'src/lib/sections/install-dict.html')
     try {
         let html = jetpack.read(fpath)
@@ -411,7 +411,7 @@ function setDictList(dnames) {
         if (index < 1) return
         dnames.splice(index, 1)
         dnames.unshift(dn)
-        oRes.dnames = dnames
+        oRes.dnames = dnames // TODO: remove
         ipcRenderer.send('dnames', dnames)
         setDictList(dnames)
         showDicts()

@@ -17,7 +17,6 @@ function createDbs(config) {
             let db = new PouchDB(dpath)
             db.dname = dn
             databases.push(db)
-            // log('D', db)
         } else {
             log('NO DB', dn, dpath)
         }
@@ -52,14 +51,13 @@ function queryDBs(clauses, config, cb) {
             })
             return _.flatten(_.compact(docs))
         }).catch(function (err) {
-            log('E1', err)
+            log('ERR 1', err)
         })
     })).then(function(arrayOfResults) {
         let flats = _.flatten(_.compact(arrayOfResults))
-        // log('A', arrayOfResults )
         cb(null, flats)
     }).catch(function (err) {
-        log('E2', err)
+        log('ERR 2', err)
     })
 }
 

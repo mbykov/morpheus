@@ -11,6 +11,7 @@ const band = require('speckled-band')
 
 let setDefauts = require('./lib/defaults')
 let query = require('./lib/queryDBs')
+const _ = require('lodash')
 
 let PouchDB = require('pouchdb')
 // PouchDB.plugin(require('pouchdb-adapter-node-websql'))
@@ -23,7 +24,6 @@ const http = require('http')
 // console.log('ISDEV', isDev)
 
 let config = setDefauts(app)
-
 
 process.on('unhandledRejection', (reason, p) => {
   // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
@@ -55,7 +55,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -81,32 +81,39 @@ ipcMain.on('config', (event) => {
 
 ipcMain.on('dnames', (event, dnames) => {
     config.dbs = dnames
+    saveConfig(config)
+})
+
+function saveConfig(config) {
     try {
         jetpack.write(config.cpath, config)
     } catch (err) {
         console.log('ERR', err)
     }
-})
+}
 
 ipcMain.on('remove', (event, dname) => {
     let dest = path.join(config.upath, 'chinese', dname)
     jetpack.remove(dest)
+    let dnames = config.dbs
+    let index =  dnames.indexOf(dname)
+    if (index < 1) return
+    dnames.splice(index, 1)
+    config.dbs = dnames
+    saveConfig(config)
     app.relaunch()
     app.quit()
 })
 
 ipcMain.on('install', (event, dname) => {
-    // log('INSTALL START', dname)
-
     if (!dname) return
     let bar = {wait: 'wait'}
     mainWindow.webContents.send('bar', bar);
 
     const resourse = ['/dicts/', dname, '.tar.gz'].join('')
-    // log('RESOURSE', resourse)
 
     let dest = path.join(config.upath, 'chinese')
-    // console.log('dest:', dest)
+
     let req = http.request({
         host: 'en.diglossa.org', // 'localhost'
         // port: 80, // 3001,
@@ -128,7 +135,7 @@ ipcMain.on('install', (event, dname) => {
             // but server at least returned correctly (in a HTTP protocol sense) formatted response
         }
         let len = parseInt(res.headers['content-length'], 10)
-        // log('LEN', len)
+
         bar = {start: len}
         mainWindow.webContents.send('bar', bar);
 
@@ -142,9 +149,10 @@ ipcMain.on('install', (event, dname) => {
         res.on('end', function () {
             res.pipe(gunzip()).pipe(tar.extract(dest));
             // log('==complete==')
+            config.dbs.push(dname)
+            saveConfig(config)
             app.relaunch()
             app.quit()
-            // log('APP NOT QUITTED')
         })
     })
     req.on('error', function (err) {
