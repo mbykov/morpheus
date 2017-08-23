@@ -1,0 +1,60 @@
+# # Test against the latest version of this Node.js version
+# environment:
+#   nodejs_version: "7"
+
+# # Install scripts. (runs after repo cloning)
+# install:
+#   # Get the latest stable version of Node.js or io.js
+#   - ps: Install-Product node $env:nodejs_version
+#   # install modules
+#   - npm install
+
+# # Post-install test scripts.
+# test_script:
+#   # Output useful info for debugging.
+#   - node --version
+#   - npm --version
+#   # run tests
+#   # - npm test
+
+# # Don't actually build.
+# # build: off
+# build:
+#   project: './'
+#   parallel: true
+#   verbosity: minimal
+
+environment:
+  GH_TOKEN:
+    secure: EGdUtTShdVdc6HFZvziVkrpRV//zl6c5XxqV4owLlybsdwyGrWAA/Z1y0pS+wt65
+
+platform:
+  - x64
+
+cache:
+  - node_modules
+  # - app\node_modules
+  # - '%APPDATA%\npm-cache'
+  # - '%USERPROFILE%\.electron'
+
+# init:
+#   - git config --global core.autocrlf input
+
+install:
+  - ps: Install-Product node 8 x64
+  # - git reset --hard HEAD
+  # - npm i electron-rebuild
+  # - npm i electron-prebuilt
+  # - npm i electron-builder
+  - npm install
+  # - npm prune
+
+build_script:
+  - node --version
+  - npm --version
+  - npm run dist
+  # - npm prune
+
+# build: off
+
+test: off
