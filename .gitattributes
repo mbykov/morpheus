@@ -1,3 +1,2 @@
 *.db filter=lfs diff=lfs merge=lfs -text
-pouchdb/chinese filter=lfs diff=lfs merge=lfs -text
-pouchdb/chinese-mrview-f60e7f1cd7614a23ce0d8b619eb46693 filter=lfs diff=lfs merge=lfs -text
+cedict filter=lfs diff=lfs merge=lfs -text

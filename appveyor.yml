@@ -26,7 +26,7 @@
 
 environment:
   GH_TOKEN:
-    secure: EGdUtTShdVdc6HFZvziVkrpRV//zl6c5XxqV4owLlybsdwyGrWAA/Z1y0pS+wt65
+    secure: 14ALPfeLn40YUtMzUuY2YcJajVec9zZa3NA6ONgKT6U6El6PjyPXntFmkb15TjgS
 
 platform:
   - x64
@@ -58,3 +58,15 @@ build_script:
 # build: off
 
 test: off
+
+# deploy:
+#   # release: $(APPVEYOR_REPO_TAG_NAME)
+#   # description: ''
+#   provider: GitHub
+#   auth_token:
+#     secure: Mh/B12zvz5BIkV7bDrjj9WOc2UR5fI0ZCpmwehs/PNsHGkzwMIHnvBDlSpumKlmz
+#   artifact: felix-$(FLX_VERSION)-msvc-win64.zip
+#   draft: false
+#   prerelease: false
+#   on:
+#     appveyor_repo_tag: true
