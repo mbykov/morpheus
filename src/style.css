@@ -7,8 +7,10 @@
 /* } */
 
 
+/* @import url("assets/han-css/han.min.css") */
+
 body {
-    font-family: 'DejaVu Sans';
+    /* font-family: 'DejaVu Sans'; */
     /* box-shadow: inset 0 2px 0px #dcffa6, 0 2px 5px #000; */
     /* margin: 2px; */
     /* margin-bottom: 5px; */
@@ -51,7 +53,8 @@ p {
 }
 
 .text {
-    font-family: 'DejaVu Sans';
+    font-family: "Biaodian Pro Sans", "Helvetica Neue", Helvetica, Arial, "Han Heiti";
+    /* font-family: 'DejaVu Sans'; */
     /* color: #fff; */
     /* background-color: #8aba87; */
     /* text-align: center; */
@@ -99,13 +102,13 @@ p {
     background-color: grey;
 }
 
-#laoshi-morphs {
-    font-family: 'DejaVu Sans';
-    font-size: 18px;
-    margin-left: 25px;
-    margin-top: 10px;
-    color: maroon;
-}
+/* #laoshi-morphs { */
+/*     font-family: 'DejaVu Sans'; */
+/*     font-size: 18px; */
+/*     margin-left: 25px; */
+/*     margin-top: 10px; */
+/*     color: maroon; */
+/* } */
 
 .underlined {
     border-bottom: 2px solid white;
@@ -206,7 +209,7 @@ p {
     height: auto;
     top: 250px;
     left: 300px;
-    font-family: 'DejaVu Sans';
+    /* font-family: 'DejaVu Sans'; */
     font-size: 26px;
     padding: 3px;
 }
@@ -227,7 +230,7 @@ p {
     height: auto;
     top: 250px;
     left: 300px;
-    font-family: 'DejaVu Sans';
+    /* font-family: 'DejaVu Sans'; */
     font-size: 26px;
     padding: 3px;
 }
@@ -244,26 +247,26 @@ p {
     margin-left: 25px;
 }
 
-#singles {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    /* background-color: #8aba87; */
-    /* color: white; */
-    background-color: white;
-    color: black;
-    /* line-height: 24px; */
-    display: 'block';
-    padding: 3px;
-    position: absolute;
-    z-index: 1000;
-    box-shadow: 0.15em 0.15em 1em rgba(0, 0, 0, 0.75);
-    /* box-shadow: 0 0 10px 1px rgba(0,0,0,.3); */
-    height: auto;
-    top: 250px;
-    left: 300px;
-    font-family: 'DejaVu Sans';
-    font-size: 26px;
-    padding: 3px;
-}
+/* #singles { */
+/*     border: 1px solid rgba(0, 0, 0, 0.2); */
+/*     /\* background-color: #8aba87; *\/ */
+/*     /\* color: white; *\/ */
+/*     background-color: white; */
+/*     color: black; */
+/*     /\* line-height: 24px; *\/ */
+/*     display: 'block'; */
+/*     padding: 3px; */
+/*     position: absolute; */
+/*     z-index: 1000; */
+/*     box-shadow: 0.15em 0.15em 1em rgba(0, 0, 0, 0.75); */
+/*     /\* box-shadow: 0 0 10px 1px rgba(0,0,0,.3); *\/ */
+/*     height: auto; */
+/*     top: 250px; */
+/*     left: 300px; */
+/*     font-family: 'DejaVu Sans'; */
+/*     font-size: 26px; */
+/*     padding: 3px; */
+/* } */
 
 #install-dict {
     padding: 10px;
@@ -325,7 +328,6 @@ p {
 
 .gutter {
     background-color: #eee;
-    /* background-color: black; */
     background-repeat: no-repeat;
     background-position: 50%;
     height: 100%;

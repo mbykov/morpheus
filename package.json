@@ -1,6 +1,6 @@
 {
   "name": "morpheus-eastern",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Morpheus for Chinese and other Oriental languages",
   "main": "src/main.js",
   "scripts": {
@@ -39,6 +39,7 @@
     "electron-is-dev": "^0.3.0",
     "fs-jetpack": "^1.1.0",
     "gunzip-maybe": "^1.4.1",
+    "han-css": "^3.3.0",
     "lodash": "^4.17.4",
     "pouchdb": "^6.3.4",
     "progress-component": "0.0.4",

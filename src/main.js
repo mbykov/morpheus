@@ -55,7 +55,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
