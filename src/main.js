@@ -27,7 +27,6 @@ process.on('unhandledRejection', (reason, p) => {
   // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 });
 
-
 let timerId = null
 let tray = null
 
@@ -71,6 +70,21 @@ function createWindow () {
   })
 }
 
+const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore()
+        mainWindow.focus()
+    }
+})
+
+if (shouldQuit) {
+    app.quit()
+}
+
+
+
+
 ipcMain.on('config', (event) => {
     mainWindow.webContents.send('config', config);
 })
@@ -97,8 +111,9 @@ ipcMain.on('remove', (event, dname) => {
     dnames.splice(index, 1)
     config.dbs = dnames
     saveConfig(config)
-    app.relaunch()
-    app.quit()
+    mainWindow.webContents.send('section', 'install-dict')
+    // app.relaunch()
+    // app.quit()
 })
 
 ipcMain.on('install', (event, dname) => {
@@ -142,13 +157,14 @@ ipcMain.on('install', (event, dname) => {
             mainWindow.webContents.send('bar', bar);
         })
 
+        // 一夫多妻製一分耕耘
         res.on('end', function () {
-            res.pipe(gunzip()).pipe(tar.extract(dest));
             // log('==complete==')
             config.dbs.push(dname)
             saveConfig(config)
-            app.relaunch()
-            app.quit()
+            mainWindow.webContents.send('section', 'install-dict')
+            // app.relaunch()
+            // app.quit()
         })
     })
     req.on('error', function (err) {
@@ -212,9 +228,13 @@ app.on('ready', () => {
 
             Promise.resolve().then(function () {
                 query(clauses, config, function(err, res) {
-                    if (err) return log('seg err', err)
                     if (!mainWindow) return
-                    mainWindow.webContents.send('parsed', {clauses: clauses, docs: res, dnames: config.dbs})
+                    if (err) {
+                        log('db err: ', err)
+                        app.quit()
+                    } else {
+                        mainWindow.webContents.send('parsed', {clauses: clauses, docs: res, dnames: config.dbs})
+                    }
                 })
             }).then(function () {
                 // log('seg ok', str)

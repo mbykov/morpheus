@@ -72,3 +72,5 @@ deploy:
 #   prerelease: false
   # on:
     # appveyor_repo_tag: true
+
+# https://www.appveyor.com/docs/deployment/github/

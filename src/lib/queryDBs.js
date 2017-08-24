@@ -46,11 +46,12 @@ function queryDBs(clauses, config, cb) {
             let docs = rdocs.map(rdoc => {
                 rdoc.docs.forEach(d => {d.dict = rdoc._id})
                 rdoc.docs.forEach(d => {if (!d.trad) d.trad = d.simp })
-                rdoc.docs.forEach(d => {d.dname = db.dname, d.type = db.dname.split('-')[0], d.name = db.dname.split('-')[1] })
+                rdoc.docs.forEach(d => {d.dname = db.dname })
                 return rdoc.docs
             })
             return _.flatten(_.compact(docs))
         }).catch(function (err) {
+            cb(err, null)
             log('ERR 1', err)
         })
     })).then(function(arrayOfResults) {

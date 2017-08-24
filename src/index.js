@@ -97,6 +97,8 @@ function parseClause(cl) {
 function bindOverEvent(el, cl) {
     let oRes = q('#results')
     delegate(el, '.seg', 'mouseover', function(e) {
+        let isShift = !!e.shiftKey;
+        if (isShift) return
         if (el.classList.contains('clause')) closePopups()
         moveCurrent(e)
         if (e.ctrlKey) return
@@ -287,7 +289,8 @@ function setInstallSection(config) {
     empty(odicts)
     split.setSizes([100, 0])
 
-    oHeader.addEventListener('mouseover', closePopups(), false)
+    // oHeader.addEventListener('mouseover', closePopups(), false)
+    closePopups()
 
     let fpath = path.join(config.rootdir, 'src/lib/sections/install-dict.html')
     try {
