@@ -29,6 +29,7 @@
     "file-loader": "^0.11.2",
     "html-webpack-plugin": "^2.30.1",
     "imports-loader": "^0.7.1",
+    "raw-loader": "^0.5.1",
     "style-loader": "^0.18.2",
     "webpack": "^3.5.5"
   },
@@ -38,6 +39,7 @@
     "fs-jetpack": "^1.1.0",
     "gunzip-maybe": "^1.4.1",
     "han-css": "^3.3.0",
+    "html-loader": "^0.5.1",
     "lodash": "^4.17.4",
     "pouchdb": "^6.3.4",
     "progress-component": "0.0.4",

@@ -34,6 +34,10 @@ module.exports = {
                 use: [
                     'file-loader'
                 ]
+            },
+            {
+                test: /\.html$/,
+                use: 'raw-loader'
             }
         ]
     }

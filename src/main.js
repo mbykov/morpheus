@@ -52,7 +52,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -111,7 +111,7 @@ ipcMain.on('remove', (event, dname) => {
     dnames.splice(index, 1)
     config.dbs = dnames
     saveConfig(config)
-    mainWindow.webContents.send('section', 'install-dict')
+    mainWindow.webContents.send('section', {sec: 'install', config: config})
     // app.relaunch()
     // app.quit()
 })
@@ -157,12 +157,11 @@ ipcMain.on('install', (event, dname) => {
             mainWindow.webContents.send('bar', bar);
         })
 
-        // 一夫多妻製一分耕耘
         res.on('end', function () {
             // log('==complete==')
             config.dbs.push(dname)
             saveConfig(config)
-            mainWindow.webContents.send('section', 'install-dict')
+            mainWindow.webContents.send('section', {sec: 'install', config: config})
             // app.relaunch()
             // app.quit()
         })
@@ -233,7 +232,7 @@ app.on('ready', () => {
                         log('db err: ', err)
                         app.quit()
                     } else {
-                        mainWindow.webContents.send('parsed', {clauses: clauses, docs: res, dnames: config.dbs})
+                        mainWindow.webContents.send('parsed', {clauses: clauses, docs: res, dnames: config.dbs, config: config})
                     }
                 })
             }).then(function () {
