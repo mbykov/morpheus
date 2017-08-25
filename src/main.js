@@ -19,7 +19,12 @@ const tar = require('tar-fs')
 const gunzip = require('gunzip-maybe')
 const http = require('http')
 
+const autoUpdater = require("electron-updater").autoUpdater
+// autoUpdater.logger = log;
+// autoUpdater.logger.transports.file.level = 'info';
+// log.info('App starting...');
 // console.log('ISDEV', isDev)
+
 
 let config = setDefauts(app)
 
@@ -30,24 +35,16 @@ process.on('unhandledRejection', (reason, p) => {
 let timerId = null
 let tray = null
 
-app.on('ready', () => {
-    let traypath = path.join(__dirname, 'assets/icons/32x32.png')
-    tray = new Tray(traypath)
-    const contextMenu = Menu.buildFromTemplate([
-        {label: 'help', role: 'help'},
-        {label: 'learn more', click () { electron.shell.openExternal('http:\/\/diglossa.org') }},
-        {label: 'quit', role: 'quit'}
-    ])
-    tray.setToolTip('Morpheus-eastern')
-    tray.setContextMenu(contextMenu)
-})
-
 const BrowserWindow = electron.BrowserWindow
 
 let mainWindow
 
 function createWindow () {
     mainWindow = new BrowserWindow({width: 800, height: 600, webPreferences: { webSecurity: false }})
+
+    let name = require('../package.json').name
+    let version = require('../package.json').version
+    mainWindow.setTitle([name, 'v.', version].join(' '));
 
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
@@ -65,9 +62,14 @@ function createWindow () {
         query = null
   })
 
-  tray.on('click', () => {
+    tray.on('click', () => {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
-  })
+    })
+
+    let template = require('./menu-template.html')(mainWindow)
+    const menu = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menu)
+
 }
 
 const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
@@ -82,8 +84,74 @@ if (shouldQuit) {
     app.quit()
 }
 
+app.on('ready', () => {
+    let oldstr = null
+    timerId = setInterval(function(){
+        if (!query) return
+        let str = clipboard.readText()
+        if (!str) return
+        if (str === oldstr) return
+        oldstr = str
+
+        let code = 'zh'
+        band(code, str, function(err, clauses) {
+            if (err) return
+            let clean = clauses.map(cl => {return cl.cl }).join('')
+            if (!clean.length) return
+
+            Promise.resolve().then(function () {
+                query(clauses, config, function(err, res) {
+                    if (!mainWindow) return
+                    if (err) {
+                        log('db err: ', err)
+                        app.quit()
+                    } else {
+                        mainWindow.webContents.send('parsed', {clauses: clauses, docs: res, dnames: config.dbs, config: config})
+                    }
+                })
+            }).then(function () {
+                // log('seg ok', str)
+            }).catch(console.log.bind(console))
+
+        })
+
+    }, 100)
+})
+
+app.on('ready', () => {
+    let traypath = path.join(__dirname, 'assets/icons/32x32.png')
+    tray = new Tray(traypath)
+    const contextMenu = Menu.buildFromTemplate([
+        {label: 'help', role: 'help'},
+        {label: 'learn more', click () { electron.shell.openExternal('http:\/\/diglossa.org') }},
+        {label: 'quit', role: 'quit'}
+    ])
+    tray.setToolTip('Morpheus-eastern')
+    tray.setContextMenu(contextMenu)
+})
+
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.on('ready', createWindow)
 
 
+// Quit when all windows are closed.
+app.on('window-all-closed', function () {
+  // On OS X it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+app.on('activate', function () {
+  // On OS X it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (mainWindow === null) {
+    createWindow()
+  }
+})
 
 ipcMain.on('config', (event) => {
     mainWindow.webContents.send('config', config);
@@ -180,93 +248,26 @@ function sendStatus(text) {
     mainWindow.webContents.send('status', text);
 }
 
-const template = [
-    {
-        role: 'window',
-        submenu: [
-            {role: 'minimize'},
-            {role: 'close'},
-            {role: 'quit'}
-        ]
-    },
-    {
-        label: 'Actions',
-        submenu: [
-            {label: 'dictionaries',  click() { mainWindow.webContents.send('section', 'install-dict') }},
-            {label: 'signup/login'}
-        ]
-    },
-    {
-        role: 'help',
-        submenu: [
-            {
-                label: 'Learn More',
-                click () { electron.shell.openExternal('https://electron.atom.io') }
-            }
-        ]
-    }
-]
+// autoUpdater.on('checking-for-update', () => {
+//     sendStatus('Checking for update...');
+// })
+// autoUpdater.on('update-available', (ev, info) => {
+//     populated = null
+//     sendStatus('Update available, downloading');
+// })
+// autoUpdater.on('update-not-available', (ev, info) => {
+//     // sendStatus('Update not available.');
+// })
+// autoUpdater.on('error', (ev, err) => {
+//     sendStatus('Error in auto-updater.' + err);
+// })
 
-const menu = Menu.buildFromTemplate(template)
-Menu.setApplicationMenu(menu)
+// // autoUpdater.on('download-progress', (progressObj) => {
+// //     let log_message = "Download speed: " + progressObj.bytesPerSecond;
+// //     log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+// //     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+// //     sendStatus(log_message);
+// // })
 
-app.on('ready', () => {
-    let oldstr = null
-    timerId = setInterval(function(){
-        if (!query) return
-        let str = clipboard.readText()
-        if (!str) return
-        if (str === oldstr) return
-        oldstr = str
-
-        let code = 'zh'
-        band(code, str, function(err, clauses) {
-            if (err) return
-            let clean = clauses.map(cl => {return cl.cl }).join('')
-            if (!clean.length) return
-
-            Promise.resolve().then(function () {
-                query(clauses, config, function(err, res) {
-                    if (!mainWindow) return
-                    if (err) {
-                        log('db err: ', err)
-                        app.quit()
-                    } else {
-                        mainWindow.webContents.send('parsed', {clauses: clauses, docs: res, dnames: config.dbs, config: config})
-                    }
-                })
-            }).then(function () {
-                // log('seg ok', str)
-            }).catch(console.log.bind(console))
-
-        })
-
-    }, 100)
-})
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
-
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-})
-
-app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow()
-  }
-})
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
 
 function log() { console.log.apply(console, arguments); }

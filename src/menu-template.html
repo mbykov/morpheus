@@ -1,0 +1,30 @@
+//
+
+module.exports = function(win){
+    return [
+    {
+        role: 'window',
+        submenu: [
+            {role: 'minimize'},
+            {role: 'close'},
+            {role: 'quit'}
+        ]
+    },
+    {
+        label: 'Actions',
+        submenu: [
+            {label: 'dictionaries',  click() { win.webContents.send('section', 'install-dict') }},
+            {label: 'signup/login'}
+        ]
+    },
+    {
+        role: 'help',
+        submenu: [
+            {
+                label: 'Learn More',
+                click () { electron.shell.openExternal('https://electron.atom.io') }
+            }
+        ]
+    }
+]
+}
