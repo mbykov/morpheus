@@ -6,7 +6,7 @@ const {ipcRenderer} = require('electron')
 const  Progress = require('progress-component');
 
 
-export function install(config) {
+export function installDict(config) {
     let oHeader = q('#text')
     empty(oHeader)
     oHeader.classList.add('font16')

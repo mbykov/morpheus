@@ -98,7 +98,7 @@ p {
     -webkit-app-region: no-drag;
 }
 
-.laoshi-current {
+.current {
     background-color: grey;
 }
 
@@ -170,10 +170,10 @@ p {
     cursor: pointer;
 }
 
-.seg:hover {
-    /* background-color: #8aba87; */
-    background-color: grey;
-}
+/* .seg:hover { */
+/*     /\* background-color: #8aba87; *\/ */
+/*     background-color: grey; */
+/* } */
 
 .ambi {
     cursor: pointer;

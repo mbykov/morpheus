@@ -11,7 +11,7 @@ import {segmenter} from 'recursive-segmenter'
 
 const {ipcRenderer} = require('electron')
 // const shell = require('electron').shell
-import {install, dictList} from './lib/sections/install.js'
+import {installDict, dictList} from './lib/sections/install.js'
 import {showDicts} from './lib/sections/dicts.js'
 
 let split = Split(['#text', '#results'], {
@@ -91,11 +91,10 @@ function parseClause(cl) {
 function bindOverEvent(el, cl) {
     let oRes = q('#results')
     delegate(el, '.seg', 'mouseover', function(e) {
-        let isShift = !!e.shiftKey;
-        if (isShift) return
+        if (e.shiftKey) return
+        if (e.ctrlKey) return
         if (el.classList.contains('clause')) closePopups()
         moveCurrent(e)
-        if (e.ctrlKey) return
         let dict = e.target.textContent
         let seg = _.find(cl.segs, s => { return s.dict == dict}) || _.find(cl.gdocs, s => { return s.dict == dict})
         if (seg && seg.docs) return showDicts(seg)
@@ -210,7 +209,7 @@ function showSection(name) {
     closePopups()
     ipcRenderer.send('config')
     ipcRenderer.on('config', function(event, config) {
-        install(config)
+        installDict(config)
     })
 }
 
