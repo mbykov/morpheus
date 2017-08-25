@@ -277,7 +277,8 @@ p {
 }
 
 .font16 {
-    font-size: 16px;
+    font-size: 18px;
+    line-height: 22px;
 }
 
 .font26 {
@@ -365,4 +366,22 @@ p {
 
 .dicts-list span:hover {
     background-color: grey;
+}
+
+.disabled {
+    color: grey;
+}
+
+.external {
+    color: maroon;
+    cursor: pointer;
+}
+
+
+.webview {
+    width: 640px;
+    height: 390px;
+    margin:0px auto;
+    /* padding:15px; */
+
 }

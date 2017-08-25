@@ -1,6 +1,6 @@
 //
 
-module.exports = function(win){
+module.exports = function(win, e){
     return [
     {
         role: 'window',
@@ -13,17 +13,24 @@ module.exports = function(win){
     {
         label: 'Actions',
         submenu: [
-            {label: 'dictionaries',  click() { win.webContents.send('section', 'install-dict') }},
+            {label: 'dictionaries',  click() { win.webContents.send('section', 'install') }},
             {label: 'signup/login'}
         ]
     },
     {
         role: 'help',
         submenu: [
-            {
-                label: 'Learn More',
-                click () { electron.shell.openExternal('https://electron.atom.io') }
-            }
+            {label: 'help',  click() { win.webContents.send('section', 'help') }},
+            {label: 'about Morpheus',  click() { win.webContents.send('section', 'about') }},
+            {label: 'about ECBT series',  click() { win.webContents.send('section', 'ecbt') }},
+            {label: 'license and code',  click() { win.webContents.send('section', 'code') }},
+            {label: 'contacs',  click() { win.webContents.send('section', 'contacts') }},
+            {label: 'screencast',  click() { win.webContents.send('section', 'screencast') }},
+            {label: 'acknowledgements',  click() { win.webContents.send('section', 'acknowledgements') }},
+            <!-- { -->
+            <!--     label: 'screencast', -->
+            <!--     click () { e.shell.openExternal('http://diglossa.org') } -->
+            <!-- } -->
         ]
     }
 ]

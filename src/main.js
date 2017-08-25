@@ -49,7 +49,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/build/index.html`)
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     // Emitted when the window is closed.
@@ -66,7 +66,7 @@ function createWindow () {
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show()
     })
 
-    let template = require('./menu-template.html')(mainWindow)
+    let template = require('./menu-template.html')(mainWindow, electron)
     const menu = Menu.buildFromTemplate(template)
     Menu.setApplicationMenu(menu)
 

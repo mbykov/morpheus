@@ -6,13 +6,23 @@ import Split from 'split.js'
 import gutter from './lib/sections/vertical.png'
 let delegate = require('delegate');
 
+// TODO: убрать
+import about from './lib/sections/about.html'
+import help from './lib/sections/help.html'
+import code from './lib/sections/code.html'
+import contacts from './lib/sections/contacts.html'
+import screencast from './lib/sections/screencast.html'
+
 // import {segmenter} from '../../segmenter'
 import {segmenter} from 'recursive-segmenter'
 
 const {ipcRenderer} = require('electron')
-// const shell = require('electron').shell
+const shell = require('electron').shell
 import {installDict, dictList} from './lib/sections/install.js'
 import {showDicts} from './lib/sections/dicts.js'
+import ambipic from './lib/sections/ambiguity.png'
+import recpic from './lib/sections/recursive.png'
+
 
 let split = Split(['#text', '#results'], {
     sizes: [60, 40],
@@ -201,16 +211,51 @@ function showMessage(str) {
 }
 
 ipcRenderer.on('section', function(event, name) {
-    showSection(name)
-})
-
-function showSection(name) {
+    let oHeader = q('#text')
     split.setSizes([100, 0])
     closePopups()
-    ipcRenderer.send('config')
-    ipcRenderer.on('config', function(event, config) {
-        installDict(config)
+    switch (name) {
+    case 'about':
+        showSection(about)
+        break
+    case 'help':
+        showSection(help)
+        let apic = q('#ambipic')
+        apic.src = ambipic
+        let rpic = q('#recpic')
+        rpic.src = recpic
+        break
+    case 'code':
+        showSection(code)
+        break
+    case 'contacts':
+        showSection(contacts)
+        break
+    case 'screencast':
+        showSection(screencast)
+        break
+    case 'install':
+        ipcRenderer.send('config')
+        ipcRenderer.on('config', function(event, config) {
+            installDict(config)
+        })
+        break
+    }
+
+    delegate(oHeader, '.external', 'click', function(e) {
+        let href= e.target.textContent
+        shell.openExternal(href)
     })
+})
+
+
+function showSection(sec) {
+    let oHeader = q('#text')
+    empty(oHeader)
+    oHeader.classList.add('font16')
+    oHeader.innerHTML = sec
+    let odicts = q('#laoshi-dicts')
+    empty(odicts)
 }
 
 function onWheel(e) {
