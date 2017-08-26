@@ -12,6 +12,8 @@ import help from './lib/sections/help.html'
 import code from './lib/sections/code.html'
 import contacts from './lib/sections/contacts.html'
 import screencast from './lib/sections/screencast.html'
+import acknowledgements from './lib/sections/acknowledgements.html'
+
 
 // import {segmenter} from '../../segmenter'
 import {segmenter} from 'recursive-segmenter'
@@ -233,6 +235,9 @@ ipcRenderer.on('section', function(event, name) {
         break
     case 'screencast':
         showSection(screencast)
+        break
+    case 'acknowledgements':
+        showSection(acknowledgements)
         break
     case 'install':
         ipcRenderer.send('config')
