@@ -1,6 +1,6 @@
 {
   "name": "morpheus-eastern",
-  "version": "0.4.6",
+  "version": "0.4.7",
   "description": "Morpheus for Chinese and other Oriental languages",
   "main": "src/main.js",
   "scripts": {
