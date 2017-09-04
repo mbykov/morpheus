@@ -79,7 +79,7 @@ function createWindow () {
 
     const ses = mainWindow.webContents.session
     ses.clearCache(function() {
-        //
+        log('CACHE')
     })
 }
 
