@@ -41,6 +41,7 @@ let mainWindow
 
 function createWindow () {
     let winpath = path.join(__dirname, '../assets/book.png')
+    log('IP', winpath)
     let icon = nativeImage.createFromPath(winpath)
 
     mainWindow = new BrowserWindow(
@@ -77,10 +78,6 @@ function createWindow () {
     const menu = Menu.buildFromTemplate(template)
     Menu.setApplicationMenu(menu)
 
-    const ses = mainWindow.webContents.session
-    ses.clearStorageData(function() {
-        log('CACHE')
-    })
 }
 
 const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
