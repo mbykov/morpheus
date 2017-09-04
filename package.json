@@ -4,13 +4,14 @@
   "description": "Morpheus for Chinese and other Oriental languages",
   "main": "src/main.js",
   "scripts": {
-    "build": "webpack",
-    "rebuild": "electron-rebuild -f -w leveldown",
-    "start": "electron .",
-    "test": "echo \"Error: no test specified\"",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder",
-    "release": "electron-builder"
+      "build": "webpack",
+      "rebuild": "electron-rebuild -f -w leveldown",
+      "postinstall": "electron-builder install-app-deps",
+      "start": "electron .",
+      "test": "echo \"Error: no test specified\"",
+      "pack": "electron-builder --dir",
+      "dist": "electron-builder",
+      "release": "electron-builder"
   },
   "homepage": "http://diglossa.org",
   "repository": "https://github.com/mbykov/laoshi",

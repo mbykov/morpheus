@@ -58,7 +58,7 @@ function createWindow () {
     let rootpath = path.resolve(__dirname, '..')
     mainWindow.loadURL(`file://${rootpath}/pack/index.html`)
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
     mainWindow.focus()
 
     mainWindow.on('closed', function () {
