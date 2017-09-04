@@ -43,7 +43,8 @@ function createWindow () {
     let winpath = path.join(__dirname, '../assets/book.png')
     log('IP', winpath)
     let icon = nativeImage.createFromPath(winpath)
-    log('IM', icon)
+    let s = icon.getSize()
+    log('IM', s)
 
     mainWindow = new BrowserWindow(
         {width: 800,
