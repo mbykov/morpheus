@@ -1,6 +1,6 @@
 {
   "name": "morpheus-eastern",
-  "version": "0.4.74",
+  "version": "0.4.75",
   "description": "Morpheus for Chinese and other Oriental languages",
   "main": "src/main.js",
   "scripts": {
@@ -73,6 +73,7 @@
       ]
     },
     "linux": {
+      "category": "Educational software",
       "target": [
         "AppImage",
         "deb"
