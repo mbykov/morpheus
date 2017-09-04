@@ -58,9 +58,6 @@
       "src",
       "package.json"
     ],
-    "directories": {
-        "buildResources": "assets"
-    },
     "publish": [
       {
         "provider": "github",
@@ -76,7 +73,7 @@
       ]
     },
     "linux": {
-      "icon": "assets",
+      "icon": "build/book.png",
       "target": [
         "AppImage",
         "deb"
@@ -84,7 +81,7 @@
     },
     "win": {
       "publisherName": "Michael Bykov",
-      "icon": "assets/icon.ico"
+      "icon": "build/book.ico"
     },
     "nsis": {
       "perMachine": false

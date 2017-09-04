@@ -40,12 +40,9 @@ const BrowserWindow = electron.BrowserWindow
 let mainWindow
 
 function createWindow () {
-    // let winpath = path.join(__dirname, '../assets/book.png')
-    let winpath = path.join(__dirname, '../assets/icons/png/64x64.png')
-    log('IP', winpath)
+    // let winpath = path.join(__dirname, '../build/book.png')
+    let winpath = path.join(__dirname, '../build/icons/png/64x64.png')
     let icon = nativeImage.createFromPath(winpath)
-    // let s = icon.getSize()
-    // log('IM', s)
 
     mainWindow = new BrowserWindow(
         {width: 800,
@@ -59,7 +56,7 @@ function createWindow () {
     mainWindow.setTitle([name, 'v.', version].join(' '));
 
     let rootpath = path.resolve(__dirname, '..')
-    mainWindow.loadURL(`file://${rootpath}/build/index.html`)
+    mainWindow.loadURL(`file://${rootpath}/pack/index.html`)
 
     // mainWindow.webContents.openDevTools()
     mainWindow.focus()
@@ -130,8 +127,8 @@ app.on('ready', () => {
 })
 
 app.on('ready', () => {
-    let trayicon = path.join(__dirname, '../assets/icons/png/32x32.png')
-    // let trayicon = path.join(__dirname, '../assets/book.png')
+    let trayicon = path.join(__dirname, '../build/icons/png/32x32.png')
+    // let trayicon = path.join(__dirname, '../build/book.png')
     tray = new Tray(trayicon)
     const contextMenu = Menu.buildFromTemplate([
         {label: 'help', role: 'help'},
