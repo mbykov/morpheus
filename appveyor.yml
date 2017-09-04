@@ -53,7 +53,8 @@ build_script:
   - node --version
   - npm --version
   - npm install
-  - npm run dist
+  - npm run rebuild
+  - npm run release
   # - npm prune
 
 # build: off

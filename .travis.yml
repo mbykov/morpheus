@@ -15,6 +15,7 @@ install:
   - npm install
 
 script:
+  - npm run rebuild
   - npm run release
 
 cache:
