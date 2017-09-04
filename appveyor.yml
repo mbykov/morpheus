@@ -46,6 +46,7 @@ install:
   # - npm i electron-rebuild
   # - npm i electron-prebuilt
   - npm i electron-builder
+  - npm i electron-rebuild
   - npm install
   # - npm prune
 
