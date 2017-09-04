@@ -2,7 +2,7 @@
 
 const path = require('path')
 const electron = require('electron')
-const {app, Menu, Tray, ipcMain} = require('electron')
+const {app, Menu, Tray, ipcMain, nativeImage} = require('electron')
 const clipboard = electron.clipboard
 const jetpack = require("fs-jetpack")
 const band = require('speckled-band')
@@ -40,7 +40,15 @@ const BrowserWindow = electron.BrowserWindow
 let mainWindow
 
 function createWindow () {
-    mainWindow = new BrowserWindow({width: 800, height: 600, webPreferences: { webSecurity: false }})
+    let winpath = path.join(__dirname, 'assets/book.png')
+    let icon = nativeImage.createFromPath(winpath)
+
+    mainWindow = new BrowserWindow(
+        {width: 800,
+         height: 600,
+         icon: icon
+         // webPreferences: { webSecurity: false }
+        })
 
     let name = require('../package.json').name
     let version = require('../package.json').version
@@ -118,8 +126,8 @@ app.on('ready', () => {
 })
 
 app.on('ready', () => {
-    let traypath = path.join(__dirname, 'assets/icons/32x32.png')
-    tray = new Tray(traypath)
+    let trayicon = path.join(__dirname, 'assets/icons/png/32x32.png')
+    tray = new Tray(trayicon)
     const contextMenu = Menu.buildFromTemplate([
         {label: 'help', role: 'help'},
         {label: 'learn more', click () { electron.shell.openExternal('http:\/\/diglossa.org') }},
