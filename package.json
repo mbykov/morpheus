@@ -73,15 +73,13 @@
       ]
     },
     "linux": {
-      "icon": "build/book.png",
       "target": [
         "AppImage",
         "deb"
       ]
     },
     "win": {
-      "publisherName": "Michael Bykov",
-      "icon": "build/book.ico"
+      "publisherName": "Michael Bykov"
     },
     "nsis": {
       "perMachine": false
