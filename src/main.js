@@ -40,7 +40,6 @@ const BrowserWindow = electron.BrowserWindow
 let mainWindow
 
 function createWindow () {
-    // new icon path
     let winpath = path.join(__dirname, '../assets/book.png')
     let icon = nativeImage.createFromPath(winpath)
 
