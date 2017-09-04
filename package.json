@@ -58,6 +58,9 @@
       "src",
       "package.json"
     ],
+      "directories": [
+          "buildResources": "assets"
+      ],
     "publish": [
       {
         "provider": "github",
