@@ -40,7 +40,7 @@ const BrowserWindow = electron.BrowserWindow
 let mainWindow
 
 function createWindow () {
-    let winpath = path.join(__dirname, 'assets/book.png')
+    let winpath = path.join(__dirname, '../assets/book.png')
     let icon = nativeImage.createFromPath(winpath)
 
     mainWindow = new BrowserWindow(
@@ -126,7 +126,8 @@ app.on('ready', () => {
 })
 
 app.on('ready', () => {
-    let trayicon = path.join(__dirname, 'assets/icons/png/32x32.png')
+    let trayicon = path.join(__dirname, '../assets/icons/png/32x32.png')
+    // let trayicon = path.join(__dirname, '../assets/book.png')
     tray = new Tray(trayicon)
     const contextMenu = Menu.buildFromTemplate([
         {label: 'help', role: 'help'},
@@ -257,19 +258,18 @@ function sendStatus(text) {
     mainWindow.webContents.send('status', text);
 }
 
-// autoUpdater.on('checking-for-update', () => {
-//     sendStatus('Checking for update...');
-// })
-// autoUpdater.on('update-available', (ev, info) => {
-//     populated = null
-//     sendStatus('Update available, downloading');
-// })
+autoUpdater.on('checking-for-update', () => {
+    sendStatus('Checking for update...');
+})
+autoUpdater.on('update-available', (ev, info) => {
+    sendStatus('Update available, downloading');
+})
 // autoUpdater.on('update-not-available', (ev, info) => {
-//     // sendStatus('Update not available.');
+    // sendStatus('Update not available.');
 // })
-// autoUpdater.on('error', (ev, err) => {
-//     sendStatus('Error in auto-updater.' + err);
-// })
+autoUpdater.on('error', (ev, err) => {
+    sendStatus('Error in auto-updater: ' + err);
+})
 
 // // autoUpdater.on('download-progress', (progressObj) => {
 // //     let log_message = "Download speed: " + progressObj.bytesPerSecond;

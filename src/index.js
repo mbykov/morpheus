@@ -6,15 +6,6 @@ import Split from 'split.js'
 import gutter from './lib/sections/vertical.png'
 let delegate = require('delegate');
 
-// TODO: убрать
-// import about from './lib/sections/about.html'
-// import help from './lib/sections/help.html'
-// import code from './lib/sections/code.html'
-// import contacts from './lib/sections/contacts.html'
-// import screencast from './lib/sections/screencast.html'
-// import acknowledgements from './lib/sections/acknowledgements.html'
-
-
 // import {segmenter} from '../../segmenter'
 import {segmenter} from 'recursive-segmenter'
 
@@ -219,53 +210,7 @@ ipcRenderer.on('section', function(event, name) {
     split.setSizes([100, 0])
     closePopups()
     showSection(name)
-
-    // switch (name) {
-    // case 'about':
-    //     showSection(about)
-    //     break
-    // case 'help':
-    //     showSection(help)
-    //     let apic = q('#ambipic')
-    //     apic.src = ambipic
-    //     let rpic = q('#recpic')
-    //     rpic.src = recpic
-    //     break
-    // case 'code':
-    //     showSection(code)
-    //     break
-    // case 'contacts':
-    //     showSection(contacts)
-    //     break
-    // case 'screencast':
-    //     showSection(screencast)
-    //     break
-    // case 'acknowledgements':
-    //     showSection(acknowledgements)
-    //     break
-    // case 'install':
-    //     ipcRenderer.send('config')
-    //     ipcRenderer.on('config', function(event, config) {
-    //         installDict(config)
-    //     })
-    //     break
-    // }
-
-    // delegate(oHeader, '.external', 'click', function(e) {
-    //     let href= e.target.textContent
-    //     shell.openExternal(href)
-    // })
 })
-
-
-// function showSection(sec) {
-//     let oHeader = q('#text')
-//     empty(oHeader)
-//     oHeader.classList.add('font16')
-//     oHeader.innerHTML = sec
-//     let odicts = q('#laoshi-dicts')
-//     empty(odicts)
-// }
 
 function onWheel(e) {
     let isShift = !!e.shiftKey;
@@ -274,3 +219,11 @@ function onWheel(e) {
     oRes.scrollTop += e.deltaY
     e.preventDefault()
 }
+
+ipcRenderer.on('status', (event, status) => {
+    split.setSizes([100, 0])
+    let oHeader = q('#text')
+    // oHeader.classList.remove('font16')
+    empty(oHeader)
+    oHeader.textContent = status
+})
