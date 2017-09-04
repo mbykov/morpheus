@@ -78,7 +78,7 @@ function createWindow () {
     Menu.setApplicationMenu(menu)
 
     const ses = mainWindow.webContents.session
-    ses.clearCache(function() {
+    ses.clearStorageData(function() {
         log('CACHE')
     })
 }
