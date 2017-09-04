@@ -76,7 +76,7 @@
       ]
     },
     "linux": {
-      "icon": "assets/icons",
+      "icon": "assets",
       "target": [
         "AppImage",
         "deb"
