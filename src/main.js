@@ -40,11 +40,12 @@ const BrowserWindow = electron.BrowserWindow
 let mainWindow
 
 function createWindow () {
-    let winpath = path.join(__dirname, '../assets/book.png')
+    // let winpath = path.join(__dirname, '../assets/book.png')
+    let winpath = path.join(__dirname, '../assets/icons/png/64x64.png')
     log('IP', winpath)
     let icon = nativeImage.createFromPath(winpath)
-    let s = icon.getSize()
-    log('IM', s)
+    // let s = icon.getSize()
+    // log('IM', s)
 
     mainWindow = new BrowserWindow(
         {width: 800,
