@@ -77,6 +77,10 @@ function createWindow () {
     const menu = Menu.buildFromTemplate(template)
     Menu.setApplicationMenu(menu)
 
+    const ses = mainWindow.webContents.session
+    ses.clearCache(function() {
+        //
+    })
 }
 
 const shouldQuit = app.makeSingleInstance((commandLine, workingDirectory) => {
