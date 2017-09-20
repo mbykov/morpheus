@@ -56,6 +56,7 @@
       "appId": "com.github.mbykov.morpheus-eastern",
       "files": [
           "assets/",
+           "assets/icons/",
           "build/",
           "pack/",
           "cedict/",
@@ -79,7 +80,6 @@
     "linux": {
       "category": "Educational software",
       "target": [
-        "AppImage",
         "deb"
       ]
     },
