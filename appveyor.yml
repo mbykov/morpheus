@@ -54,7 +54,7 @@ build_script:
   - node --version
   - npm --version
   - npm install
-  - npm run rebuild
+  # - npm run rebuild
   - npm run release
   # - npm prune
 
