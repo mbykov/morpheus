@@ -56,7 +56,6 @@
       "appId": "com.github.mbykov.morpheus-eastern",
       "files": [
           "assets/",
-           "assets/icons/",
           "build/",
           "pack/",
           "cedict/",
@@ -79,12 +78,14 @@
     },
     "linux": {
       "category": "Educational software",
-      "target": [
+        "icon": "assets/",
+        "target": [
         "deb"
       ]
     },
     "win": {
-      "publisherName": "Michael Bykov"
+        "icon": "assets/icon.ico",
+        "publisherName": "Michael Bykov"
     },
     "nsis": {
       "perMachine": false
