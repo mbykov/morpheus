@@ -1,6 +1,6 @@
 {
   "name": "morpheus-eastern",
-  "version": "0.4.83",
+  "version": "0.4.84",
   "description": "Morpheus for Chinese and other Oriental languages",
   "main": "src/main.js",
   "scripts": {
@@ -14,7 +14,7 @@
       "release": "electron-builder"
   },
   "homepage": "http://diglossa.org",
-  "repository": "https://github.com/mbykov/laoshi",
+  "repository": "https://github.com/mbykov/morpheus-eastern",
   "keywords": [
     "chinese",
     "segmentation",
@@ -53,14 +53,15 @@
     "tar-fs": "^1.15.3"
   },
   "build": {
-    "appId": "com.github.mbykov.morpheus-eastern",
-    "files": [
-      "build/",
-      "pack/",
-      "cedict/",
-      "src",
-      "package.json"
-    ],
+      "appId": "com.github.mbykov.morpheus-eastern",
+      "files": [
+          "assets/",
+          "build/",
+          "pack/",
+          "cedict/",
+          "src",
+          "package.json"
+      ],
     "publish": [
       {
         "provider": "github",

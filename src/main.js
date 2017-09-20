@@ -42,7 +42,7 @@ let mainWindow
 function createWindow () {
     // new icon path
     // let winpath = path.join(__dirname, '../build/book.png')
-    let winpath = path.join(__dirname, '../build/64x64.png')
+    let winpath = path.join(__dirname, '../assets/64x64.png')
     let icon = nativeImage.createFromPath(winpath)
 
     mainWindow = new BrowserWindow(
@@ -128,7 +128,7 @@ app.on('ready', () => {
 })
 
 app.on('ready', () => {
-    let trayicon = path.join(__dirname, '../build/64x64.png')
+    let trayicon = path.join(__dirname, '../assets/64x64.png')
     // let trayicon = path.join(__dirname, '../build/book.png')
     tray = new Tray(trayicon)
     const contextMenu = Menu.buildFromTemplate([
