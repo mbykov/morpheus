@@ -1,2 +1,0 @@
-*.db filter=lfs diff=lfs merge=lfs -text
-cedict filter=lfs diff=lfs merge=lfs -text
