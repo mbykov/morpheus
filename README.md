@@ -1,4 +1,4 @@
-# morpheus-vue
+# Morpheus for Chinese and other Oriental languages
 
 > An electron-vue project
 
@@ -6,24 +6,28 @@
 
 ``` bash
 # install dependencies
-npm install
+yarn
 
-# serve with hot reload at localhost:9080
-npm run dev
-
-# build electron application for production
-npm run build
-
-# run unit tests
-npm test
-
-
-# lint all JS/Vue component files in `src/`
-npm run lint
+# serve with hot reload
+yarn run dev
 
 ```
 
----
+#### troubles?
 
- NODE_MODULE_VERSION 57. This version of Node.js requires
- NODE_MODULE_VERSION 54. Please try re-compiling or re-installing
+in case of errors like this:
+
+. . .
+NODE_MODULE_VERSION 57. This version of Node.js requires
+NODE_MODULE_VERSION 54. Please try re-compiling or re-installing
+. . .
+
+``` bash
+
+# install electron-rebuild
+ yarn add electron-rebuild
+
+# fix the bug
+ ./node_modules/.bin/electron-rebuild -f -w leveldown
+
+```
