@@ -1,0 +1,72 @@
+#main {
+    margin: 0;
+    height: 100%;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    /* float: left; */
+}
+
+.split {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    height: 100%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('~@/assets/vertical.png');
+    /* background-image: url('~@/static/vertical.png'); */
+    cursor: col-resize;
+}
+
+.split, .gutter.gutter-horizontal {
+    height: 100%;
+    float: left;
+}
+
+#text {
+    font-family: "Biaodian Pro Sans", "Helvetica Neue", Helvetica, Arial, "Han Heiti";
+    font-size: 26px;
+    padding: 15px;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    padding: 50px;
+    padding-top: 15px;
+    padding-bottom: 25px;
+    -webkit-app-region: drag;
+}
+
+#results {
+    font-family: 'DejaVu Sans';
+    font-size: 16px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 25px;
+}
+
+.seg:hover {
+    background-color: #eee;
+}
+
+.ambi:hover {
+    background-color: #eee;
+}
+
+.link {
+    cursor: pointer;
+}
+
+.clause {
+    background-color: #eee;
+    /* background-color: #ffb6c1; */
+    /* #FADADD #fadadd */
+    /* background-color: #eee; */
+}

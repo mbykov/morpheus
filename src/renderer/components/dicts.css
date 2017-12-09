@@ -1,0 +1,40 @@
+#dict-glyph {
+}
+
+.dict-glyph {
+    font-size: 52px;
+    color: maroon;
+    cursor: pointer;
+}
+
+.dict-other {
+    font-size: 32px;
+    color: grey;
+    cursor: pointer;
+}
+
+.dict-other-type {
+    padding-left: 25px;
+}
+
+.dname {
+    float: right;
+    color: maroon;
+    /* margin-bottom: 25px; */
+    padding-bottom: 25px;
+}
+#dicts > span {
+    margin: 15px;
+}
+
+.pos {
+    color: green;
+}
+
+.trns {
+    padding-left: 20px;
+}
+
+.note {
+    padding-left: 20px;
+}

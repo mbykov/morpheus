@@ -1,0 +1,17 @@
+/* hanzi.css */
+
+#hanzisvg {
+    /* float: left; */
+}
+
+#hanzidescr {
+    /* float: left; */
+}
+
+ul {
+    list-style-type: none;
+}
+
+.component {
+    fint-size: 42px;
+}

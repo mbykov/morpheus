@@ -1,0 +1,61 @@
+body {
+    margin: 0;
+    height: 100%;
+    background: none repeat scroll 0 0 #ffffee;
+    color: #333;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+html {
+    margin: 0;
+    /* overflow-y: scroll; */
+    /* overflow-x: hidden; */
+    height: 100%;
+    /* padding: 10px; */
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+h2 {
+    color: maroon;
+}
+
+b {
+    color: maroon;
+}
+
+p {
+    margins: 0;
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 15px;
+}
+
+#app {
+    height: 100%;
+    /* overflow-y: hidden; */
+    /* overflow-x: hidden; */
+    padding: 10px;
+}
+
+#arrows {
+    float: right;
+    padding: 10px;
+    padding-right: 20px;
+    margin-left: -125px;
+}
+
+.arrow {
+    width: 35px;
+    cursor: pointer;
+    /* cursor: url('~@/assets/hand-pointer.png'), auto */
+    /* cursor: url('~@/assets/cursor-hand.gif'), auto */
+}
+
+.section {
+    height: 100%;
+    padding: 50px;
+    font-size: 1.2em;
+    overflow-y: auto;
+}
