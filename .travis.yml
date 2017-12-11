@@ -3,7 +3,14 @@
 osx_image: xcode8.3
 sudo: required
 dist: trusty
-language: c
+language: node_js
+node_js: "8"
+
+env:
+  global:
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+
 matrix:
   include:
   - os: osx
@@ -34,9 +41,12 @@ install:
 - source ~/.bashrc
 - npm install -g xvfb-maybe
 - yarn
-script:
+# script:
 #- xvfb-maybe node_modules/.bin/karma start test/unit/karma.conf.js
-- yarn run release
+# - yarn run release
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then yarn release; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn release -- --mac --win; fi
 branches:
   only:
   - master
