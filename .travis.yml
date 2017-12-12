@@ -58,7 +58,8 @@ install:
 # - yarn run release
 script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then yarn release; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn release -- --mac --win; fi
+#  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn release -- --mac --win; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then echo "===OSX==="; yarn release; fi
 branches:
   only:
   - master
