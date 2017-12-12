@@ -1,13 +1,13 @@
 # Commented sections below can be used to run tests on the CI server
 # https://simulatedgreg.gitbooks.io/electron-vue/content/en/testing.html#on-the-subject-of-ci-testing
-osx_image: xcode9.2
-xcode_sdk: macosx10.13
-#group: travis_lts
-sudo: required
-dist: trusty
+#osx_image: xcode9.2
+##xcode_sdk: macosx10.13
+##group: travis_lts
+#sudo: required
+#dist: trusty
 #language: c
-language: node_js
-node_js: "8"
+#language: node_js
+#node_js: "8"
 
 env:
   global:
@@ -16,10 +16,19 @@ env:
 
 matrix:
   include:
-  - os: osx
-  - os: linux
-    env: CC=clang CXX=clang++ npm_config_clang=1
-    compiler: clang
+    - os: osx
+      osx_image: xcode9.2
+      language: node_js
+      node_js: "8"
+      env:
+        - ELECTRON_CACHE=$HOME/.cache/electron
+        - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+
+    - os: linux
+      language: node_js
+      node_js: "8"
+      env: CC=clang CXX=clang++ npm_config_clang=1
+      compiler: clang
 cache:
   directories:
   - node_modules
