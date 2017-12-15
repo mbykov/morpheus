@@ -1,6 +1,7 @@
 //
 
 import {log} from './utils'
+import {q, qs, empty, create, span} from './utils'
 import {ipcRenderer, shell} from 'electron'
 import { EventBus } from './bus'
 import router from './router'
@@ -13,6 +14,7 @@ const rpng = 'static/right.png'
 const lpng = 'static/left.png'
 const clipboard = require('electron-clipboard-extended')
 var Mousetrap = require('mousetrap')
+let segmenter = require('recursive-segmenter')
 
 export default {
   name: 'morpheus',
@@ -68,6 +70,7 @@ export default {
       router.go(1)
     },
     showSection (name) {
+      log('SS:', name)
       router.push({path: name, query: {text: name}})
     }
   }
@@ -85,3 +88,34 @@ ipcRenderer.on('hanzi', function (event, doc) {
 // ipcRenderer.on('cfg', function (event, cfg) {
 //   EventBus.$emit('cfg', cfg)
 // })
+
+// string of the segments - spans
+ipcRenderer.on('data', function (event, data) {
+  let clause = q('.clause')
+  if (!clause) return
+  let docs = _.flatten(data.res.map(d => { return d.docs }))
+  let dicts = _.uniq(_.flatten(data.res.map(d => { return d._id })))
+  Promise.resolve(segmenter(data.str, dicts)).then(segs => {
+    let key = clause.textContent
+    if (!EventBus.res) EventBus.res = {}
+    EventBus.res[key] = {docs: docs, segs: segs}
+    clause.classList.remove('clause')
+    setSegs(clause, segs)
+  })
+})
+
+function setSegs (clause, segs) {
+  empty(clause)
+  segs.forEach(s => {
+    let spn = span(s.seg)
+    if (s.ambis) {
+      spn.classList.add('ambi')
+      spn.ambis = s.ambis
+    } else if (s.hole) {
+      spn.classList.add('hole')
+    } else {
+      spn.classList.add('seg')
+    }
+    clause.appendChild(spn)
+  })
+}

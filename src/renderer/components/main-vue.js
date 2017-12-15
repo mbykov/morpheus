@@ -128,36 +128,38 @@ export default {
   }
 }
 
-// string of the segments - spans
-ipcRenderer.on('data', function (event, data) {
-  let clause = q('.clause')
-  if (!clause) return
-  let docs = _.flatten(data.res.map(d => { return d.docs }))
-  let dicts = _.uniq(_.flatten(data.res.map(d => { return d._id })))
-  Promise.resolve(segmenter(data.str, dicts)).then(segs => {
-    let key = clause.textContent
-    if (!EventBus.res) EventBus.res = {}
-    EventBus.res[key] = {docs: docs, segs: segs}
-    clause.classList.remove('clause')
-    setSegs(clause, segs)
-  })
-})
+// // string of the segments - spans
+// moved to app-vue.js:
 
-function setSegs (clause, segs) {
-  empty(clause)
-  segs.forEach(s => {
-    let spn = span(s.seg)
-    if (s.ambis) {
-      spn.classList.add('ambi')
-      spn.ambis = s.ambis
-    } else if (s.hole) {
-      spn.classList.add('hole')
-    } else {
-      spn.classList.add('seg')
-    }
-    clause.appendChild(spn)
-  })
-}
+// ipcRenderer.on('data', function (event, data) {
+//   let clause = q('.clause')
+//   if (!clause) return
+//   let docs = _.flatten(data.res.map(d => { return d.docs }))
+//   let dicts = _.uniq(_.flatten(data.res.map(d => { return d._id })))
+//   Promise.resolve(segmenter(data.str, dicts)).then(segs => {
+//     let key = clause.textContent
+//     if (!EventBus.res) EventBus.res = {}
+//     EventBus.res[key] = {docs: docs, segs: segs}
+//     clause.classList.remove('clause')
+//     setSegs(clause, segs)
+//   })
+// })
+
+// function setSegs (clause, segs) {
+//   empty(clause)
+//   segs.forEach(s => {
+//     let spn = span(s.seg)
+//     if (s.ambis) {
+//       spn.classList.add('ambi')
+//       spn.ambis = s.ambis
+//     } else if (s.hole) {
+//       spn.classList.add('hole')
+//     } else {
+//       spn.classList.add('seg')
+//     }
+//     clause.appendChild(spn)
+//   })
+// }
 
 // utils:
 function findAncestor (el, cls) {
