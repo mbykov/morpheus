@@ -93,11 +93,13 @@ ipcRenderer.on('data', function (event, data) {
   log('D', data)
   let clause = q('.clause')
   if (!clause) return
+  clause.classList.remove('clause')
   let docs = _.flatten(data.res.map(d => { return d.docs }))
   let dicts = _.uniq(_.flatten(data.res.map(d => { return d._id })))
   Promise.resolve(segmenter(data.str, dicts)).then(segs => {
     let key = clause.textContent
     if (!EventBus.res) EventBus.res = {}
+    if (EventBus.res[key]) return
     EventBus.res[key] = {docs: docs, segs: segs}
     clause.classList.remove('clause')
     setSegs(clause, segs)
