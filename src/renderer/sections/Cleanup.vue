@@ -10,7 +10,7 @@
   </div>
 </template>
 
-<script src="./cleanup">
+<script src="./cleanup-vue">
 </script>
 
 <style>

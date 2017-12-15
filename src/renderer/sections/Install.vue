@@ -1,6 +1,6 @@
 <template>
   <div id="install" class="section">
-    <p>Download precompiled dictionaries from XXX, or create your own, then</p>
+    <p>Download precompiled dictionaries from <span class="link" @click="open">http://diglossa.org/chinese/dictionaries.html</span>, or create your own, then</p>
     <h2>install from file:</h2>
     <p>do not untar / ungzip files!</p>
     <p></p>
@@ -20,5 +20,9 @@
 <style>
   #install {
     width: 500px;
-  }
+}
+.link {
+    color: maroon;
+    cursor: pointer;
+}
 </style>
