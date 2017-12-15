@@ -1,6 +1,6 @@
 //
 
-import {log} from './utils'
+// import {log} from './utils'
 import {q, qs, empty, create, span} from './utils'
 import {ipcRenderer, shell} from 'electron'
 import { EventBus } from './bus'
@@ -90,7 +90,6 @@ ipcRenderer.on('hanzi', function (event, doc) {
 
 // string of the segments - spans
 ipcRenderer.on('data', function (event, data) {
-  log('D', data)
   let clause = q('.clause')
   if (!clause) return
   clause.classList.remove('clause')
