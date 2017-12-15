@@ -4,7 +4,7 @@
 
 > copy any Chinese text anywhere on a desktop and move mouse over the text in Morpheus
 
- <p align="center"><img src="./blob/master/static/screen.gif" /></p>
+ <p align="center"><img src="../../../screen.gif" /></p>
 
 #### Build Setup
 
