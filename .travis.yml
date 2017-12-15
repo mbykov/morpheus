@@ -4,11 +4,11 @@
 ##xcode_sdk: macosx10.13
 ##group: travis_lts
 #sudo: required
-dist: trusty
+# dist: trusty
 #language: c
 #language: node_js
 #node_js: "8"
-group: edge
+# group: edge
 
 env:
   global:
