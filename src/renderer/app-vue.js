@@ -1,6 +1,6 @@
 //
 
-import {log} from './utils'
+// import {log} from './utils'
 import {q, qs, empty, create, span} from './utils'
 import {ipcRenderer, shell} from 'electron'
 import { EventBus } from './bus'
@@ -70,7 +70,6 @@ export default {
       router.go(1)
     },
     showSection (name) {
-      log('SS:', name)
       router.push({path: name, query: {text: name}})
     }
   }

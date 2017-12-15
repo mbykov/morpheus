@@ -1,6 +1,6 @@
 //
 
-import {log} from '../utils'
+// import {log} from '../utils'
 import _ from 'lodash'
 import {q, placePopup} from '../utils'
 import { EventBus } from '../bus'
