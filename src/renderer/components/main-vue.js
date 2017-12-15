@@ -63,11 +63,13 @@ export default {
       let text = q('#text')
       empty(text)
       if (!pars) return
-      pars.forEach((cls) => {
+      pars.forEach((cls, parid) => {
         let par = create('p')
-        cls.forEach((cl) => {
+        par.setAttribute('parid', parid)
+        cls.forEach((cl, clid) => {
           let spn = span(cl.text)
           spn.classList = (cl.type === 'cl') ? 'cl' : 'sp'
+          spn.setAttribute('clid', clid)
           par.appendChild(spn)
         })
         text.appendChild(par)
@@ -80,10 +82,8 @@ export default {
       this.clean = true
       EventBus.$emit('close-popups')
       if (ev.target.classList.contains('cl')) {
-        let cls = qs('.clause')
-        cls.forEach(cl => { cl.classList.remove('clause') })
-        ev.target.classList.add('clause')
-        let data = ev.target.textContent
+        let text = ev.target.textContent
+        let data = {text: text, parid: ev.target.parentNode.getAttribute('parid'), clid: ev.target.getAttribute('clid')}
         ipcRenderer.send('data', data)
       } else if (ev.target.classList.contains('ambi')) {
         let cl = findAncestor(ev.target, 'cl')
@@ -127,39 +127,6 @@ export default {
     }
   }
 }
-
-// // string of the segments - spans
-// moved to app-vue.js:
-
-// ipcRenderer.on('data', function (event, data) {
-//   let clause = q('.clause')
-//   if (!clause) return
-//   let docs = _.flatten(data.res.map(d => { return d.docs }))
-//   let dicts = _.uniq(_.flatten(data.res.map(d => { return d._id })))
-//   Promise.resolve(segmenter(data.str, dicts)).then(segs => {
-//     let key = clause.textContent
-//     if (!EventBus.res) EventBus.res = {}
-//     EventBus.res[key] = {docs: docs, segs: segs}
-//     clause.classList.remove('clause')
-//     setSegs(clause, segs)
-//   })
-// })
-
-// function setSegs (clause, segs) {
-//   empty(clause)
-//   segs.forEach(s => {
-//     let spn = span(s.seg)
-//     if (s.ambis) {
-//       spn.classList.add('ambi')
-//       spn.ambis = s.ambis
-//     } else if (s.hole) {
-//       spn.classList.add('hole')
-//     } else {
-//       spn.classList.add('seg')
-//     }
-//     clause.appendChild(spn)
-//   })
-// }
 
 // utils:
 function findAncestor (el, cls) {

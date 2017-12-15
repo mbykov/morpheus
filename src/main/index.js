@@ -133,13 +133,14 @@ function createWindow () {
     Promise.resolve(createDBs(upath, cfg)).then(dbs => {
       if (!dbs) return
       ipcMain.removeAllListeners('data')
-      ipcMain.on('data', function (event, str) {
+      ipcMain.on('data', function (event, data) {
+        let str = data.text
         queryDBs(dbs, str)
           .then(function (arrayOfResults) {
             let flats = _.flatten(_.compact(arrayOfResults))
             if (!flats.length) return
-            let data = {str: str, res: flats}
-            mainWindow.webContents.send('data', data)
+            let answer = {str: str, res: flats, parid: data.parid, clid: data.clid}
+            mainWindow.webContents.send('data', answer)
           }).catch(function (err) {
             console.log('ERR queryDBs', err)
           })
@@ -193,9 +194,9 @@ app.on('activate', () => {
 })
 
 app.on('ready', () => {
-  globalShortcut.register('CommandOrControl+q', () => {
-    app.quit()
-  })
+  // globalShortcut.register('CommandOrControl+q', () => {
+  //   app.quit()
+  // })
   globalShortcut.register('CommandOrControl+Shift+q', () => {
     app.quit()
   })

@@ -1,6 +1,6 @@
 //
 
-// import {log} from './utils'
+import {log} from './utils'
 import {q, qs, empty, create, span} from './utils'
 import {ipcRenderer, shell} from 'electron'
 import { EventBus } from './bus'
@@ -90,17 +90,18 @@ ipcRenderer.on('hanzi', function (event, doc) {
 
 // string of the segments - spans
 ipcRenderer.on('data', function (event, data) {
-  let clause = q('.clause')
+  let parsel = JSON.stringify(data.parid)
+  let par = document.querySelector(`[parid=${parsel}]`)
+  if (!par) return
+  let clsel = JSON.stringify(data.clid)
+  let clause = par.querySelector(`[clid=${clsel}]`)
   if (!clause) return
-  clause.classList.remove('clause')
   let docs = _.flatten(data.res.map(d => { return d.docs }))
   let dicts = _.uniq(_.flatten(data.res.map(d => { return d._id })))
   Promise.resolve(segmenter(data.str, dicts)).then(segs => {
     let key = clause.textContent
     if (!EventBus.res) EventBus.res = {}
-    if (EventBus.res[key]) return
     EventBus.res[key] = {docs: docs, segs: segs}
-    clause.classList.remove('clause')
     setSegs(clause, segs)
   })
 })
