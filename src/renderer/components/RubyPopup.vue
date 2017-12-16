@@ -1,18 +1,19 @@
 <template>
-  <div id="ambis" v-show="ambis">
-    <span class="ambis" @mouseover="showDict" @click="showRec">
-      <div v-for="row in ambis" class="amrow">
-        <span v-for="col in row" class="seg">{{col.seg}}</span>
-      </div>
+  <div id="ruby-popup" v-show="rubies">
+    <span class="rubies">
+        <span v-for="(seg, idx) in rubies" class="arow" :idx="idx">
+        <span class="ruby">{{calcSeg(seg.pins)}} </span>
+        <!-- <span class="ruby">{{seg.pins[Math.floor(0.2)]}} </span> -->
+      </span>
     </span>
   </div>
 </template>
 
-<script src="./ambis-popup">
+<script src="./ruby-popup">
 </script>
 
 <style>
-.ambis {
+.rubies {
     border: 1px solid rgba(0, 0, 0, 0.2);
     /* background-color: #8aba87; */
     /* color: white; */
@@ -29,7 +30,7 @@
     top: 250px;
     left: 300px;
     /* font-family: 'DejaVu Sans'; */
-    font-size: 26px;
+    font-size: 16px;
     padding: 3px;
 }
 </style>

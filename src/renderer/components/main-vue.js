@@ -1,12 +1,13 @@
 //
 
-// import {log} from '../utils'
+import {log} from '../utils'
 import _ from 'lodash'
 import {q, qs, empty, create, span} from '../utils'
 import Split from 'split.js'
 import { EventBus } from '../bus'
 import {ipcRenderer} from 'electron'
 
+import RubyPopup from '@/components/RubyPopup'
 import AmbisPopup from '@/components/AmbisPopup'
 import RecursivePopup from '@/components/RecursivePopup'
 import Dicts from '@/components/Dicts'
@@ -30,6 +31,7 @@ export default {
   components: {
     Dicts,
     Hanzi,
+    RubyPopup,
     AmbisPopup,
     RecursivePopup
   },
@@ -78,10 +80,16 @@ export default {
 
     mainProc (ev) {
       if (ev.target.nodeName !== 'SPAN') return
-      if (ev.shiftKey) return
       this.clean = true
       EventBus.$emit('close-popups')
-      if (ev.target.classList.contains('cl')) {
+      if (ev.shiftKey) {
+        if (!EventBus.res) return
+        let cl = findAncestor(ev.target, 'cl')
+        if (!cl) return
+        let key = cl.textContent
+        let docs = EventBus.res[key].docs
+        showRuby(ev.target, key, docs)
+      } else if (ev.target.classList.contains('cl')) {
         let text = ev.target.textContent
         let data = {text: text, parid: ev.target.parentNode.getAttribute('parid'), clid: ev.target.getAttribute('clid')}
         ipcRenderer.send('data', data)
@@ -126,6 +134,45 @@ export default {
       EventBus.$emit('show-recursive', data)
     }
   }
+}
+
+function showRuby (el, text, docs) {
+  let elpins = _.filter(docs, doc => { return doc.pinyin})
+  let dicts = _.uniq(_.flatten(elpins.map(d => { return d.dict })))
+  // log('D', dicts)
+  Promise.resolve(segmenter(text, dicts)).then(segs => {
+    let rubies = []
+    segs.forEach(seg => {
+      // log('S:', seg)
+      if (seg.ambis) {
+        // log('A', seg)
+        let apins = []
+        seg.ambis.forEach(asegs => {
+          let spins = []
+          asegs.forEach(aseg => {
+            let segdocs = _.filter(docs, doc => { return doc.dict === aseg.seg})
+            let segpins = segdocs.map(doc => { return doc.pinyin })
+            let pins = _.uniq(_.flatten(segpins))
+            spins.push(pins)
+          })
+          apins.push(spins.join(' '))
+        })
+        let ruby = {start: seg.start, size: seg.size, pins: _.uniq(apins)}
+        rubies.push(ruby)
+
+      } else  {
+        let segdocs = _.filter(docs, doc => { return doc.dict === seg.seg})
+        let segpins = segdocs.map(doc => { return doc.pinyin })
+        let pins = _.uniq(_.flatten(segpins))
+        let ruby = {start: seg.start, size: seg.size, pins: pins}
+        rubies.push(ruby)
+      }
+    })
+    let clause = findAncestor(el, 'cl')
+    let coords = getCoords(clause)
+    let data = {rubies: rubies, coords: coords}
+    EventBus.$emit('show-ruby', data)
+  })
 }
 
 // utils:

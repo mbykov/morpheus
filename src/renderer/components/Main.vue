@@ -7,6 +7,7 @@
     <div id="results" class="split split-horizontal">
       <ambis-popup :clean="clean"></ambis-popup>
       <recursive-popup :clean="clean"></recursive-popup>
+      <ruby-popup :clean="clean"></ruby-popup>
       <dicts></dicts>
       <hanzi></hanzi>
     </div>

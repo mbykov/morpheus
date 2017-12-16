@@ -81,24 +81,6 @@ export function findAncestor (el, cls) {
   }
 }
 
-// export function segs2dict (seg, segs) {
-//   let dict = _.find(segs, (d) => { return d.dict === seg })
-//   if (!dict) {
-//     return
-//   }
-//   for (let dbn in dict.dbns) {
-//     let dns = dict.dbns[dbn]
-//     let simps = _.compact(_.uniq(_.flatten(dns.map(dn => { return dn.docs.map(d => { return d.simp }) }))))
-//     let trads = _.compact(_.uniq(_.flatten(dns.map(dn => { return dn.docs.map(d => { return d.trad }) }))))
-//     // log('SIMPS', simps)
-//     // log('TRADS', trads, trads.length)
-//     if (trads.length && simps.length && simps.toString() !== trads.toString()) {
-//       dict.other = (simps.includes(dict.dict)) ? ['trad:', trads].join(' ') : ['simp:', simps].join(' ')
-//     }
-//   }
-//   return dict
-// }
-
 export function placePopup (coords, el) {
   var top = [coords.top, 'px'].join('')
   var left = [coords.left, 'px'].join('')
