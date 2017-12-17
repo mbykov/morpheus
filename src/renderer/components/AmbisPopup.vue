@@ -1,8 +1,8 @@
 <template>
   <div id="ambis" v-show="ambis">
     <span class="ambis" @mouseover="showDict" @click="showRec">
-      <div v-for="row in ambis" class="amrow">
-        <span v-for="col in row" class="seg">{{col.seg}}</span>
+      <div v-for="(row, idx) in ambis" class="amrow">
+        <span v-for="(col, idy) in row" :class="setClass(idx, idy)">{{col.seg}}</span>
       </div>
     </span>
   </div>
@@ -31,5 +31,8 @@
     /* font-family: 'DejaVu Sans'; */
     font-size: 26px;
     padding: 3px;
+}
+.even {
+    background-color: #eee;
 }
 </style>

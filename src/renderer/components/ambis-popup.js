@@ -33,6 +33,16 @@ export default {
       placePopup(data.coords, oambis)
     },
 
+    setClass(idx, idy) {
+      let odd, even
+      if (idy % 2 === 0) {
+        odd = 'seg'; even ='seg even'
+      } else {
+        odd = 'seg even'; even ='seg'
+      }
+      return (idx % 2 === 0) ? odd : even
+    },
+
     showDict: function (ev) {
       if (ev.shiftKey) return
       if (!ev.target.classList.contains('seg')) return

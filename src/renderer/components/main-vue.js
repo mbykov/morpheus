@@ -82,6 +82,7 @@ export default {
       if (ev.target.nodeName !== 'SPAN') return
       this.clean = true
       EventBus.$emit('close-popups')
+      if (ev.ctrlKey) return
       if (ev.shiftKey) {
         if (!EventBus.res) return
         let cl = findAncestor(ev.target, 'cl')
@@ -89,7 +90,8 @@ export default {
         let key = cl.textContent
         let docs = EventBus.res[key].docs
         showRuby(ev.target, key, docs)
-      } else if (ev.target.classList.contains('cl')) {
+      }
+      if (ev.target.classList.contains('cl')) {
         let text = ev.target.textContent
         let data = {text: text, parid: ev.target.parentNode.getAttribute('parid'), clid: ev.target.getAttribute('clid')}
         ipcRenderer.send('data', data)
