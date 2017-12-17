@@ -1,10 +1,23 @@
-# Morpheus for Chinese and other Oriental languages
+# Morpheus for Chinese
 
-> An electron-vue & Couch / Pouch project -
+> reading Chinese (including Classical Chinese) made easy, Chinese word recursive segmentation, ruby-annonation on a fly for the whole sentence, a lot of dictionaries, including Dharma-Reader series, works offline and everywhere on a desktop:
 
 > copy any Chinese text anywhere on a desktop and move mouse over the text in Morpheus
 
  <p align="center"><img src="https://github.com/mbykov/morpheus/blob/master/static/ascreen.gif" /></p>
+
+#### learn more:
+
+``` bash
+    http://diglossa.org/chinese
+```
+
+#### cross platform:
+
+``` bash
+# MacOS, Windows, Ubuntu:
+    https://github.com/mbykov/morpheus/releases
+```
 
 #### Build Setup
 
