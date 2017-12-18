@@ -1,6 +1,6 @@
 //
 
-import {log} from '../utils'
+// import {log} from '../utils'
 import _ from 'lodash'
 import {q, qs, empty, create, span} from '../utils'
 import Split from 'split.js'
@@ -60,6 +60,7 @@ export default {
     showRoute (text) {
       let pars = zh(text)
       this.setClauses(pars)
+      EventBus.$emit('clean')
     },
     setClauses (pars) {
       let text = q('#text')
@@ -81,8 +82,9 @@ export default {
     mainProc (ev) {
       if (ev.target.nodeName !== 'SPAN') return
       this.clean = true
-      EventBus.$emit('close-popups')
+      // EventBus.$emit('close-popups')
       if (ev.ctrlKey) return
+      EventBus.$emit('clean')
       if (ev.shiftKey) {
         if (!EventBus.res) return
         let cl = findAncestor(ev.target, 'cl')
@@ -101,19 +103,19 @@ export default {
         let seg = ev.target.textContent
         let coords = getCoords(ev.target)
         let data = {seg: seg, coords: coords, ambis: ev.target.ambis, cl: clkey}
-        EventBus.$emit('clean')
+        // EventBus.$emit('clean')
         EventBus.$emit('show-ambis', data)
       } else if (ev.target.classList.contains('hole')) {
         let seg = ev.target.textContent
         let data = {seg: seg, cl: 'no-result', hole: true}
-        EventBus.$emit('clean')
+        // EventBus.$emit('clean')
         EventBus.$emit('show-dict', data)
       } else if (ev.target.classList.contains('seg')) {
         let cl = findAncestor(ev.target, 'cl')
         let clkey = cl.textContent
         let seg = ev.target.textContent
         let data = {seg: seg, cl: clkey}
-        EventBus.$emit('clean')
+        // EventBus.$emit('clean')
         this.clean = true
         EventBus.$emit('show-dict', data)
       }
@@ -141,13 +143,10 @@ export default {
 function showRuby (el, text, docs) {
   let elpins = _.filter(docs, doc => { return doc.pinyin})
   let dicts = _.uniq(_.flatten(elpins.map(d => { return d.dict })))
-  // log('D', dicts)
   Promise.resolve(segmenter(text, dicts)).then(segs => {
     let rubies = []
     segs.forEach(seg => {
-      // log('S:', seg)
       if (seg.ambis) {
-        // log('A', seg)
         let apins = []
         seg.ambis.forEach(asegs => {
           let spins = []
@@ -185,5 +184,6 @@ function findAncestor (el, cls) {
 
 function getCoords (el) {
   let rect = el.getBoundingClientRect()
+  // return {top: rect.top + 28 + window.scrollY, left: rect.left}
   return {top: rect.top + 28, left: rect.left}
 }

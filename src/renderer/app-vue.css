@@ -10,6 +10,7 @@ body {
 
 html {
     margin: 0;
+    margin-top: 15px;
     /* overflow-y: scroll; */
     /* overflow-x: hidden; */
     height: 100%;
@@ -36,7 +37,7 @@ p {
     height: 100%;
     /* overflow-y: hidden; */
     /* overflow-x: hidden; */
-    padding: 10px;
+    /* padding: 10px; */
 }
 
 #arrows {

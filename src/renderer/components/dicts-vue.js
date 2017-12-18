@@ -20,6 +20,10 @@ export default {
     }
   },
   created () {
+    // EventBus.$on('clean', data => {
+    // err - dict.seg
+    //   this.dict = null
+    // })
     EventBus.$on('show-hanzi', data => { this.dict = false })
     EventBus.$on('show-dict', data => {
       if (data.hole) {

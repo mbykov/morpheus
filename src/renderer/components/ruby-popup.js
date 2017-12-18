@@ -1,6 +1,6 @@
 //
 
-import {log} from '../utils'
+// import {log} from '../utils'
 // import _ from 'lodash'
 import {q, placePopup} from '../utils'
 import { EventBus } from '../bus'
@@ -29,8 +29,6 @@ export default {
   methods: {
     calcSeg: function (segs) {
       let idx = Math.floor(this.random * segs.length)
-      // log('S', segs.length, idx)
-      // log('S', segs[idx])
       return segs[idx]
     },
     showPopup: function (data) {
@@ -45,8 +43,9 @@ export default {
       }
       let popup = q('.rubies')
       let coords = data.coords
-      coords.top = coords.top -62
-      placePopup(coords, popup)
+      // coords.top = coords.top - 62
+      let ncoords = {top: data.coords.top - 65, left: data.left}
+      placePopup(ncoords, popup)
     }
   }
 }

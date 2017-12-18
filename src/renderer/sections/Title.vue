@@ -30,7 +30,7 @@ span.router-link-exact-active {
 }
 
 #title {
-    margin: auto;
+    /* margin: auto; */
     padding: 10px;
 }
 
@@ -39,8 +39,10 @@ span.router-link-exact-active {
     padding: 25px;
 }
 #text {
+    /* margin-top: 15px; */
+    font-size: 26px;
     margin-top: 50px;
-    margins: 25px;
+    /* margins: 25px; */
 }
 
 #version {

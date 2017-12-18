@@ -1,6 +1,6 @@
 # Morpheus for Chinese
 
-> reading Chinese (including Classical Chinese) made easy, Chinese word recursive segmentation, ruby-annonation on a fly for the whole sentence, a lot of dictionaries, including Dharma-Reader series, works offline and everywhere on a desktop:
+> reading Chinese (including Classical Chinese) made easy, Chinese word recursive segmentation, pinyin-annonation on a fly for the whole sentence, a lot of dictionaries, including Dharma-Reader series, works offline and everywhere on a desktop:
 
 > copy any Chinese text anywhere on a desktop and move mouse over the text in Morpheus
 
