@@ -1,10 +1,11 @@
 //
 
-import {log} from './utils'
+// import {log} from './utils'
 import {q, qs, empty, create, span} from './utils'
 import {ipcRenderer, shell} from 'electron'
 import { EventBus } from './bus'
 import router from './router'
+import { unihan } from './components/unihan.js'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
@@ -36,12 +37,14 @@ export default {
     Mousetrap.bind('esc', function () { EventBus.$emit('clean') }, 'keyup')
     Mousetrap.bind('alt+left', function () { router.go(-1) }, 'keyup')
     Mousetrap.bind('alt+right', function () { router.go(1) }, 'keyup')
-    Mousetrap.bind('ctrl+shift+u', () => { EventBus.$emit('showUnihan', 'u') })
-    Mousetrap.bind('ctrl+shift+c', () => { EventBus.$emit('showUnihan', 'c') })
-    Mousetrap.bind('ctrl+shift+s', () => { EventBus.$emit('showUnihan', 's') })
-    Mousetrap.bind('ctrl+shift+g', () => { EventBus.$emit('showUnihan', 'g') })
-    Mousetrap.bind('ctrl+shift+n', () => { EventBus.$emit('showUnihan', 'n') })
+    Mousetrap.bind('ctrl+shift+u', () => { showUnihan('u') })
+    Mousetrap.bind('ctrl+shift+c', () => { showUnihan('c') })
+    Mousetrap.bind('ctrl+shift+s', () => { showUnihan('s') })
+    Mousetrap.bind('ctrl+shift+g', () => { showUnihan('g') })
+    Mousetrap.bind('ctrl+shift+n', () => { showUnihan('n') })
+    Mousetrap.bind('ctrl+shift+m', () => { showUnihan('m')})
   },
+
   mounted () {
     this.$electron.ipcRenderer.on('cfg', (event, cfg) => {
       let sorted = _.sortBy(cfg, 'weight')
@@ -120,4 +123,12 @@ function setSegs (clause, segs) {
     }
     clause.appendChild(spn)
   })
+}
+
+function showUnihan(sym) {
+  let current = q('.seg:hover')
+  if (!current) return
+  let seg = current.textContent
+  if (seg.length !== 1) return
+  unihan(sym, seg)
 }

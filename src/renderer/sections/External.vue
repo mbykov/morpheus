@@ -6,6 +6,7 @@
     <p><b>u</b>: Unihan database - http://www.unicode.org/cgi-bin/GetUnihanData</p>
     <p><b>c</b>: Chise: (CHaracter Information Service Environment) - http://www.chise.org</p>
     <p><b>s</b>: extended Shuowen Jiezi -  http://www2.dhii.jp:3000</p>
+    <p><b>m</b>: mdbg -  https://www.mdbg.net</p>
     <p><b>n</b>: NTI-Reader - http://ntireader.org/</p>
     <p></p>
   </div>

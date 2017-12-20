@@ -1,9 +1,8 @@
 //
 
-import {log} from '../utils'
+// import {log} from '../utils'
 import {ipcRenderer} from 'electron'
 import { EventBus } from '../bus.js'
-import { unihan } from './unihan.js'
 import _ from 'lodash'
 
 export default {
@@ -30,7 +29,6 @@ export default {
         this.dict = {seg: data.seg, dbns: {'no result': []}}
         return
       }
-      // if (!EventBus.res[data.cl]) log('E', EventBus.res)
       if (!EventBus.res[data.cl]) return
       let docs = _.filter(EventBus.res[data.cl].docs, doc => { return doc.dict === data.seg })
       let simps = _.compact(_.uniq(docs.map(doc => { return doc.simp })))
@@ -52,13 +50,6 @@ export default {
 
       let dbns = _.groupBy(docs, 'dname')
       this.dict = {seg: data.seg, otype: otype, other: other, dbns: dbns}
-    })
-    EventBus.$on('showUnihan', (sym) => {
-      let doc = this.dict
-      if (!doc) return
-      let seg = doc.seg
-      if (!seg) return
-      unihan(sym, seg)
     })
   },
   methods: {
